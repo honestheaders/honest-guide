@@ -16,10 +16,10 @@ def rakuten_link(url, label):
     aid = CFG["rakuten_affiliate_id"]
     if aid:
         from urllib.parse import quote
-        href = f"https://hb.afl.rakuten.co.jp/hgc/{aid}/?pc={quote(url, safe='')}&m={quote(url, safe='')}"
+        href = f"https://hb.afl.rakuten.co.jp/hgc/{aid}/?pc={quote(url, safe='')}&link_type=text"
     else:
         href = url
-    return f'<a href="{html.escape(href)}" rel="sponsored noopener" target="_blank">{html.escape(label)}</a>'
+    return f'<a href="{html.escape(href)}" rel="nofollow sponsored noopener" target="_blank">{html.escape(label)}</a>'
 
 PR = '<p class="pr">※この記事にはプロモーション(広告)が含まれます。商品リンクから購入されると、当サイトに報酬が入ることがあります。</p>'
 
