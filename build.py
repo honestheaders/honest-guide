@@ -23,15 +23,17 @@ def rakuten_link(url, label):
 
 PR = '<p class="pr">※この記事にはプロモーション(広告)が含まれます。商品リンクから購入されると、当サイトに報酬が入ることがあります。</p>'
 
-def page(path, title, desc, body, article=False):
+def page(path, title, desc, body, article=False, extra_head=""):
     canon = f'{CFG["base_url"]}{path}'
     nav = f'''<header><div class="wrap"><a class="logo" href="{BASE}/">{CFG["site_name"]}</a>
-<nav><a href="{BASE}/tools/">計算ツール</a><a href="{BASE}/guides/">えらび方ガイド</a><a href="{BASE}/about/">運営者情報</a></nav></div></header>'''
+<nav><a href="{BASE}/tools/">計算ツール</a><a href="{BASE}/guides/">えらび方ガイド</a><a href="{BASE}/templates/">手続き表</a><a href="{BASE}/about/">運営者情報</a></nav></div></header>'''
     foot = f'''<footer><div class="wrap"><p>当サイトは、楽天アフィリエイトなどのアフィリエイトプログラムに参加しています。商品リンクを通じて報酬を得ることがあります。</p>
 <p><a href="{BASE}/about/">運営者情報</a> / <a href="{BASE}/privacy/">プライバシーポリシー</a></p><p>&copy; {datetime.date.today().year} {CFG["operator"]}</p></div></footer>'''
     doc = f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{html.escape(title)}</title><meta name="description" content="{html.escape(desc)}"><link rel="canonical" href="{canon}">
 <meta property="og:title" content="{html.escape(title)}"><meta property="og:description" content="{html.escape(desc)}"><meta property="og:type" content="{'article' if article else 'website'}">
+<link rel="icon" href="{BASE}/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="{CFG["site_name"]}" href="{CFG["base_url"]}/feed.xml">
+<script type="application/ld+json">{{"@context":"https://schema.org","@type":"WebSite","name":"{CFG["site_name"]}","url":"{CFG["base_url"]}/"}}</script>{extra_head}
 <style>{CSS}</style></head><body>{nav}<main class="wrap">{body}</main>{foot}</body></html>'''
     d = OUT / path.strip("/")
     d.mkdir(parents=True, exist_ok=True)
@@ -80,6 +82,7 @@ pages.append(page("/tools/", "計算ツール一覧|Honest Guide", "暮らしの
 
 # ---------- 記事(content/*.md) ----------
 articles = []
+articles_full = []
 for f in sorted((ROOT / "content").glob("*.md")):
     raw = f.read_text(encoding="utf-8")
     m = re.match(r"---\n(.*?)\n---\n(.*)", raw, re.S)
@@ -92,11 +95,34 @@ for f in sorted((ROOT / "content").glob("*.md")):
     body_html = markdown.markdown(body_md, extensions=["tables"])
     slug = f.stem
     articles.append((slug, meta))
-    body = f'<article><h1>{html.escape(meta["title"])}</h1><p class="date">更新日:{meta.get("updated", TODAY)}</p>{PR}{body_html}</article>'
-    pages.append(page(f"/guides/{slug}/", f'{meta["title"]}|Honest Guide', meta.get("description", ""), body, article=True))
+    articles_full.append((slug, meta, body_html))
+
+for i, (slug, meta, body_html) in enumerate(articles_full):
+    others = [a for a in articles_full if a[0] != slug]
+    # 関連記事: 直前・直後の2本(単純だが偏らない)
+    rel = (others[i-1:i] + others[i:i+1]) if len(others) > 1 else others
+    rel = rel[:2] or others[:2]
+    rel_html = "".join(f'<li><a href="{BASE}/guides/{r[0]}/">{html.escape(r[1]["title"])}</a></li>' for r in rel)
+    related = f'<section class="related"><h2>関連する記事</h2><ul>{rel_html}</ul><p>計算がめんどうなときは<a href="{BASE}/tools/">計算ツール</a>もどうぞ。</p></section>' if rel else ""
+    crumb = f'<nav class="crumb"><a href="{BASE}/">ホーム</a> › <a href="{BASE}/guides/">えらび方ガイド</a> › {html.escape(meta["title"])}</nav>'
+    ld = json.dumps({"@context":"https://schema.org","@type":"Article","headline":meta["title"],"description":meta.get("description",""),
+        "dateModified":meta.get("updated",TODAY),"author":{"@type":"Organization","name":CFG["operator"]},"publisher":{"@type":"Organization","name":CFG["operator"]},
+        "mainEntityOfPage":f'{CFG["base_url"]}/guides/{slug}/'}, ensure_ascii=False)
+    body = f'{crumb}<article><h1>{html.escape(meta["title"])}</h1><p class="date">更新日:{meta.get("updated", TODAY)}</p>{PR}{body_html}</article>{related}'
+    pages.append(page(f"/guides/{slug}/", f'{meta["title"]}|Honest Guide', meta.get("description", ""), body, article=True, extra_head=f'<script type="application/ld+json">{ld}</script>'))
 
 lst = "".join(f'<li><a href="{BASE}/guides/{s}/"><b>{html.escape(m["title"])}</b><span>{html.escape(m.get("description",""))}</span></a></li>' for s, m in articles) or "<li>準備中です。</li>"
 pages.append(page("/guides/", "えらび方ガイド一覧|Honest Guide", "暮らしの道具のえらび方ガイド一覧。", f"<h1>えらび方ガイド</h1><ul class=\"cards\">{lst}</ul>"))
+
+# ---------- 手続きチェック表(BOOTH) ----------
+tpl = f'''<h1>手続きの期限チェック表(Excel)</h1>
+<p>役所や年金などの手続きは、期限がばらばらで、数えるのがめんどうです。日付を1か所入れるだけで、すべての手続きの期限日と残り日数が自動で出るExcelの表を、{CFG["operator"]}のショップで販売しています。ExcelでもGoogleスプレッドシートでも使え、スマホでも開けます。</p>
+<ul class="cards">
+<li><a href="https://honest-tools.booth.pm/items/8919127" rel="noopener" target="_blank"><b>死亡後の手続き 期限チェック表</b><span>亡くなった日を入れると、28の手続きの期限日が自動で出ます(500円)</span></a></li>
+<li><a href="https://honest-tools.booth.pm/" rel="noopener" target="_blank"><b>退職後の手続き 期限チェック表</b><span>退職日を入れると、17の手続きの期限日と失業給付の目安が出ます(500円)</span></a></li>
+</ul>
+<p class="note">いずれも一般的な期限をまとめた目安で、法律・税務・社会保険の助言ではありません。個別の事情は各窓口でご確認ください。販売ページはBOOTH(ピクシブ株式会社が運営する販売サイト)です。</p>'''
+pages.append(page("/templates/", "手続きの期限チェック表(Excel)|Honest Guide", "日付を入れるだけで手続きの期限日が自動で出るExcelチェック表の案内。", tpl))
 
 # ---------- 固定ページ ----------
 about = f'''<h1>運営者情報</h1><table class="plain"><tr><th>サイト名</th><td>{CFG["site_name"]}</td></tr>
@@ -120,7 +146,8 @@ pages.append(page("/privacy/", "プライバシーポリシー|Honest Guide", "�
 top = f'''<section class="hero"><h1>{CFG["site_name"]}</h1><p>{CFG["tagline"]}</p></section>
 <h2>計算ツール</h2><ul class="cards"><li><a href="{BASE}/tools/area/"><b>坪・平米・畳の換算</b><span>広さの単位をまとめて換算</span></a></li>
 <li><a href="{BASE}/tools/denki/"><b>家電の電気代</b><span>消費電力と時間から電気代の目安</span></a></li></ul>
-<h2>えらび方ガイド</h2><ul class="cards">{lst}</ul>'''
+<h2>えらび方ガイド</h2><ul class="cards">{lst}</ul>
+<h2>手続きの期限チェック表</h2><ul class="cards"><li><a href="{BASE}/templates/"><b>Excelの期限チェック表</b><span>日付を入れるだけで、手続きの期限日が自動で出ます</span></a></li></ul>'''
 pages.append(page("/", "Honest Guide|暮らしの計算と、えらび方の道具箱", "計算ツールと、道具のえらび方ガイド。", top))
 
 # ---------- サイトマップ等 ----------
@@ -128,4 +155,13 @@ urls = "".join(f'<url><loc>{CFG["base_url"]}{p}</loc><lastmod>{TODAY}</lastmod><
 (OUT / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>', encoding="utf-8")
 (OUT / "robots.txt").write_text(f'User-agent: *\nAllow: /\nSitemap: {CFG["base_url"]}/sitemap.xml\n', encoding="utf-8")
 (OUT / ".nojekyll").write_text("", encoding="utf-8")
+# 404
+nf = f'<h1>ページが見つかりません</h1><p>アドレスが変わったか、ページがなくなった可能性があります。</p><p><a href="{BASE}/">トップページへ戻る</a> / <a href="{BASE}/guides/">記事一覧</a> / <a href="{BASE}/tools/">計算ツール</a></p>'
+page("/404/", "ページが見つかりません|Honest Guide", "", nf)
+shutil.move(OUT / "404" / "index.html", OUT / "404.html"); shutil.rmtree(OUT / "404")
+# RSS
+items = "".join(f'<item><title>{html.escape(m["title"])}</title><link>{CFG["base_url"]}/guides/{s_}/</link><guid>{CFG["base_url"]}/guides/{s_}/</guid><description>{html.escape(m.get("description",""))}</description><pubDate>{datetime.datetime.strptime(m.get("updated",TODAY),"%Y-%m-%d").strftime("%a, %d %b %Y 00:00:00 +0900")}</pubDate></item>' for s_, m in sorted(articles, key=lambda a: a[1].get("updated",""), reverse=True))
+(OUT / "feed.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>{CFG["site_name"]}</title><link>{CFG["base_url"]}/</link><description>{CFG["tagline"]}</description><language>ja</language>{items}</channel></rss>', encoding="utf-8")
+# favicon
+(OUT / "favicon.svg").write_text('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#1f4e79"/><circle cx="32" cy="32" r="20" fill="#ffe699"/><path d="M22 33l7 7 13-14" fill="none" stroke="#1f4e79" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>', encoding="utf-8")
 print(f"{len(pages)} pages, {len(articles)} articles")

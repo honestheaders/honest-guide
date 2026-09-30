@@ -1,6 +1,6 @@
 <!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>家電の電気代 計算ツール|Honest Guide</title><meta name="description" content="消費電力と使用時間から、家電の電気代の目安を計算できる無料ツール。"><link rel="canonical" href="https://honestheaders.github.io/honest-guide/tools/denki/">
-<meta property="og:title" content="家電の電気代 計算ツール|Honest Guide"><meta property="og:description" content="消費電力と使用時間から、家電の電気代の目安を計算できる無料ツール。"><meta property="og:type" content="website">
+<title>手続きの期限チェック表(Excel)|Honest Guide</title><meta name="description" content="日付を入れるだけで手続きの期限日が自動で出るExcelチェック表の案内。"><link rel="canonical" href="https://honestheaders.github.io/honest-guide/templates/">
+<meta property="og:title" content="手続きの期限チェック表(Excel)|Honest Guide"><meta property="og:description" content="日付を入れるだけで手続きの期限日が自動で出るExcelチェック表の案内。"><meta property="og:type" content="website">
 <link rel="icon" href="/honest-guide/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Honest Guide" href="https://honestheaders.github.io/honest-guide/feed.xml">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Honest Guide","url":"https://honestheaders.github.io/honest-guide/"}</script>
 <style>:root{--c:#1f4e79;--bg:#fafaf7;--t:#222;--m:#666;--l:#ddd}
@@ -20,18 +20,11 @@ a{color:var(--c)}table{border-collapse:collapse;width:100%;margin:16px 0;font-si
 
 .crumb{font-size:13px;color:var(--m)}.related{margin-top:32px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:4px 16px 12px}.related h2{margin-top:12px;font-size:17px}
 </style></head><body><header><div class="wrap"><a class="logo" href="/honest-guide/">Honest Guide</a>
-<nav><a href="/honest-guide/tools/">計算ツール</a><a href="/honest-guide/guides/">えらび方ガイド</a><a href="/honest-guide/templates/">手続き表</a><a href="/honest-guide/about/">運営者情報</a></nav></div></header><main class="wrap"><h1>家電の電気代 計算ツール</h1>
-<p>消費電力と使う時間から、電気代の目安を計算します。</p>
-<div class="tool"><label>消費電力(W)<input id="w" type="number" step="any" inputmode="decimal" value="1000"></label>
-<label>1日に使う時間(時間)<input id="h" type="number" step="any" inputmode="decimal" value="1"></label>
-<label>1か月に使う日数(日)<input id="d" type="number" step="any" inputmode="decimal" value="30"></label>
-<label>電気料金の単価(円/kWh)<input id="p" type="number" step="any" inputmode="decimal" value="31"></label></div>
-<div class="result"><p>1日あたり <b id="r1">-</b> 円</p><p>1か月あたり <b id="r2">-</b> 円</p><p>1年あたり <b id="r3">-</b> 円</p></div>
-<p class="note">単価の31円/kWhは、電気料金を比べるときによく使われる目安の単価(全国家庭電気製品公正取引協議会の目安)です。実際の単価は、ご契約の料金プランで違います。検針票やアプリで確認して入れると、より正確になります。</p>
-<script>
-const g=id=>parseFloat(document.getElementById(id).value)||0;
-function calc(){const day=g('w')/1000*g('h')*g('p');const f=n=>Math.round(n).toLocaleString('ja-JP');
- document.getElementById('r1').textContent=f(day);document.getElementById('r2').textContent=f(day*g('d'));document.getElementById('r3').textContent=f(day*g('d')*12);}
-['w','h','d','p'].forEach(i=>document.getElementById(i).addEventListener('input',calc));calc();
-</script></main><footer><div class="wrap"><p>当サイトは、楽天アフィリエイトなどのアフィリエイトプログラムに参加しています。商品リンクを通じて報酬を得ることがあります。</p>
+<nav><a href="/honest-guide/tools/">計算ツール</a><a href="/honest-guide/guides/">えらび方ガイド</a><a href="/honest-guide/templates/">手続き表</a><a href="/honest-guide/about/">運営者情報</a></nav></div></header><main class="wrap"><h1>手続きの期限チェック表(Excel)</h1>
+<p>役所や年金などの手続きは、期限がばらばらで、数えるのがめんどうです。日付を1か所入れるだけで、すべての手続きの期限日と残り日数が自動で出るExcelの表を、Honest Toolsのショップで販売しています。ExcelでもGoogleスプレッドシートでも使え、スマホでも開けます。</p>
+<ul class="cards">
+<li><a href="https://honest-tools.booth.pm/items/8919127" rel="noopener" target="_blank"><b>死亡後の手続き 期限チェック表</b><span>亡くなった日を入れると、28の手続きの期限日が自動で出ます(500円)</span></a></li>
+<li><a href="https://honest-tools.booth.pm/" rel="noopener" target="_blank"><b>退職後の手続き 期限チェック表</b><span>退職日を入れると、17の手続きの期限日と失業給付の目安が出ます(500円)</span></a></li>
+</ul>
+<p class="note">いずれも一般的な期限をまとめた目安で、法律・税務・社会保険の助言ではありません。個別の事情は各窓口でご確認ください。販売ページはBOOTH(ピクシブ株式会社が運営する販売サイト)です。</p></main><footer><div class="wrap"><p>当サイトは、楽天アフィリエイトなどのアフィリエイトプログラムに参加しています。商品リンクを通じて報酬を得ることがあります。</p>
 <p><a href="/honest-guide/about/">運営者情報</a> / <a href="/honest-guide/privacy/">プライバシーポリシー</a></p><p>&copy; 2026 Honest Tools</p></div></footer></body></html>
