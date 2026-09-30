@@ -1,0 +1,14 @@
+name: IndexNow(検索エンジンに更新を知らせる)
+on:
+  push:
+    branches: [main]
+    paths: ["docs/**"]
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 公開が反映されるまで待つ
+        run: sleep 120
+      - name: IndexNowに送信
+        run: python3 indexnow.py
