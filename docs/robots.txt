@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://honestheaders.github.io/honest-guide/sitemap.xml
