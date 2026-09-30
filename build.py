@@ -120,6 +120,7 @@ tpl = f'''<h1>手続きの期限チェック表(Excel)</h1>
 <ul class="cards">
 <li><a href="https://honest-tools.booth.pm/items/8919127" rel="noopener" target="_blank"><b>死亡後の手続き 期限チェック表</b><span>亡くなった日を入れると、28の手続きの期限日が自動で出ます(500円)</span></a></li>
 <li><a href="https://honest-tools.booth.pm/" rel="noopener" target="_blank"><b>退職後の手続き 期限チェック表</b><span>退職日を入れると、17の手続きの期限日と失業給付の目安が出ます(500円)</span></a></li>
+<li><a href="https://honest-tools.booth.pm/" rel="noopener" target="_blank"><b>引っ越しの手続き 期限チェック表</b><span>引越しの日を入れると、転入届・マイナンバー・車検証など23の手続きの期限日が出ます(500円)</span></a></li>
 </ul>
 <p class="note">いずれも一般的な期限をまとめた目安で、法律・税務・社会保険の助言ではありません。個別の事情は各窓口でご確認ください。販売ページはBOOTH(ピクシブ株式会社が運営する販売サイト)です。</p>'''
 pages.append(page("/templates/", "手続きの期限チェック表(Excel)|Honest Guide", "日付を入れるだけで手続きの期限日が自動で出るExcelチェック表の案内。", tpl))
