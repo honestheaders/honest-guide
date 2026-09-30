@@ -162,6 +162,10 @@ shutil.move(OUT / "404" / "index.html", OUT / "404.html"); shutil.rmtree(OUT / "
 # RSS
 items = "".join(f'<item><title>{html.escape(m["title"])}</title><link>{CFG["base_url"]}/guides/{s_}/</link><guid>{CFG["base_url"]}/guides/{s_}/</guid><description>{html.escape(m.get("description",""))}</description><pubDate>{datetime.datetime.strptime(m.get("updated",TODAY),"%Y-%m-%d").strftime("%a, %d %b %Y 00:00:00 +0900")}</pubDate></item>' for s_, m in sorted(articles, key=lambda a: a[1].get("updated",""), reverse=True))
 (OUT / "feed.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>{CFG["site_name"]}</title><link>{CFG["base_url"]}/</link><description>{CFG["tagline"]}</description><language>ja</language>{items}</channel></rss>', encoding="utf-8")
+# IndexNow key file (検索エンジンへの通知用)
+kf = ROOT / "indexnow_key.txt"
+if kf.exists():
+    k = kf.read_text().strip(); (OUT / f"{k}.txt").write_text(k, encoding="utf-8")
 # favicon
 (OUT / "favicon.svg").write_text('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#1f4e79"/><circle cx="32" cy="32" r="20" fill="#ffe699"/><path d="M22 33l7 7 13-14" fill="none" stroke="#1f4e79" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>', encoding="utf-8")
 print(f"{len(pages)} pages, {len(articles)} articles")
