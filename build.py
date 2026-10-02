@@ -11,15 +11,57 @@ TODAY = datetime.date.today().isoformat()
 
 CSS = (ROOT / "src" / "style.css").read_text(encoding="utf-8")
 
-def rakuten_link(url, label):
-    """楽天のURLをアフィリエイトリンクに包む。IDが未設定ならそのまま。"""
+def rakuten_href(url):
+    """楽天のURLをアフィリエイトリンクのURLに包む。IDが未設定ならそのまま。"""
     aid = CFG["rakuten_affiliate_id"]
-    if aid:
-        from urllib.parse import quote
-        href = f"https://hb.afl.rakuten.co.jp/hgc/{aid}/?pc={quote(url, safe='')}&link_type=text"
-    else:
-        href = url
-    return f'<a href="{html.escape(href)}" rel="nofollow sponsored noopener" target="_blank">{html.escape(label)}</a>'
+    if not aid:
+        return url
+    from urllib.parse import quote
+    return f"https://hb.afl.rakuten.co.jp/hgc/{aid}/?pc={quote(url, safe='')}&link_type=text"
+
+def search_url(words):
+    """楽天市場の検索ページのURL。words は「加湿器 気化式 14畳」のような空白区切りの語。"""
+    from urllib.parse import quote
+    return "https://search.rakuten.co.jp/search/mall/" + quote(words.strip()) + "/"
+
+def rakuten_link(url, label):
+    """押しやすいボタン形のリンク(楽天)。表示名の先頭の「楽天市場で」は、ボタンに楽天市場の印があるので省く。"""
+    label = re.sub(r"^楽天(市場)?で", "", label)
+    return (f'<a class="buy" href="{html.escape(rakuten_href(url))}" rel="nofollow sponsored noopener" target="_blank">'
+            f'<span class="shop">楽天市場</span>{html.escape(label)}<span class="arrow">›</span></a>')
+
+def item_card(name, spec, fit, words, label=""):
+    """型番カード。name=商品名(型番)、spec=公式で確認した仕様、fit=向いている人、words=楽天で探す語。"""
+    btn = rakuten_link(search_url(words), label or "楽天で価格とレビューを見る")
+    return (f'<div class="item"><p class="iname">{html.escape(name)}</p>'
+            f'<p class="ispec">{html.escape(spec)}</p>'
+            f'<p class="ifit"><b>向いている人</b>{html.escape(fit)}</p>{btn}</div>')
+
+def expand_links(md):
+    """記事の中の商品リンクの書き方を、HTMLに変える。
+    {{rakuten:URL|表示名}}            … 楽天のURLを直接指定するボタン
+    {{search:探す語|表示名}}           … 楽天の検索ページへのボタン(URLを自分で作らなくてよい)
+    {{item:商品名|公式の仕様|向いている人|探す語}} … 型番カード
+    """
+    md = re.sub(r"\{\{item:(.+?)\|(.+?)\|(.+?)\|(.+?)\}\}", lambda x: item_card(*[g.strip() for g in x.groups()]), md)
+    md = re.sub(r"\{\{search:(.+?)\|(.+?)\}\}", lambda x: rakuten_link(search_url(x.group(1)), x.group(2).strip()), md)
+    md = re.sub(r"\{\{rakuten:(.+?)\|(.+?)\}\}", lambda x: rakuten_link(x.group(1).strip(), x.group(2).strip()), md)
+    return md
+
+def quick_box(body_html):
+    """記事の最初の段落のすぐ後ろに「先に商品を見たい人へ」の箱を入れる(記事の中のボタンを集めて並べる)。"""
+    btns = re.findall(r'<a class="buy".*?</a>', body_html, re.S)
+    uniq = []
+    for b in btns:
+        if b not in uniq:
+            uniq.append(b)
+    # 手続きの記事(チェック表への案内がある記事)は、手続きを読みに来た人なので先頭の箱は出さない
+    if not uniq or f"{BASE}/templates/" in body_html:
+        return body_html
+    box = ('<aside class="quick"><p class="qh">先に商品を見たい人へ</p>' + "".join(uniq[:4]) +
+           '<p class="qn">選び方のポイントは、このあと本文で説明しています。</p></aside>')
+    i = body_html.find("</p>")
+    return body_html if i < 0 else body_html[:i+4] + box + body_html[i+4:]
 
 PR = '<p class="pr">※この記事にはプロモーション(広告)が含まれます。商品リンクから購入されると、当サイトに報酬が入ることがあります。</p>'
 
@@ -56,7 +98,9 @@ function setFrom(src){const v=parseFloat(src.value);if(isNaN(v))return;let m;
  if(src===m2)m=v;else if(src===ts)m=v*T;else m=v*J;
  if(src!==m2)m2.value=r(m);if(src!==ts)ts.value=r(m/T);if(src!==jo)jo.value=r(m/J);}
 [m2,ts,jo].forEach(e=>e.addEventListener('input',()=>setFrom(e)));
-</script>'''
+</script>
+<h2>広さを測る道具</h2><p>部屋の広さを自分で測るときに使う道具です。</p>
+''' + rakuten_link(search_url("レーザー距離計"), "レーザー距離計を探す") + rakuten_link(search_url("メジャー 5.5m"), "メジャー(5.5m)を探す") + f'''<p class="note">畳・坪・平米のくわしい関係は<a href="{BASE}/guides/tatami-tsubo-heibei/">こちらの記事</a>で説明しています。</p>'''
 pages.append(page("/tools/area/", "坪・平米・畳の換算ツール|Honest Guide", "坪、平米(㎡)、畳を相互に換算できる無料ツール。", AREA))
 
 DENKI = '''<h1>家電の電気代 計算ツール</h1>
@@ -72,7 +116,9 @@ const g=id=>parseFloat(document.getElementById(id).value)||0;
 function calc(){const day=g('w')/1000*g('h')*g('p');const f=n=>Math.round(n).toLocaleString('ja-JP');
  document.getElementById('r1').textContent=f(day);document.getElementById('r2').textContent=f(day*g('d'));document.getElementById('r3').textContent=f(day*g('d')*12);}
 ['w','h','d','p'].forEach(i=>document.getElementById(i).addEventListener('input',calc));calc();
-</script>'''
+</script>
+<h2>家電の消費電力を実際に測るには</h2><p>コンセントと家電の間につなぐと、使っている電力(W)と電気代が表示される「ワットチェッカー」という道具があります。箱に書かれた数字ではなく、実際の数字で計算できます。</p>
+''' + rakuten_link(search_url("ワットチェッカー"), "ワットチェッカーを探す") + f'''<p class="note">待機電力の測り方は<a href="{BASE}/guides/taiki-denryoku/">こちらの記事</a>で説明しています。</p>'''
 pages.append(page("/tools/denki/", "家電の電気代 計算ツール|Honest Guide", "消費電力と使用時間から、家電の電気代の目安を計算できる無料ツール。", DENKI))
 
 tools_body = f'''<h1>計算ツール</h1><ul class="cards">
@@ -91,8 +137,8 @@ for f in sorted((ROOT / "content").glob("*.md")):
     meta = {k.strip(): v.strip() for k, v in meta.items()}
     body_md = m.group(2)
     # {{rakuten:URL|ラベル}} をアフィリエイトリンクに置換
-    body_md = re.sub(r"\{\{rakuten:(.+?)\|(.+?)\}\}", lambda x: rakuten_link(x.group(1), x.group(2)), body_md)
-    body_html = markdown.markdown(body_md, extensions=["tables"])
+    body_md = expand_links(body_md)
+    body_html = quick_box(markdown.markdown(body_md, extensions=["tables"]))
     slug = f.stem
     articles.append((slug, meta))
     articles_full.append((slug, meta, body_html))

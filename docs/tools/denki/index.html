@@ -19,6 +19,13 @@ a{color:var(--c)}table{border-collapse:collapse;width:100%;margin:16px 0;font-si
 .note{font-size:13px;color:var(--m)}footer{background:#f1f1ec;font-size:13px;color:var(--m);padding:20px 0}
 
 .crumb{font-size:13px;color:var(--m)}.related{margin-top:32px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:4px 16px 12px}.related h2{margin-top:12px;font-size:17px}
+.buy{display:flex;align-items:center;gap:10px;background:#bf0000;color:#fff;text-decoration:none;font-weight:700;border-radius:10px;padding:12px 14px;margin:10px 0;line-height:1.4;box-shadow:0 2px 0 #8c0000}
+.buy:hover,.buy:focus-visible{background:#a30000;outline:none}.buy .shop{font-size:11px;font-weight:700;background:#fff;color:#bf0000;border-radius:4px;padding:2px 6px;white-space:nowrap}
+.buy .arrow{margin-left:auto;font-size:20px}li>.buy{margin:6px 0}article ul:has(.buy){list-style:none;padding-left:0}
+.quick{background:#fff;border:2px solid #f0c9c9;border-radius:12px;padding:12px 14px;margin:18px 0}.quick .qh{margin:0 0 4px;font-weight:700;color:#bf0000}.quick .qn{margin:6px 0 0;font-size:13px;color:var(--m)}
+.item{background:#fff;border:1px solid var(--l);border-radius:12px;padding:14px 16px;margin:14px 0}.item p{margin:0 0 6px}.iname{font-weight:700;font-size:17px;color:var(--c)}
+.ispec{font-size:14px;color:var(--t)}.ifit{font-size:14px;background:#f5f8fb;border-radius:6px;padding:6px 10px}.ifit b{display:block;font-size:12px;color:var(--c)}
+.crumb a{color:var(--c);margin-left:0;font-size:13px}
 </style></head><body><header><div class="wrap"><a class="logo" href="/honest-guide/">Honest Guide</a>
 <nav><a href="/honest-guide/tools/">計算ツール</a><a href="/honest-guide/guides/">えらび方ガイド</a><a href="/honest-guide/templates/">手続き表</a><a href="/honest-guide/about/">運営者情報</a></nav></div></header><main class="wrap"><h1>家電の電気代 計算ツール</h1>
 <p>消費電力と使う時間から、電気代の目安を計算します。</p>
@@ -33,5 +40,7 @@ const g=id=>parseFloat(document.getElementById(id).value)||0;
 function calc(){const day=g('w')/1000*g('h')*g('p');const f=n=>Math.round(n).toLocaleString('ja-JP');
  document.getElementById('r1').textContent=f(day);document.getElementById('r2').textContent=f(day*g('d'));document.getElementById('r3').textContent=f(day*g('d')*12);}
 ['w','h','d','p'].forEach(i=>document.getElementById(i).addEventListener('input',calc));calc();
-</script></main><footer><div class="wrap"><p>当サイトは、楽天アフィリエイトなどのアフィリエイトプログラムに参加しています。商品リンクを通じて報酬を得ることがあります。</p>
+</script>
+<h2>家電の消費電力を実際に測るには</h2><p>コンセントと家電の間につなぐと、使っている電力(W)と電気代が表示される「ワットチェッカー」という道具があります。箱に書かれた数字ではなく、実際の数字で計算できます。</p>
+<a class="buy" href="https://hb.afl.rakuten.co.jp/hgc/580beaab.1446d3f4.580beaac.2b337a41/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2583%25AF%25E3%2583%2583%25E3%2583%2588%25E3%2583%2581%25E3%2582%25A7%25E3%2583%2583%25E3%2582%25AB%25E3%2583%25BC%2F&amp;link_type=text" rel="nofollow sponsored noopener" target="_blank"><span class="shop">楽天市場</span>ワットチェッカーを探す<span class="arrow">›</span></a><p class="note">待機電力の測り方は<a href="/honest-guide/guides/taiki-denryoku/">こちらの記事</a>で説明しています。</p></main><footer><div class="wrap"><p>当サイトは、楽天アフィリエイトなどのアフィリエイトプログラムに参加しています。商品リンクを通じて報酬を得ることがあります。</p>
 <p><a href="/honest-guide/about/">運営者情報</a> / <a href="/honest-guide/privacy/">プライバシーポリシー</a></p><p>&copy; 2026 Honest Tools</p></div></footer></body></html>
