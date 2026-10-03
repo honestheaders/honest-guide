@@ -169,11 +169,12 @@ pages.append(page("/guides/", "えらび方ガイド一覧|Honest Guide", "暮�
 tpl = f'''<h1>手続きの期限チェック表(Excel)</h1>
 <p>役所や年金などの手続きは、期限がばらばらで、数えるのがめんどうです。日付を1か所入れるだけで、すべての手続きの期限日と残り日数が自動で出るExcelの表を、{CFG["operator"]}のショップで販売しています。ExcelでもGoogleスプレッドシートでも使え、スマホでも開けます。</p>
 <ul class="cards">
-<li><a href="https://honest-tools.booth.pm/items/8919127" rel="noopener" target="_blank"><b>死亡後の手続き 期限チェック表</b><span>亡くなった日を入れると、28の手続きの期限日が自動で出ます(500円)</span></a></li>
-<li><a href="https://honest-tools.booth.pm/" rel="noopener" target="_blank"><b>退職後の手続き 期限チェック表</b><span>退職日を入れると、17の手続きの期限日と失業給付の目安が出ます(500円)</span></a></li>
-<li><a href="https://honest-tools.booth.pm/" rel="noopener" target="_blank"><b>引っ越しの手続き 期限チェック表</b><span>引越しの日を入れると、転入届・マイナンバー・車検証など23の手続きの期限日が出ます(500円)</span></a></li>
+<li><a href="https://honest-tools.booth.pm/items/8919127" rel="noopener" target="_blank"><b>死亡後の手続き 期限チェック表(完全版)</b><span>亡くなった日を入れて8つの質問に答えると、33の手続きから、あなたの家族に必要なものだけが期限の近い順に並びます</span></a></li>
+<li><a href="https://honest-tools.booth.pm/" rel="noopener" target="_blank"><b>退職後の手続き 期限チェック表(完全版)</b><span>退職日と質問の答えから、22の手続きの期限日と、失業給付を受け取れる日数の目安が出ます</span></a></li>
+<li><a href="https://honest-tools.booth.pm/" rel="noopener" target="_blank"><b>引っ越しの手続き 期限チェック表(完全版)</b><span>引っ越しの日を入れると、転入届・マイナンバー・車・児童手当など30の手続きの期限日が出ます</span></a></li>
 </ul>
 <p>まずは無料の期限計算ツールで、主な手続きの期限だけ確かめることもできます。</p><ul class="cards">{kigen_cards}</ul>
+<p>3つとも、質問に「はい・いいえ」で答えると必要な手続きだけに絞りこめる「やることリスト」、同じ窓口の手続きをまとめた「窓口別まとめ」、窓口ごとの「持ち物リスト」、期限をGoogleカレンダーに入れるボタン、すべての期限の公的な出典がついています。価格はBOOTHのページでご確認ください(3つセットもあります)。</p>
 <p class="note">いずれも一般的な期限をまとめた目安で、法律・税務・社会保険の助言ではありません。個別の事情は各窓口でご確認ください。販売ページはBOOTH(ピクシブ株式会社が運営する販売サイト)です。</p>'''
 pages.append(page("/templates/", "手続きの期限チェック表(Excel)|Honest Guide", "日付を入れるだけで手続きの期限日が自動で出るExcelチェック表の案内。", tpl))
 

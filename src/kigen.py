@@ -25,7 +25,7 @@ TOOLS = [
             ("国土交通省 自動車検査登録総合ポータルサイト「Q&A」", "https://www.jidoushatouroku-portal.mlit.go.jp/jidousha/kensatoroku/faq/index.html"),
         ],
         "checked": "2026年10月3日",
-        "excel": "Excel版は、電気・ガス・水道、郵便の転送、運転免許、児童手当など、23の手続きをまとめて管理できます。",
+        "excel": "Excel版(完全版)は、電気・ガス・水道、郵便の転送、運転免許、児童手当、犬の登録など、30の手続きをまとめて管理できます。",
         "goods": [("引っ越し 段ボール", "引っ越し用の段ボールを探す"), ("クリアファイル A4", "書類をまとめるクリアファイルを探す")],
     },
     {
@@ -50,7 +50,7 @@ TOOLS = [
             ("ハローワークインターネットサービス「基本手当」", "https://www.hellowork.mhlw.go.jp/insurance/insurance_basicbenefit.html"),
         ],
         "checked": "2026年10月1日",
-        "excel": "Excel版は、住民税、保険証の返却、確定申告など、17の手続きをまとめて管理できます。",
+        "excel": "Excel版(完全版)は、住民税、企業年金の移換、確定申告など22の手続きと、失業給付を受け取れる日数の目安をまとめて管理できます。",
         "goods": [("書類ファイル", "書類ファイルを探す"), ("クリアファイル A4", "書類をまとめるクリアファイルを探す")],
     },
 ]
@@ -168,7 +168,7 @@ def build(page, rakuten_link, search_url, BASE, CFG):
 <button id="line" class="line" type="button">家族にLINEで送る</button>
 <button id="copy" type="button">期限の一覧を送る・コピーする</button>
 <p class="note">カレンダーに入れると、期限の3日前にお知らせが出ます(お使いのカレンダーの設定によります)。Androidで一括登録がうまくいかないときは、各手続きの「Googleカレンダーに入れる」を使ってください。送ったリンクを開くと、同じ日付で期限が表示されます。</p></div>
-<div class="upsell"><p><b>手続きをまとめて管理したい人へ</b></p><p>{html.escape(t["excel"])}日付を入れるだけで期限日が自動で出ます(500円・Excel/Googleスプレッドシート)。</p><p><a href="{BASE}/templates/">期限チェック表(Excel)を見る</a></p></div>
+<div class="upsell"><p><b>手続きをまとめて管理したい人へ</b></p><p>{html.escape(t["excel"])}質問に答えると必要な手続きだけに絞りこめて、窓口別のまとめと持ち物リストもつきます(Excel/Googleスプレッドシート)。</p><p><a href="{BASE}/templates/">期限チェック表(Excel)を見る</a></p></div>
 <h2>くわしい説明</h2><p>それぞれの手続きの中身や必要な書類は、<a href="{BASE}/guides/{t["article"]}/">こちらの記事</a>で、公的な情報をもとに説明しています。</p>
 <h2>手続きで使う物</h2>{goods}
 <h2>出典と確認日</h2><ul class="src">{src}</ul><p class="note">確認日:{t["checked"]}</p>
