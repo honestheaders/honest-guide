@@ -121,7 +121,12 @@ function calc(){const day=g('w')/1000*g('h')*g('p');const f=n=>Math.round(n).toL
 ''' + rakuten_link(search_url("ワットチェッカー"), "ワットチェッカーを探す") + f'''<p class="note">待機電力の測り方は<a href="{BASE}/guides/taiki-denryoku/">こちらの記事</a>で説明しています。</p>'''
 pages.append(page("/tools/denki/", "家電の電気代 計算ツール|Honest Guide", "消費電力と使用時間から、家電の電気代の目安を計算できる無料ツール。", DENKI))
 
-tools_body = f'''<h1>計算ツール</h1><ul class="cards">
+import sys; sys.path.insert(0, str(ROOT / "src")); import kigen
+KIGEN = kigen.build(page, rakuten_link, search_url, BASE, CFG)
+pages += [k[0] for k in KIGEN]
+kigen_cards = "".join(f'<li><a href="{BASE}{p}"><b>{html.escape(t)}</b><span>日付を入れると期限日と残り日数が出ます。カレンダー登録・LINE共有つき</span></a></li>' for p, t, d in KIGEN)
+
+tools_body = f'''<h1>計算ツール</h1><h2>手続きの期限</h2><ul class="cards">{kigen_cards}</ul><h2>暮らしの計算</h2><ul class="cards">
 <li><a href="{BASE}/tools/area/"><b>坪・平米・畳の換算</b><span>広さの単位をまとめて換算</span></a></li>
 <li><a href="{BASE}/tools/denki/"><b>家電の電気代</b><span>消費電力と時間から電気代の目安</span></a></li></ul>'''
 pages.append(page("/tools/", "計算ツール一覧|Honest Guide", "暮らしの計算ツール一覧。", tools_body))
@@ -168,6 +173,7 @@ tpl = f'''<h1>手続きの期限チェック表(Excel)</h1>
 <li><a href="https://honest-tools.booth.pm/" rel="noopener" target="_blank"><b>退職後の手続き 期限チェック表</b><span>退職日を入れると、17の手続きの期限日と失業給付の目安が出ます(500円)</span></a></li>
 <li><a href="https://honest-tools.booth.pm/" rel="noopener" target="_blank"><b>引っ越しの手続き 期限チェック表</b><span>引越しの日を入れると、転入届・マイナンバー・車検証など23の手続きの期限日が出ます(500円)</span></a></li>
 </ul>
+<p>まずは無料の期限計算ツールで、主な手続きの期限だけ確かめることもできます。</p><ul class="cards">{kigen_cards}</ul>
 <p class="note">いずれも一般的な期限をまとめた目安で、法律・税務・社会保険の助言ではありません。個別の事情は各窓口でご確認ください。販売ページはBOOTH(ピクシブ株式会社が運営する販売サイト)です。</p>'''
 pages.append(page("/templates/", "手続きの期限チェック表(Excel)|Honest Guide", "日付を入れるだけで手続きの期限日が自動で出るExcelチェック表の案内。", tpl))
 
@@ -191,6 +197,7 @@ pages.append(page("/privacy/", "プライバシーポリシー|Honest Guide", "�
 
 # ---------- トップ ----------
 top = f'''<section class="hero"><h1>{CFG["site_name"]}</h1><p>{CFG["tagline"]}</p></section>
+<h2>手続きの期限を計算する(無料)</h2><ul class="cards">{kigen_cards}</ul>
 <h2>計算ツール</h2><ul class="cards"><li><a href="{BASE}/tools/area/"><b>坪・平米・畳の換算</b><span>広さの単位をまとめて換算</span></a></li>
 <li><a href="{BASE}/tools/denki/"><b>家電の電気代</b><span>消費電力と時間から電気代の目安</span></a></li></ul>
 <h2>えらび方ガイド</h2><ul class="cards">{lst}</ul>
