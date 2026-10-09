@@ -1,0 +1,142 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="google-site-verification" content="hqAGwjMx_F-TdJl79qigCCcuhYe7_9BUhfd7nEK2TMI"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Security headers checklist: the 7 to add and the 5 to remove | Honest Guide</title><meta name="description" content="Check for HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy and COOP, and remove X-Powered-By, server versions, X-XSS-Protection, HPKP and Expect-CT."><link rel="canonical" href="https://honestheaders.github.io/honest-guide/en/security-headers-checklist/">
+<meta property="og:title" content="Security headers checklist: the 7 to add and the 5 to remove | Honest Guide"><meta property="og:description" content="Check for HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy and COOP, and remove X-Powered-By, server versions, X-XSS-Protection, HPKP and Expect-CT."><meta property="og:type" content="article">
+<link rel="icon" href="/honest-guide/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Honest Guide (English)" href="https://honestheaders.github.io/honest-guide/en/feed.xml"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Security headers checklist: the 7 to add and the 5 to remove", "description": "Check for HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy and COOP, and remove X-Powered-By, server versions, X-XSS-Protection, HPKP and Expect-CT.", "inLanguage": "en", "dateModified": "2026-10-09", "author": {"@type": "Organization", "name": "Honest Tools"}, "publisher": {"@type": "Organization", "name": "Honest Tools"}, "mainEntityOfPage": "https://honestheaders.github.io/honest-guide/en/security-headers-checklist/"}</script>
+<style>:root{--c:#1f4e79;--bg:#fafaf7;--t:#222;--m:#666;--l:#ddd}
+*{box-sizing:border-box}body{margin:0;font-family:"Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;color:var(--t);background:var(--bg);line-height:1.85;font-size:16px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+header{background:var(--c);color:#fff}header .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 16px;gap:8px}
+.logo{color:#fff;font-weight:700;font-size:20px;text-decoration:none}nav a{color:#dbe8f5;margin-left:14px;text-decoration:none;font-size:14px}
+main{padding-top:24px;padding-bottom:40px}h1{font-size:26px;line-height:1.4}h2{font-size:20px;border-left:5px solid var(--c);padding-left:10px;margin-top:36px}
+a{color:var(--c)}table{border-collapse:collapse;width:100%;margin:16px 0;font-size:15px}th,td{border:1px solid var(--l);padding:8px;text-align:left;vertical-align:top}th{background:#eef3f8}
+.plain th{width:30%}.cards{list-style:none;padding:0;display:grid;gap:12px}.cards a{display:block;background:#fff;border:1px solid var(--l);border-radius:10px;padding:14px 16px;text-decoration:none;color:var(--t)}
+.cards b{display:block;color:var(--c)}.cards span{font-size:14px;color:var(--m)}.hero{background:#fff;border:1px solid var(--l);border-radius:12px;padding:20px;text-align:center}
+.pr{font-size:13px;color:var(--m);background:#f1f1ec;padding:8px 12px;border-radius:6px}.date{font-size:13px;color:var(--m)}
+.tool{display:grid;gap:12px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:16px}.tool label{display:block;font-size:14px;color:var(--m)}
+.tool input{display:block;width:100%;font-size:20px;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px}
+.result{background:#fff8dc;border:1px solid #ecd98a;border-radius:10px;padding:8px 16px;margin-top:16px;font-size:18px}.result b{font-size:24px;color:#c00}
+.note{font-size:13px;color:var(--m)}footer{background:#f1f1ec;font-size:13px;color:var(--m);padding:20px 0}
+
+.crumb{font-size:13px;color:var(--m)}.related{margin-top:32px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:4px 16px 12px}.related h2{margin-top:12px;font-size:17px}
+.buy{display:flex;align-items:center;gap:10px;background:#bf0000;color:#fff;text-decoration:none;font-weight:700;border-radius:10px;padding:12px 14px;margin:10px 0;line-height:1.4;box-shadow:0 2px 0 #8c0000}
+.buy:hover,.buy:focus-visible{background:#a30000;outline:none}.buy .shop{font-size:11px;font-weight:700;background:#fff;color:#bf0000;border-radius:4px;padding:2px 6px;white-space:nowrap}
+.buy .arrow{margin-left:auto;font-size:20px}li>.buy{margin:6px 0}article ul:has(.buy){list-style:none;padding-left:0}
+.quick{background:#fff;border:2px solid #f0c9c9;border-radius:12px;padding:12px 14px;margin:18px 0}.quick .qh{margin:0 0 4px;font-weight:700;color:#bf0000}.quick .qn{margin:6px 0 0;font-size:13px;color:var(--m)}
+.item{background:#fff;border:1px solid var(--l);border-radius:12px;padding:14px 16px;margin:14px 0}.item p{margin:0 0 6px}.iname{font-weight:700;font-size:17px;color:var(--c)}
+.ispec{font-size:14px;color:var(--t)}.ifit{font-size:14px;background:#f5f8fb;border-radius:6px;padding:6px 10px}.ifit b{display:block;font-size:12px;color:var(--c)}
+.crumb a{color:var(--c);margin-left:0;font-size:13px}
+.src a,.note a{word-break:break-all}
+article a{overflow-wrap:anywhere}td code{overflow-wrap:anywhere}article table{display:block;overflow-x:auto}body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.7}code{background:#f1f1ec;padding:1px 4px;border-radius:4px;font-size:.92em}pre{background:#f1f1ec;padding:12px;border-radius:8px;overflow-x:auto}pre code{padding:0}.own{background:#1f4e79;box-shadow:0 2px 0 #12304d}.own:hover,.own:focus-visible{background:#163a5c}.own .shop{color:#1f4e79}</style></head><body><header><div class="wrap"><a class="logo" href="/honest-guide/en/">Honest Guide</a><nav><a href="/honest-guide/en/">Guides</a><a href="/honest-guide/en/about/">About</a><a href="/honest-guide/">日本語</a></nav></div></header><main class="wrap"><nav class="crumb"><a href="/honest-guide/en/">Guides</a> › Security headers checklist: the 7 to add and the 5 to remove</nav><article><h1>Security headers checklist: the 7 to add and the 5 to remove</h1><p class="date">Updated 2026-10-09</p><p class="pr">Disclosure: Honest Tools makes Honest Headers, Honest Cookies and the PDFs linked on this site. Links to them are links to our own products. This section has no ads and no affiliate links.</p><p>Short answer: look for <strong>7 headers</strong> (Strict-Transport-Security, Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, Cross-Origin-Opener-Policy) and <strong>remove 5</strong> (X-Powered-By, a version number in <code>Server</code>, X-XSS-Protection, Public-Key-Pins, Expect-CT). Fix the "remove" list first: those are usually one-line changes.</p>
+<p>Headers are one layer of protection. A full set does not make a site secure on its own.</p>
+<h2>Step 1: see your current headers</h2>
+<p>Use any one of these:</p>
+<ul>
+<li>Command line: <code>curl -sI https://your-site.example</code> prints the response headers.</li>
+<li>Browser: open DevTools, <strong>Network</strong>, reload, click the first (document) request and read <strong>Response Headers</strong>.</li>
+<li>Online: Mozilla's HTTP Observatory tests a site's headers and gives recommendations.</li>
+</ul>
+<p>Check the home page, one inner page, a 404 page and a redirect. Some servers only add headers to successful responses.</p>
+<h2>Step 2: the 7 headers to look for</h2>
+<table>
+<thead>
+<tr>
+<th>Header</th>
+<th>Look for</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Strict-Transport-Security</td>
+<td>Present on HTTPS responses, e.g. <code>max-age=31536000; includeSubDomains</code></td>
+<td>Tells browsers to use HTTPS only. Ignored if sent over plain HTTP.</td>
+</tr>
+<tr>
+<td>Content-Security-Policy</td>
+<td>Present; at minimum <code>frame-ancestors</code>, <code>object-src 'none'</code>, <code>base-uri</code></td>
+<td>Limits where scripts load from and who can frame the page</td>
+</tr>
+<tr>
+<td>X-Frame-Options</td>
+<td><code>DENY</code> or <code>SAMEORIGIN</code></td>
+<td>Blocks framing (clickjacking). OWASP prefers CSP <code>frame-ancestors</code> where possible.</td>
+</tr>
+<tr>
+<td>X-Content-Type-Options</td>
+<td><code>nosniff</code></td>
+<td>Stops the browser from guessing file types</td>
+</tr>
+<tr>
+<td>Referrer-Policy</td>
+<td>Set explicitly, e.g. <code>strict-origin-when-cross-origin</code></td>
+<td>Controls how much of your URL is shared with other sites</td>
+</tr>
+<tr>
+<td>Permissions-Policy</td>
+<td>Unused features off, e.g. <code>geolocation=(), camera=(), microphone=()</code></td>
+<td>Stops the page and embeds from using features you never need</td>
+</tr>
+<tr>
+<td>Cross-Origin-Opener-Policy</td>
+<td><code>same-origin</code> (or <code>same-origin-allow-popups</code> for sign-in or payment popups)</td>
+<td>Separates your page from cross-origin windows</td>
+</tr>
+</tbody>
+</table>
+<p>OWASP's own example for HSTS is <code>max-age=63072000; includeSubDomains; preload</code>. Only add <code>preload</code> once every subdomain serves HTTPS.</p>
+<h2>Step 3: the 5 to remove</h2>
+<table>
+<thead>
+<tr>
+<th>Header</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>X-Powered-By</td>
+<td>Remove it. OWASP: "Remove all <code>X-Powered-By</code> headers."</td>
+</tr>
+<tr>
+<td>Server with a version number</td>
+<td>Remove the version (for example <code>server_tokens off;</code> in nginx)</td>
+</tr>
+<tr>
+<td>X-XSS-Protection</td>
+<td>OWASP: "Do not set this header or explicitly turn it off." Use CSP instead.</td>
+</tr>
+<tr>
+<td>Public-Key-Pins</td>
+<td>OWASP: "Do not use."</td>
+</tr>
+<tr>
+<td>Expect-CT</td>
+<td>OWASP: "Do not use it."</td>
+</tr>
+</tbody>
+</table>
+<h2>Test before you deploy</h2>
+<p>CSP, COOP and HSTS can break parts of a site if set without testing. Add them one at a time. You can try a new response header in your own browser first, without touching the server, using DevTools overrides or a header extension (see <a href="/honest-guide/en/modify-http-headers-in-chrome/">How to change HTTP headers in Chrome</a>):</p>
+<div class="item"><p class="iname">Honest Headers (free Chrome extension)</p><p class="ispec">Add, change or remove HTTP request and response headers. Profiles, URL filters, ModHeader JSON import. No data collection.</p><a class="buy own" href="https://chromewebstore.google.com/detail/nomciaobihmigkiocpafmhmhcabpneif" rel="noopener" target="_blank"><span class="shop">Honest Tools</span>Get it on the Chrome Web Store<span class="arrow">›</span></a></div>
+
+<p>A printable version of this checklist, and copy-paste settings for nginx, Apache, Cloudflare and Vercel:</p>
+<div class="item"><p class="iname">Security Headers: 5-Minute Checklist (PDF, pay what you want from $0)</p><p class="ispec">A 2-page printable version of the checklist, with sources.</p><a class="buy own" href="https://honesttools.gumroad.com/l/irlsg" rel="noopener" target="_blank"><span class="shop">Honest Tools</span>Get the PDF on Gumroad<span class="arrow">›</span></a></div>
+
+<div class="item"><p class="iname">Security Headers Config Templates ($7 PDF)</p><p class="ispec">Copy-paste settings for nginx, Apache, Cloudflare and Vercel, with a safe rollout order.</p><a class="buy own" href="https://honesttools.gumroad.com/l/ypsvgk" rel="noopener" target="_blank"><span class="shop">Honest Tools</span>See it on Gumroad<span class="arrow">›</span></a></div>
+
+<h2>Who this is not for</h2>
+<ul>
+<li>This is a checklist, not a security audit or penetration test.</li>
+<li>If your site is behind a platform that controls headers for you (some site builders), you may not be able to change them; check the platform's documentation first.</li>
+<li>Do not copy a strict CSP into production without testing; it can block your own scripts.</li>
+</ul>
+<h2>Sources</h2>
+<ul>
+<li>OWASP HTTP Headers Cheat Sheet (checked 2026-10-09): <a href="https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html">https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html</a></li>
+<li>MDN, Strict-Transport-Security (checked 2026-10-08): <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Strict-Transport-Security">https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Strict-Transport-Security</a></li>
+<li>MDN, X-Frame-Options (checked 2026-10-08): <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Frame-Options">https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Frame-Options</a></li>
+<li>MDN, Content Security Policy guide (checked 2026-10-08): <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP">https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP</a></li>
+<li>MDN, Cross-Origin-Opener-Policy (checked 2026-10-08): <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cross-Origin-Opener-Policy">https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cross-Origin-Opener-Policy</a></li>
+<li>Mozilla HTTP Observatory: <a href="https://developer.mozilla.org/en-US/observatory">https://developer.mozilla.org/en-US/observatory</a></li>
+<li>nginx, server_tokens: <a href="https://nginx.org/en/docs/http/ngx_http_core_module.html#server_tokens">https://nginx.org/en/docs/http/ngx_http_core_module.html#server_tokens</a></li>
+</ul></article><section class="related"><h2>More guides</h2><ul><li><a href="/honest-guide/en/edit-cookies-in-chrome/">How to view and edit cookies in Chrome (DevTools, or an extension)</a></li><li><a href="/honest-guide/en/modify-http-headers-in-chrome/">How to change HTTP headers in Chrome (response headers in DevTools, request headers with an extension)</a></li><li><a href="/honest-guide/en/samesite-cookie-attribute/">SameSite cookies explained: Strict, Lax and None (and why None needs Secure)</a></li></ul></section></main><footer><div class="wrap"><p>Practical notes on HTTP headers, cookies and browser tools, by Honest Tools. Facts are checked against official documentation; each article lists its sources and the date they were checked.</p><p><a href="/honest-guide/en/about/">About</a> / <a href="/honest-guide/en/privacy/">Privacy</a></p><p>&copy; 2026 Honest Tools</p></div></footer></body></html>
