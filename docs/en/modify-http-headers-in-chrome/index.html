@@ -1,0 +1,87 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="google-site-verification" content="hqAGwjMx_F-TdJl79qigCCcuhYe7_9BUhfd7nEK2TMI"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How to change HTTP headers in Chrome (response headers in DevTools, request headers with an extension) | Honest Guide</title><meta name="description" content="DevTools can override response headers locally (Network &gt; right-click &gt; Override headers). To add or change request headers, you need an extension that uses declarativeNetRequest."><link rel="canonical" href="https://honestheaders.github.io/honest-guide/en/modify-http-headers-in-chrome/">
+<meta property="og:title" content="How to change HTTP headers in Chrome (response headers in DevTools, request headers with an extension) | Honest Guide"><meta property="og:description" content="DevTools can override response headers locally (Network &gt; right-click &gt; Override headers). To add or change request headers, you need an extension that uses declarativeNetRequest."><meta property="og:type" content="article">
+<link rel="icon" href="/honest-guide/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Honest Guide (English)" href="https://honestheaders.github.io/honest-guide/en/feed.xml"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "How to change HTTP headers in Chrome (response headers in DevTools, request headers with an extension)", "description": "DevTools can override response headers locally (Network > right-click > Override headers). To add or change request headers, you need an extension that uses declarativeNetRequest.", "inLanguage": "en", "dateModified": "2026-10-09", "author": {"@type": "Organization", "name": "Honest Tools"}, "publisher": {"@type": "Organization", "name": "Honest Tools"}, "mainEntityOfPage": "https://honestheaders.github.io/honest-guide/en/modify-http-headers-in-chrome/"}</script>
+<style>:root{--c:#1f4e79;--bg:#fafaf7;--t:#222;--m:#666;--l:#ddd}
+*{box-sizing:border-box}body{margin:0;font-family:"Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;color:var(--t);background:var(--bg);line-height:1.85;font-size:16px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+header{background:var(--c);color:#fff}header .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 16px;gap:8px}
+.logo{color:#fff;font-weight:700;font-size:20px;text-decoration:none}nav a{color:#dbe8f5;margin-left:14px;text-decoration:none;font-size:14px}
+main{padding-top:24px;padding-bottom:40px}h1{font-size:26px;line-height:1.4}h2{font-size:20px;border-left:5px solid var(--c);padding-left:10px;margin-top:36px}
+a{color:var(--c)}table{border-collapse:collapse;width:100%;margin:16px 0;font-size:15px}th,td{border:1px solid var(--l);padding:8px;text-align:left;vertical-align:top}th{background:#eef3f8}
+.plain th{width:30%}.cards{list-style:none;padding:0;display:grid;gap:12px}.cards a{display:block;background:#fff;border:1px solid var(--l);border-radius:10px;padding:14px 16px;text-decoration:none;color:var(--t)}
+.cards b{display:block;color:var(--c)}.cards span{font-size:14px;color:var(--m)}.hero{background:#fff;border:1px solid var(--l);border-radius:12px;padding:20px;text-align:center}
+.pr{font-size:13px;color:var(--m);background:#f1f1ec;padding:8px 12px;border-radius:6px}.date{font-size:13px;color:var(--m)}
+.tool{display:grid;gap:12px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:16px}.tool label{display:block;font-size:14px;color:var(--m)}
+.tool input{display:block;width:100%;font-size:20px;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px}
+.result{background:#fff8dc;border:1px solid #ecd98a;border-radius:10px;padding:8px 16px;margin-top:16px;font-size:18px}.result b{font-size:24px;color:#c00}
+.note{font-size:13px;color:var(--m)}footer{background:#f1f1ec;font-size:13px;color:var(--m);padding:20px 0}
+
+.crumb{font-size:13px;color:var(--m)}.related{margin-top:32px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:4px 16px 12px}.related h2{margin-top:12px;font-size:17px}
+.buy{display:flex;align-items:center;gap:10px;background:#bf0000;color:#fff;text-decoration:none;font-weight:700;border-radius:10px;padding:12px 14px;margin:10px 0;line-height:1.4;box-shadow:0 2px 0 #8c0000}
+.buy:hover,.buy:focus-visible{background:#a30000;outline:none}.buy .shop{font-size:11px;font-weight:700;background:#fff;color:#bf0000;border-radius:4px;padding:2px 6px;white-space:nowrap}
+.buy .arrow{margin-left:auto;font-size:20px}li>.buy{margin:6px 0}article ul:has(.buy){list-style:none;padding-left:0}
+.quick{background:#fff;border:2px solid #f0c9c9;border-radius:12px;padding:12px 14px;margin:18px 0}.quick .qh{margin:0 0 4px;font-weight:700;color:#bf0000}.quick .qn{margin:6px 0 0;font-size:13px;color:var(--m)}
+.item{background:#fff;border:1px solid var(--l);border-radius:12px;padding:14px 16px;margin:14px 0}.item p{margin:0 0 6px}.iname{font-weight:700;font-size:17px;color:var(--c)}
+.ispec{font-size:14px;color:var(--t)}.ifit{font-size:14px;background:#f5f8fb;border-radius:6px;padding:6px 10px}.ifit b{display:block;font-size:12px;color:var(--c)}
+.crumb a{color:var(--c);margin-left:0;font-size:13px}
+.src a,.note a{word-break:break-all}
+article a{overflow-wrap:anywhere}td code{overflow-wrap:anywhere}article table{display:block;overflow-x:auto}body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.7}code{background:#f1f1ec;padding:1px 4px;border-radius:4px;font-size:.92em}pre{background:#f1f1ec;padding:12px;border-radius:8px;overflow-x:auto}pre code{padding:0}.own{background:#1f4e79;box-shadow:0 2px 0 #12304d}.own:hover,.own:focus-visible{background:#163a5c}.own .shop{color:#1f4e79}</style></head><body><header><div class="wrap"><a class="logo" href="/honest-guide/en/">Honest Guide</a><nav><a href="/honest-guide/en/">Guides</a><a href="/honest-guide/en/about/">About</a><a href="/honest-guide/">日本語</a></nav></div></header><main class="wrap"><nav class="crumb"><a href="/honest-guide/en/">Guides</a> › How to change HTTP headers in Chrome (response headers in DevTools, request headers with an extension)</nav><article><h1>How to change HTTP headers in Chrome (response headers in DevTools, request headers with an extension)</h1><p class="date">Updated 2026-10-09</p><p class="pr">Disclosure: Honest Tools makes Honest Headers, Honest Cookies and the PDFs linked on this site. Links to them are links to our own products. This section has no ads and no affiliate links.</p><p>Short answer: to change <strong>response</strong> headers, use DevTools: in the <strong>Network</strong> panel, right-click a request and choose <strong>Override headers</strong>, then reload. To add, change or remove <strong>request</strong> headers (for example <code>Authorization</code> or a custom <code>X-</code> header), use an extension. Chrome's DevTools guide only covers response headers.</p>
+<h2>Which tool for which job</h2>
+<table>
+<thead>
+<tr>
+<th>You want to</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test a new response header (CSP, CORS, cache) without touching the server</td>
+<td>DevTools local overrides</td>
+</tr>
+<tr>
+<td>Send a custom request header on every request to a site</td>
+<td>An extension</td>
+</tr>
+<tr>
+<td>Remove a header the server sends</td>
+<td>DevTools overrides, or an extension</td>
+</tr>
+<tr>
+<td>Switch between sets of headers quickly</td>
+<td>An extension with profiles</td>
+</tr>
+</tbody>
+</table>
+<h2>Override response headers in DevTools</h2>
+<ol>
+<li>Open DevTools and the <strong>Network</strong> panel. Reload the page.</li>
+<li>Right-click the request and choose <strong>Override headers</strong>. DevTools opens the <strong>Headers &gt; Response Headers</strong> editor.</li>
+<li>The first time, DevTools asks you to <strong>select a folder</strong> to store override files in. Click <strong>Allow</strong> to give it access.</li>
+<li>Edit a value, or add a new header.</li>
+<li>Reload the page to apply it.</li>
+</ol>
+<p>The rules are saved in a <code>.headers</code> file under <strong>Sources &gt; Overrides</strong>. Two things to know: local overrides <strong>disable the cache</strong> while they are on, and they only apply while DevTools is open.</p>
+<h2>Change request headers with an extension</h2>
+<p>Extensions change headers through Chrome's <code>declarativeNetRequest</code> API. Its <code>modifyHeaders</code> action can work on request and response headers with three operations:</p>
+<ul>
+<li><strong>set</strong>: "Sets a new value for the specified header, removing any existing headers with the same name."</li>
+<li><strong>remove</strong>: "Removes all entries for the specified header."</li>
+<li><strong>append</strong>: "Adds a new entry for the specified header" (for request headers, only an allowlist of headers can be appended).</li>
+</ul>
+<p>Because the browser applies the rules itself, a well-built header extension does not need to read your pages. Look for one that does not collect data and lets you limit it to the sites you test.</p>
+<p>We make one that only uses these built-in rules, has profiles and URL filters, and can import ModHeader exports:</p>
+<div class="item"><p class="iname">Honest Headers (free Chrome extension)</p><p class="ispec">Add, change or remove HTTP request and response headers. Profiles, URL filters, ModHeader JSON import. No data collection.</p><a class="buy own" href="https://chromewebstore.google.com/detail/nomciaobihmigkiocpafmhmhcabpneif" rel="noopener" target="_blank"><span class="shop">Honest Tools</span>Get it on the Chrome Web Store<span class="arrow">›</span></a></div>
+
+<h2>Who this is not for</h2>
+<ul>
+<li>If you only need to test one response header once, DevTools overrides are enough.</li>
+<li>If you need headers changed for every user, change the server, CDN or proxy configuration. Browser tools only change what your own browser sends and sees.</li>
+<li>Changing headers in your browser does not bypass server-side security. Use it for testing your own sites.</li>
+</ul>
+<h2>Sources (checked 2026-10-09)</h2>
+<ul>
+<li>Chrome for Developers, "Override web content and HTTP response headers locally": <a href="https://developer.chrome.com/docs/devtools/overrides">https://developer.chrome.com/docs/devtools/overrides</a></li>
+<li>Chrome for Developers, chrome.declarativeNetRequest: <a href="https://developer.chrome.com/docs/extensions/reference/api/declarativeNetRequest">https://developer.chrome.com/docs/extensions/reference/api/declarativeNetRequest</a></li>
+</ul></article><section class="related"><h2>More guides</h2><ul><li><a href="/honest-guide/en/edit-cookies-in-chrome/">How to view and edit cookies in Chrome (DevTools, or an extension)</a></li><li><a href="/honest-guide/en/samesite-cookie-attribute/">SameSite cookies explained: Strict, Lax and None (and why None needs Secure)</a></li><li><a href="/honest-guide/en/security-headers-checklist/">Security headers checklist: the 7 to add and the 5 to remove</a></li></ul></section></main><footer><div class="wrap"><p>Practical notes on HTTP headers, cookies and browser tools, by Honest Tools. Facts are checked against official documentation; each article lists its sources and the date they were checked.</p><p><a href="/honest-guide/en/about/">About</a> / <a href="/honest-guide/en/privacy/">Privacy</a></p><p>&copy; 2026 Honest Tools</p></div></footer></body></html>

@@ -68,7 +68,7 @@ PR = '<p class="pr">※この記事にはプロモーション(広告)が含ま�
 def page(path, title, desc, body, article=False, extra_head=""):
     canon = f'{CFG["base_url"]}{path}'
     nav = f'''<header><div class="wrap"><a class="logo" href="{BASE}/">{CFG["site_name"]}</a>
-<nav><a href="{BASE}/tools/">計算ツール</a><a href="{BASE}/guides/">えらび方ガイド</a><a href="{BASE}/templates/">手続き表</a><a href="{BASE}/about/">運営者情報</a></nav></div></header>'''
+<nav><a href="{BASE}/tools/">計算ツール</a><a href="{BASE}/guides/">えらび方ガイド</a><a href="{BASE}/templates/">手続き表</a><a href="{BASE}/about/">運営者情報</a><a href="{BASE}/en/" hreflang="en">English</a></nav></div></header>'''
     foot = f'''<footer><div class="wrap"><p>当サイトは、楽天アフィリエイトなどのアフィリエイトプログラムに参加しています。商品リンクを通じて報酬を得ることがあります。</p>
 <p><a href="{BASE}/about/">運営者情報</a> / <a href="{BASE}/privacy/">プライバシーポリシー</a></p><p>&copy; {datetime.date.today().year} {CFG["operator"]}</p></div></footer>'''
     doc = f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="google-site-verification" content="hqAGwjMx_F-TdJl79qigCCcuhYe7_9BUhfd7nEK2TMI"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -205,6 +205,11 @@ top = f'''<section class="hero"><h1>{CFG["site_name"]}</h1><p>{CFG["tagline"]}</
 <h2>手続きの期限チェック表</h2><ul class="cards"><li><a href="{BASE}/templates/"><b>Excelの期限チェック表</b><span>日付を入れるだけで、手続きの期限日が自動で出ます</span></a></li></ul>'''
 pages.append(page("/", "Honest Guide|暮らしの計算と、えらび方の道具箱", "計算ツールと、道具のえらび方ガイド。", top))
 
+# ---------- 英語コーナー(content_en/*.md → /en/) ----------
+import en
+EN_PAGES, EN_COUNT = en.build(OUT, CFG, CSS, ROOT)
+pages += EN_PAGES
+
 # ---------- サイトマップ等 ----------
 urls = "".join(f'<url><loc>{CFG["base_url"]}{p}</loc><lastmod>{TODAY}</lastmod></url>' for p in pages)
 (OUT / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>', encoding="utf-8")
@@ -223,4 +228,4 @@ if kf.exists():
     k = kf.read_text().strip(); (OUT / f"{k}.txt").write_text(k, encoding="utf-8")
 # favicon
 (OUT / "favicon.svg").write_text('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#1f4e79"/><circle cx="32" cy="32" r="20" fill="#ffe699"/><path d="M22 33l7 7 13-14" fill="none" stroke="#1f4e79" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>', encoding="utf-8")
-print(f"{len(pages)} pages, {len(articles)} articles")
+print(f"{len(pages)} pages, {len(articles)} articles, {EN_COUNT} English articles")

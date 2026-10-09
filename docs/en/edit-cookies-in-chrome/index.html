@@ -1,0 +1,94 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="google-site-verification" content="hqAGwjMx_F-TdJl79qigCCcuhYe7_9BUhfd7nEK2TMI"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How to view and edit cookies in Chrome (DevTools, or an extension) | Honest Guide</title><meta name="description" content="Open DevTools, go to Application &gt; Storage &gt; Cookies, pick the site, and double-click a field to edit it. When an extension is the better choice, and what permissions it needs."><link rel="canonical" href="https://honestheaders.github.io/honest-guide/en/edit-cookies-in-chrome/">
+<meta property="og:title" content="How to view and edit cookies in Chrome (DevTools, or an extension) | Honest Guide"><meta property="og:description" content="Open DevTools, go to Application &gt; Storage &gt; Cookies, pick the site, and double-click a field to edit it. When an extension is the better choice, and what permissions it needs."><meta property="og:type" content="article">
+<link rel="icon" href="/honest-guide/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Honest Guide (English)" href="https://honestheaders.github.io/honest-guide/en/feed.xml"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "How to view and edit cookies in Chrome (DevTools, or an extension)", "description": "Open DevTools, go to Application > Storage > Cookies, pick the site, and double-click a field to edit it. When an extension is the better choice, and what permissions it needs.", "inLanguage": "en", "dateModified": "2026-10-09", "author": {"@type": "Organization", "name": "Honest Tools"}, "publisher": {"@type": "Organization", "name": "Honest Tools"}, "mainEntityOfPage": "https://honestheaders.github.io/honest-guide/en/edit-cookies-in-chrome/"}</script>
+<style>:root{--c:#1f4e79;--bg:#fafaf7;--t:#222;--m:#666;--l:#ddd}
+*{box-sizing:border-box}body{margin:0;font-family:"Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;color:var(--t);background:var(--bg);line-height:1.85;font-size:16px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+header{background:var(--c);color:#fff}header .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 16px;gap:8px}
+.logo{color:#fff;font-weight:700;font-size:20px;text-decoration:none}nav a{color:#dbe8f5;margin-left:14px;text-decoration:none;font-size:14px}
+main{padding-top:24px;padding-bottom:40px}h1{font-size:26px;line-height:1.4}h2{font-size:20px;border-left:5px solid var(--c);padding-left:10px;margin-top:36px}
+a{color:var(--c)}table{border-collapse:collapse;width:100%;margin:16px 0;font-size:15px}th,td{border:1px solid var(--l);padding:8px;text-align:left;vertical-align:top}th{background:#eef3f8}
+.plain th{width:30%}.cards{list-style:none;padding:0;display:grid;gap:12px}.cards a{display:block;background:#fff;border:1px solid var(--l);border-radius:10px;padding:14px 16px;text-decoration:none;color:var(--t)}
+.cards b{display:block;color:var(--c)}.cards span{font-size:14px;color:var(--m)}.hero{background:#fff;border:1px solid var(--l);border-radius:12px;padding:20px;text-align:center}
+.pr{font-size:13px;color:var(--m);background:#f1f1ec;padding:8px 12px;border-radius:6px}.date{font-size:13px;color:var(--m)}
+.tool{display:grid;gap:12px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:16px}.tool label{display:block;font-size:14px;color:var(--m)}
+.tool input{display:block;width:100%;font-size:20px;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px}
+.result{background:#fff8dc;border:1px solid #ecd98a;border-radius:10px;padding:8px 16px;margin-top:16px;font-size:18px}.result b{font-size:24px;color:#c00}
+.note{font-size:13px;color:var(--m)}footer{background:#f1f1ec;font-size:13px;color:var(--m);padding:20px 0}
+
+.crumb{font-size:13px;color:var(--m)}.related{margin-top:32px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:4px 16px 12px}.related h2{margin-top:12px;font-size:17px}
+.buy{display:flex;align-items:center;gap:10px;background:#bf0000;color:#fff;text-decoration:none;font-weight:700;border-radius:10px;padding:12px 14px;margin:10px 0;line-height:1.4;box-shadow:0 2px 0 #8c0000}
+.buy:hover,.buy:focus-visible{background:#a30000;outline:none}.buy .shop{font-size:11px;font-weight:700;background:#fff;color:#bf0000;border-radius:4px;padding:2px 6px;white-space:nowrap}
+.buy .arrow{margin-left:auto;font-size:20px}li>.buy{margin:6px 0}article ul:has(.buy){list-style:none;padding-left:0}
+.quick{background:#fff;border:2px solid #f0c9c9;border-radius:12px;padding:12px 14px;margin:18px 0}.quick .qh{margin:0 0 4px;font-weight:700;color:#bf0000}.quick .qn{margin:6px 0 0;font-size:13px;color:var(--m)}
+.item{background:#fff;border:1px solid var(--l);border-radius:12px;padding:14px 16px;margin:14px 0}.item p{margin:0 0 6px}.iname{font-weight:700;font-size:17px;color:var(--c)}
+.ispec{font-size:14px;color:var(--t)}.ifit{font-size:14px;background:#f5f8fb;border-radius:6px;padding:6px 10px}.ifit b{display:block;font-size:12px;color:var(--c)}
+.crumb a{color:var(--c);margin-left:0;font-size:13px}
+.src a,.note a{word-break:break-all}
+article a{overflow-wrap:anywhere}td code{overflow-wrap:anywhere}article table{display:block;overflow-x:auto}body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.7}code{background:#f1f1ec;padding:1px 4px;border-radius:4px;font-size:.92em}pre{background:#f1f1ec;padding:12px;border-radius:8px;overflow-x:auto}pre code{padding:0}.own{background:#1f4e79;box-shadow:0 2px 0 #12304d}.own:hover,.own:focus-visible{background:#163a5c}.own .shop{color:#1f4e79}</style></head><body><header><div class="wrap"><a class="logo" href="/honest-guide/en/">Honest Guide</a><nav><a href="/honest-guide/en/">Guides</a><a href="/honest-guide/en/about/">About</a><a href="/honest-guide/">日本語</a></nav></div></header><main class="wrap"><nav class="crumb"><a href="/honest-guide/en/">Guides</a> › How to view and edit cookies in Chrome (DevTools, or an extension)</nav><article><h1>How to view and edit cookies in Chrome (DevTools, or an extension)</h1><p class="date">Updated 2026-10-09</p><p class="pr">Disclosure: Honest Tools makes Honest Headers, Honest Cookies and the PDFs linked on this site. Links to them are links to our own products. This section has no ads and no affiliate links.</p><p>Short answer: open DevTools, go to <strong>Application &gt; Storage &gt; Cookies</strong>, select the site, and <strong>double-click any field to edit it</strong>. You do not need to install anything. An extension only helps if you edit cookies often, or need to export and import them.</p>
+<h2>Edit a cookie in DevTools (no install)</h2>
+<ol>
+<li>Open DevTools on the page (F12, or Ctrl+Shift+I / Cmd+Option+I).</li>
+<li>Go to <strong>Application &gt; Storage &gt; Cookies</strong> and select an origin.</li>
+<li>The table shows Name, Value, Domain, Path, Expires / Max-Age, Size, HttpOnly, Secure, SameSite, Partition Key and Priority.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>To do this</th>
+<th>Do this in the Cookies pane</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Edit a value or attribute</td>
+<td>Double-click the field and type</td>
+</tr>
+<tr>
+<td>Add a cookie</td>
+<td>Double-click an empty row, enter a Name and Value, press Enter</td>
+</tr>
+<tr>
+<td>Delete one cookie</td>
+<td>Select it, then click <strong>Delete selected</strong></td>
+</tr>
+<tr>
+<td>Delete all cookies for the site</td>
+<td>Click <strong>Clear all</strong></td>
+</tr>
+<tr>
+<td>Find a cookie</td>
+<td>Type in <strong>Filter</strong> (matches Name or Value only, not case-sensitive)</td>
+</tr>
+<tr>
+<td>Read an encoded value</td>
+<td>Tick <strong>Show URL-decoded</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Size is calculated for you and cannot be edited. Cookies with invalid values are shown in red; <strong>Only show cookies with an issue</strong> lists just those.</p>
+<h2>When an extension is the better tool</h2>
+<p>DevTools is enough for a one-off change. A cookie extension is handier when you:</p>
+<ul>
+<li>switch test accounts or sessions many times a day,</li>
+<li>need to export cookies as JSON or as a <code>cookies.txt</code> file (for command-line tools), and import them again,</li>
+<li>want to do it from a toolbar button without opening DevTools.</li>
+</ul>
+<h2>Check the permissions before you install</h2>
+<p>An extension reads cookies through Chrome's <code>chrome.cookies</code> API. Chrome's documentation says the extension must declare the <code>cookies</code> permission <strong>and host permissions</strong> for the sites whose cookies it reads; without host permission for a URL, the call fails. That is why many cookie editors ask to "read and change all your data on all websites" when you install them.</p>
+<p>Cookies often hold login sessions, so it is worth choosing an extension that asks for as little access as possible, is open source, and makes no network requests of its own.</p>
+<p>We make one that works this way. It installs with no site access and asks for the current site only when you open it:</p>
+<div class="item"><p class="iname">Honest Cookies (free Chrome extension, open source)</p><p class="ispec">View, edit, add, delete, export and import cookies. Installs with no site access and asks for one site at a time.</p><a class="buy own" href="https://github.com/honestheaders/honest-cookies" rel="noopener" target="_blank"><span class="shop">Honest Tools</span>See it on GitHub<span class="arrow">›</span></a></div>
+
+<h2>Who this is not for</h2>
+<ul>
+<li>If you only need to change a cookie once or twice, DevTools is enough. Do not install an extension you will not use again.</li>
+<li>If you want to manage cookies across a whole team or in automated tests, an extension is the wrong tool; set cookies in your test framework instead.</li>
+<li>Do not paste cookies from someone else's browser into yours unless you own the account. A session cookie works like a password.</li>
+</ul>
+<h2>Sources (checked 2026-10-09)</h2>
+<ul>
+<li>Chrome for Developers, "View, add, edit, and delete cookies": <a href="https://developer.chrome.com/docs/devtools/application/cookies">https://developer.chrome.com/docs/devtools/application/cookies</a></li>
+<li>Chrome for Developers, chrome.cookies API: <a href="https://developer.chrome.com/docs/extensions/reference/api/cookies">https://developer.chrome.com/docs/extensions/reference/api/cookies</a></li>
+</ul></article><section class="related"><h2>More guides</h2><ul><li><a href="/honest-guide/en/modify-http-headers-in-chrome/">How to change HTTP headers in Chrome (response headers in DevTools, request headers with an extension)</a></li><li><a href="/honest-guide/en/samesite-cookie-attribute/">SameSite cookies explained: Strict, Lax and None (and why None needs Secure)</a></li><li><a href="/honest-guide/en/security-headers-checklist/">Security headers checklist: the 7 to add and the 5 to remove</a></li></ul></section></main><footer><div class="wrap"><p>Practical notes on HTTP headers, cookies and browser tools, by Honest Tools. Facts are checked against official documentation; each article lists its sources and the date they were checked.</p><p><a href="/honest-guide/en/about/">About</a> / <a href="/honest-guide/en/privacy/">Privacy</a></p><p>&copy; 2026 Honest Tools</p></div></footer></body></html>
