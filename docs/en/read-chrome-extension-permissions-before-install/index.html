@@ -1,0 +1,109 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="google-site-verification" content="hqAGwjMx_F-TdJl79qigCCcuhYe7_9BUhfd7nEK2TMI"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chrome extension permissions: what &quot;site access&quot; means and how to limit it | Honest Guide</title><meta name="description" content="How to read a Chrome extension&#x27;s permissions before installing: host permissions, activeTab, optional permissions, and the three site-access settings you can change yourself."><link rel="canonical" href="https://honestheaders.github.io/honest-guide/en/read-chrome-extension-permissions-before-install/">
+<meta property="og:title" content="Chrome extension permissions: what &quot;site access&quot; means and how to limit it | Honest Guide"><meta property="og:description" content="How to read a Chrome extension&#x27;s permissions before installing: host permissions, activeTab, optional permissions, and the three site-access settings you can change yourself."><meta property="og:type" content="article">
+<link rel="icon" href="/honest-guide/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Honest Guide (English)" href="https://honestheaders.github.io/honest-guide/en/feed.xml"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Chrome extension permissions: what \"site access\" means and how to limit it", "description": "How to read a Chrome extension's permissions before installing: host permissions, activeTab, optional permissions, and the three site-access settings you can change yourself.", "inLanguage": "en", "dateModified": "2026-10-10", "author": {"@type": "Organization", "name": "Honest Tools"}, "publisher": {"@type": "Organization", "name": "Honest Tools"}, "mainEntityOfPage": "https://honestheaders.github.io/honest-guide/en/read-chrome-extension-permissions-before-install/"}</script>
+<style>:root{--c:#1f4e79;--bg:#fafaf7;--t:#222;--m:#666;--l:#ddd}
+*{box-sizing:border-box}body{margin:0;font-family:"Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;color:var(--t);background:var(--bg);line-height:1.85;font-size:16px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+header{background:var(--c);color:#fff}header .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 16px;gap:8px}
+.logo{color:#fff;font-weight:700;font-size:20px;text-decoration:none}nav a{color:#dbe8f5;margin-left:14px;text-decoration:none;font-size:14px}
+main{padding-top:24px;padding-bottom:40px}h1{font-size:26px;line-height:1.4}h2{font-size:20px;border-left:5px solid var(--c);padding-left:10px;margin-top:36px}
+a{color:var(--c)}table{border-collapse:collapse;width:100%;margin:16px 0;font-size:15px}th,td{border:1px solid var(--l);padding:8px;text-align:left;vertical-align:top}th{background:#eef3f8}
+.plain th{width:30%}.cards{list-style:none;padding:0;display:grid;gap:12px}.cards a{display:block;background:#fff;border:1px solid var(--l);border-radius:10px;padding:14px 16px;text-decoration:none;color:var(--t)}
+.cards b{display:block;color:var(--c)}.cards span{font-size:14px;color:var(--m)}.hero{background:#fff;border:1px solid var(--l);border-radius:12px;padding:20px;text-align:center}
+.pr{font-size:13px;color:var(--m);background:#f1f1ec;padding:8px 12px;border-radius:6px}.date{font-size:13px;color:var(--m)}
+.tool{display:grid;gap:12px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:16px}.tool label{display:block;font-size:14px;color:var(--m)}
+.tool input{display:block;width:100%;font-size:20px;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px}
+.result{background:#fff8dc;border:1px solid #ecd98a;border-radius:10px;padding:8px 16px;margin-top:16px;font-size:18px}.result b{font-size:24px;color:#c00}
+.note{font-size:13px;color:var(--m)}footer{background:#f1f1ec;font-size:13px;color:var(--m);padding:20px 0}
+
+.crumb{font-size:13px;color:var(--m)}.related{margin-top:32px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:4px 16px 12px}.related h2{margin-top:12px;font-size:17px}
+.buy{display:flex;align-items:center;gap:10px;background:#bf0000;color:#fff;text-decoration:none;font-weight:700;border-radius:10px;padding:12px 14px;margin:10px 0;line-height:1.4;box-shadow:0 2px 0 #8c0000}
+.buy:hover,.buy:focus-visible{background:#a30000;outline:none}.buy .shop{font-size:11px;font-weight:700;background:#fff;color:#bf0000;border-radius:4px;padding:2px 6px;white-space:nowrap}
+.buy .arrow{margin-left:auto;font-size:20px}li>.buy{margin:6px 0}article ul:has(.buy){list-style:none;padding-left:0}
+.quick{background:#fff;border:2px solid #f0c9c9;border-radius:12px;padding:12px 14px;margin:18px 0}.quick .qh{margin:0 0 4px;font-weight:700;color:#bf0000}.quick .qn{margin:6px 0 0;font-size:13px;color:var(--m)}
+.item{background:#fff;border:1px solid var(--l);border-radius:12px;padding:14px 16px;margin:14px 0}.item p{margin:0 0 6px}.iname{font-weight:700;font-size:17px;color:var(--c)}
+.ispec{font-size:14px;color:var(--t)}.ifit{font-size:14px;background:#f5f8fb;border-radius:6px;padding:6px 10px}.ifit b{display:block;font-size:12px;color:var(--c)}
+.crumb a{color:var(--c);margin-left:0;font-size:13px}
+.src a,.note a{word-break:break-all}
+article a{overflow-wrap:anywhere}td code{overflow-wrap:anywhere}article table{display:block;overflow-x:auto}body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.7}code{background:#f1f1ec;padding:1px 4px;border-radius:4px;font-size:.92em}pre{background:#f1f1ec;padding:12px;border-radius:8px;overflow-x:auto}pre code{padding:0}.own{background:#1f4e79;box-shadow:0 2px 0 #12304d}.own:hover,.own:focus-visible{background:#163a5c}.own .shop{color:#1f4e79}</style></head><body><header><div class="wrap"><a class="logo" href="/honest-guide/en/">Honest Guide</a><nav><a href="/honest-guide/en/">Guides</a><a href="/honest-guide/en/about/">About</a><a href="/honest-guide/">日本語</a></nav></div></header><main class="wrap"><nav class="crumb"><a href="/honest-guide/en/">Guides</a> › Chrome extension permissions: what &quot;site access&quot; means and how to limit it</nav><article><h1>Chrome extension permissions: what &quot;site access&quot; means and how to limit it</h1><p class="date">Updated 2026-10-10</p><p class="pr">Disclosure: Honest Tools makes Honest Headers, Honest Cookies and the PDFs linked on this site. Links to them are links to our own products. This section has no ads and no affiliate links.</p><p>An extension that can "read and change all your data on all websites" can do that on every page you open, until you change the setting. Chrome lets you narrow it yourself: open the extension's Details page and pick <strong>On select</strong>, <strong>On specific sites</strong> or <strong>On all sites</strong>. Below is how to read the permission list, which parts to question, and how to limit access after you have installed.</p>
+<h2>Two kinds of permissions, and why the difference matters</h2>
+<p>Chrome's developer documentation says extensions declare their intent in the manifest's permission fields, and it separates them like this:</p>
+<ul>
+<li><code>permissions</code> are for extension APIs. Some of them show a warning at install time, and some show none.</li>
+<li><code>host_permissions</code> let an extension interact with URLs that match the given patterns. A pattern for all sites means every page you visit.</li>
+<li><code>optional_permissions</code> and <code>optional_host_permissions</code> are "granted by the user at runtime, instead of at install time". The documentation recommends optional permissions wherever the extension's features allow it.</li>
+</ul>
+<p>So when you read a listing, the question is not only "what does it ask for?" but also "does it ask up front, or only when I use a feature?" An extension built around optional permissions starts with less access.</p>
+<h2>What activeTab means</h2>
+<p><code>activeTab</code> is a narrower alternative to all-sites access. Chrome's documentation says it "gives an extension temporary access to the currently active tab when the user invokes the extension". Invoking means one of these actions:</p>
+<ul>
+<li>clicking the extension's toolbar button,</li>
+<li>running one of its context menu items,</li>
+<li>using a keyboard shortcut it defines, or</li>
+<li>accepting one of its omnibox suggestions.</li>
+</ul>
+<p>The access is revoked when you navigate away or close the tab. The documentation says it is not granted for restricted pages, and moving to another path on the same site keeps the access. If an extension's job is "do something to the page I am looking at, when I ask", <code>activeTab</code> is the shape of permission that matches that job.</p>
+<h2>Quick reference</h2>
+<table>
+<thead>
+<tr>
+<th>What you see</th>
+<th>What it means</th>
+<th>What to ask</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Access to all sites at install</td>
+<td>The extension can act on every page you open</td>
+<td>Does its job really need every site?</td>
+</tr>
+<tr>
+<td><code>activeTab</code></td>
+<td>Temporary access to the current tab after you invoke it</td>
+<td>Nothing special. This is the narrow option</td>
+</tr>
+<tr>
+<td>Optional permissions</td>
+<td>The extension asks later, when you use a feature</td>
+<td>Do I want to grant this when asked?</td>
+</tr>
+<tr>
+<td>A new warning after an update</td>
+<td>Chrome turns the extension off until you accept</td>
+<td>Why does it need this now?</td>
+</tr>
+</tbody>
+</table>
+<p>On that last row: Chrome's permission-warning page says that when a new permission triggers a warning, "the extension will be disabled until the user accepts the new permission". That protects you from permissions that are added later. It does not protect you from code that changes what it does with access you already granted. For that case, the useful control is a narrower site-access setting.</p>
+<h2>Limit site access in four steps</h2>
+<p>These are the steps from Chrome's help page. Chrome calls the first option <strong>On select</strong>.</p>
+<ol>
+<li>Open Chrome, choose <strong>More</strong>, then <strong>Extensions</strong>, then <strong>Manage extensions</strong>.</li>
+<li>On the extension, select <strong>Details</strong>.</li>
+<li>Next to "Allow this extension to read and change all your data on websites you visit", choose <strong>On select</strong>, <strong>On specific sites</strong> or <strong>On all sites</strong>.</li>
+<li>For specific sites, go to <strong>Permissions</strong>, then <strong>Allowed sites</strong>, and select <strong>Add</strong>. If you do not see Add, set the option to <strong>On specific sites</strong> first.</li>
+</ol>
+<p>You can also click the Extensions icon next to the address bar, open <strong>More</strong>, and use <strong>This can read and change site data</strong> to choose between running when you select the extension, on the current site, or on all sites.</p>
+<p>An extension set to run on select, or on a short list of sites, has less to work with than one set to all sites. Some extensions need all-sites access for their feature, such as a tool that edits request headers on any page you test. In that case the setting is a trade-off you make on purpose. You can still narrow it to the sites you work on.</p>
+<h2>A short checklist before you click Add to Chrome</h2>
+<ol>
+<li>Read the permissions on the store page. Is anything there that the extension's one-line description does not explain?</li>
+<li>Check whether it asks for all-sites access at install, or uses <code>activeTab</code> or optional permissions.</li>
+<li>After installing, open Details and move site access to <strong>On select</strong> or <strong>On specific sites</strong> if the feature still works.</li>
+<li>Remove extensions you stopped using. An unused extension with broad access still has that access.</li>
+</ol>
+<p>If you want to see how this applies to a tool that edits headers, read <a href="/honest-guide/en/modheader-removed-from-chrome-what-to-do/">what was reported about ModHeader and how to check a header extension</a>. For cookie tools, the same question applies: see <a href="/honest-guide/en/edit-cookies-in-chrome/">how to view and edit cookies in Chrome</a>.</p>
+<div class="item"><p class="iname">Honest Cookies (free Chrome extension, open source)</p><p class="ispec">View, edit, add, delete, export and import cookies. Installs with no site access and asks for one site at a time.</p><a class="buy own" href="https://chromewebstore.google.com/detail/fajimapdhdmcpbccjflmelfilgfpakci" rel="noopener" target="_blank"><span class="shop">Honest Tools</span>Get it on the Chrome Web Store<span class="arrow">›</span></a></div>
+
+<h2>Who this is not for</h2>
+<p>If you only install extensions from your employer's managed list, your administrator may already control site access, and the options above may be locked. If you need an extension that works on every site by design, this guide does not tell you to avoid it. It shows where the setting is. And a permission list cannot tell you whether the publisher is trustworthy. It tells you what the extension is able to do, not what it will do.</p>
+<h2>Sources</h2>
+<p>Checked on 2026-10-10.</p>
+<ul>
+<li><a href="https://developer.chrome.com/docs/extensions/develop/concepts/declare-permissions">Declare permissions (Chrome for Developers)</a></li>
+<li><a href="https://developer.chrome.com/docs/extensions/develop/concepts/activeTab">The activeTab permission (Chrome for Developers)</a></li>
+<li><a href="https://developer.chrome.com/docs/extensions/permission_warnings">Permission warning guidelines (Chrome for Developers)</a></li>
+<li><a href="https://support.google.com/chrome_webstore/answer/2664769">Install and manage extensions (Chrome Help)</a></li>
+</ul></article><section class="related"><h2>More guides</h2><ul><li><a href="/honest-guide/en/modheader-removed-from-chrome-what-to-do/">ModHeader was removed from the Chrome Web Store: what was reported, and how to check any header extension</a></li><li><a href="/honest-guide/en/edit-cookies-in-chrome/">How to view and edit cookies in Chrome (DevTools, or an extension)</a></li><li><a href="/honest-guide/en/modify-http-headers-in-chrome/">How to change HTTP headers in Chrome (response headers in DevTools, request headers with an extension)</a></li></ul></section></main><footer><div class="wrap"><p>Practical notes on HTTP headers, cookies and browser tools, by Honest Tools. Facts are checked against official documentation; each article lists its sources and the date they were checked.</p><p><a href="/honest-guide/en/about/">About</a> / <a href="/honest-guide/en/privacy/">Privacy</a></p><p>&copy; 2026 Honest Tools</p></div></footer></body></html>

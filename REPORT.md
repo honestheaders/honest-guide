@@ -19,3 +19,4 @@
 - 2026-10-09: オーナーの決定で、海外向け(英語)をメインにした。英語コーナー /en/ を新設し、英語記事4本を公開(Chromeでクッキーを見る・直す方法、SameSite、Chromeでヘッダーを変える方法、セキュリティヘッダーのチェックリスト)。出典: Chrome for Developers、MDN、web.dev、OWASP。楽天リンクなし、自社商品カードのみ。日本語ページのメニューに English を追加。
 - 2026-10-10: 英語記事の自動チェック check_en.py を追加(見出し・長さ・出典・使わない言い方・サイト内リンクを機械で確認)。毎朝の英語記事は「書く→チェック→直す」をPASSまでくり返し、pushが本当に届いたかも確かめる形に変更。10/10朝の実行は記事が届いていなかった(原因不明、記録なし)。
 - 2026-10-10: 英語記事「ModHeader was removed from the Chrome Web Store…」を公開(出典: Stripe OLT の調査、Chrome for Developers の declarativeNetRequest / webRequest)。ModHeader削除(2026-07-10)で乗り換え先を探す人向け。あわせて拡張の出す前チェック ext-check/ を追加し、themes_en.md に旬のテーマ E22〜E25 を先頭に追加。
+- 2026-10-11: 英語記事「Chrome extension permissions: what "site access" means and how to limit it」を公開(E22)。出典: Chrome for Developers(Declare permissions・activeTab・Permission warning guidelines)、Chrome Help(Install and manage extensions)。チェックは1回で合格。
