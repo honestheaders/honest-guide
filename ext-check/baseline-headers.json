@@ -1,0 +1,17 @@
+{
+  "name": "Honest Headers",
+  "published_version": "1.1.1",
+  "allowed_permissions": ["declarativeNetRequest", "storage", "alarms"],
+  "allowed_host_permissions": ["<all_urls>"],
+  "allowed_optional_permissions": [],
+  "allowed_optional_host_permissions": [],
+  "allowed_url_prefixes": [
+    "https://honesttools.gumroad.com/",
+    "https://chromewebstore.google.com/detail/nomciaobihmigkiocpafmhmhcabpneif",
+    "https://github.com/keiinoue0612-droid/honest-headers",
+    "https://github.com/honestheaders/",
+    "https://developer.chrome.com/",
+    "http://www.w3.org/2000/svg"
+  ],
+  "forbidden_strings": ["booth.pm", "BOOTH"]
+}

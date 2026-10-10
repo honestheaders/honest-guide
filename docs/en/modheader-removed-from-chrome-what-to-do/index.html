@@ -1,0 +1,103 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="google-site-verification" content="hqAGwjMx_F-TdJl79qigCCcuhYe7_9BUhfd7nEK2TMI"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ModHeader was removed from the Chrome Web Store: what was reported, and how to check any header extension | Honest Guide</title><meta name="description" content="Google removed ModHeader on 10 July 2026 after Stripe OLT found a dormant browsing-history collector. What the report says, what it does not say, and a 2-minute permission check."><link rel="canonical" href="https://honestheaders.github.io/honest-guide/en/modheader-removed-from-chrome-what-to-do/">
+<meta property="og:title" content="ModHeader was removed from the Chrome Web Store: what was reported, and how to check any header extension | Honest Guide"><meta property="og:description" content="Google removed ModHeader on 10 July 2026 after Stripe OLT found a dormant browsing-history collector. What the report says, what it does not say, and a 2-minute permission check."><meta property="og:type" content="article">
+<link rel="icon" href="/honest-guide/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Honest Guide (English)" href="https://honestheaders.github.io/honest-guide/en/feed.xml"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "ModHeader was removed from the Chrome Web Store: what was reported, and how to check any header extension", "description": "Google removed ModHeader on 10 July 2026 after Stripe OLT found a dormant browsing-history collector. What the report says, what it does not say, and a 2-minute permission check.", "inLanguage": "en", "dateModified": "2026-10-10", "author": {"@type": "Organization", "name": "Honest Tools"}, "publisher": {"@type": "Organization", "name": "Honest Tools"}, "mainEntityOfPage": "https://honestheaders.github.io/honest-guide/en/modheader-removed-from-chrome-what-to-do/"}</script>
+<style>:root{--c:#1f4e79;--bg:#fafaf7;--t:#222;--m:#666;--l:#ddd}
+*{box-sizing:border-box}body{margin:0;font-family:"Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;color:var(--t);background:var(--bg);line-height:1.85;font-size:16px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+header{background:var(--c);color:#fff}header .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 16px;gap:8px}
+.logo{color:#fff;font-weight:700;font-size:20px;text-decoration:none}nav a{color:#dbe8f5;margin-left:14px;text-decoration:none;font-size:14px}
+main{padding-top:24px;padding-bottom:40px}h1{font-size:26px;line-height:1.4}h2{font-size:20px;border-left:5px solid var(--c);padding-left:10px;margin-top:36px}
+a{color:var(--c)}table{border-collapse:collapse;width:100%;margin:16px 0;font-size:15px}th,td{border:1px solid var(--l);padding:8px;text-align:left;vertical-align:top}th{background:#eef3f8}
+.plain th{width:30%}.cards{list-style:none;padding:0;display:grid;gap:12px}.cards a{display:block;background:#fff;border:1px solid var(--l);border-radius:10px;padding:14px 16px;text-decoration:none;color:var(--t)}
+.cards b{display:block;color:var(--c)}.cards span{font-size:14px;color:var(--m)}.hero{background:#fff;border:1px solid var(--l);border-radius:12px;padding:20px;text-align:center}
+.pr{font-size:13px;color:var(--m);background:#f1f1ec;padding:8px 12px;border-radius:6px}.date{font-size:13px;color:var(--m)}
+.tool{display:grid;gap:12px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:16px}.tool label{display:block;font-size:14px;color:var(--m)}
+.tool input{display:block;width:100%;font-size:20px;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px}
+.result{background:#fff8dc;border:1px solid #ecd98a;border-radius:10px;padding:8px 16px;margin-top:16px;font-size:18px}.result b{font-size:24px;color:#c00}
+.note{font-size:13px;color:var(--m)}footer{background:#f1f1ec;font-size:13px;color:var(--m);padding:20px 0}
+
+.crumb{font-size:13px;color:var(--m)}.related{margin-top:32px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:4px 16px 12px}.related h2{margin-top:12px;font-size:17px}
+.buy{display:flex;align-items:center;gap:10px;background:#bf0000;color:#fff;text-decoration:none;font-weight:700;border-radius:10px;padding:12px 14px;margin:10px 0;line-height:1.4;box-shadow:0 2px 0 #8c0000}
+.buy:hover,.buy:focus-visible{background:#a30000;outline:none}.buy .shop{font-size:11px;font-weight:700;background:#fff;color:#bf0000;border-radius:4px;padding:2px 6px;white-space:nowrap}
+.buy .arrow{margin-left:auto;font-size:20px}li>.buy{margin:6px 0}article ul:has(.buy){list-style:none;padding-left:0}
+.quick{background:#fff;border:2px solid #f0c9c9;border-radius:12px;padding:12px 14px;margin:18px 0}.quick .qh{margin:0 0 4px;font-weight:700;color:#bf0000}.quick .qn{margin:6px 0 0;font-size:13px;color:var(--m)}
+.item{background:#fff;border:1px solid var(--l);border-radius:12px;padding:14px 16px;margin:14px 0}.item p{margin:0 0 6px}.iname{font-weight:700;font-size:17px;color:var(--c)}
+.ispec{font-size:14px;color:var(--t)}.ifit{font-size:14px;background:#f5f8fb;border-radius:6px;padding:6px 10px}.ifit b{display:block;font-size:12px;color:var(--c)}
+.crumb a{color:var(--c);margin-left:0;font-size:13px}
+.src a,.note a{word-break:break-all}
+article a{overflow-wrap:anywhere}td code{overflow-wrap:anywhere}article table{display:block;overflow-x:auto}body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.7}code{background:#f1f1ec;padding:1px 4px;border-radius:4px;font-size:.92em}pre{background:#f1f1ec;padding:12px;border-radius:8px;overflow-x:auto}pre code{padding:0}.own{background:#1f4e79;box-shadow:0 2px 0 #12304d}.own:hover,.own:focus-visible{background:#163a5c}.own .shop{color:#1f4e79}</style></head><body><header><div class="wrap"><a class="logo" href="/honest-guide/en/">Honest Guide</a><nav><a href="/honest-guide/en/">Guides</a><a href="/honest-guide/en/about/">About</a><a href="/honest-guide/">日本語</a></nav></div></header><main class="wrap"><nav class="crumb"><a href="/honest-guide/en/">Guides</a> › ModHeader was removed from the Chrome Web Store: what was reported, and how to check any header extension</nav><article><h1>ModHeader was removed from the Chrome Web Store: what was reported, and how to check any header extension</h1><p class="date">Updated 2026-10-10</p><p class="pr">Disclosure: Honest Tools makes Honest Headers, Honest Cookies and the PDFs linked on this site. Links to them are links to our own products. This section has no ads and no affiliate links.</p><p>If you used ModHeader, here is the short version. On 10 July 2026 Google removed it from the Chrome Web Store after a security firm, Stripe OLT, reported a dormant browsing-history collector in version 7.0.18. The report says it did <strong>not</strong> observe browsing history being sent out. It does say the extension had far more access than editing headers needs. Remove it, move your rules, and check the permissions of whatever you install next.</p>
+<h2>What was reported</h2>
+<p>Stripe OLT's write-up (linked in Sources) describes ModHeader version 7.0.18, extension ID <code>idgpnmonknjnojddfkpgkljpfnnfcklj</code>. In summary:</p>
+<ul>
+<li>The code could fingerprint the device and keep an encrypted list of visited domains, capped at 1,000, in the browser's local storage.</li>
+<li>A daily upload routine was present, but the report says it was gated off by an empty allow-list.</li>
+<li>The extension sent small messages on install, update and uninstall to a third-party domain (product name, version, browser type).</li>
+<li>The permissions included access to all sites, a content script on all sites, <code>webRequest</code> and <code>scripting</code>.</li>
+<li>Google removed the listing on 10 July 2026 after responsible disclosure.</li>
+</ul>
+<h2>What was not reported</h2>
+<p>The report states that active browsing-history exfiltration was not observed in that build. It also notes that an update could have switched the upload on without asking for new permissions. That is the real lesson: an extension that already has broad access does not need your permission again to change what it does.</p>
+<p>We could not confirm, as of 10 October 2026, whether ModHeader has been relisted. Check the store page before relying on any claim about its current state, including ours.</p>
+<h2>Check any header extension in two minutes</h2>
+<p>Open <code>chrome://extensions</code>, click <strong>Details</strong> on the extension, and read "Site access" and the permissions list. For a tool that only edits headers, these are what matter:</p>
+<table>
+<thead>
+<tr>
+<th>Permission</th>
+<th>What it lets an extension do</th>
+<th>Needed to edit headers?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>declarativeNetRequest</code></td>
+<td>Ask Chrome to change requests and responses by rules, without the extension seeing the content</td>
+<td>Yes, this is the intended API</td>
+</tr>
+<tr>
+<td><code>storage</code></td>
+<td>Save your profiles in the browser</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>webRequest</code></td>
+<td>Observe network requests as they happen</td>
+<td>No. In Manifest V3 it can no longer modify requests for normal extensions</td>
+</tr>
+<tr>
+<td><code>scripting</code> / content scripts</td>
+<td>Run code inside the pages you visit</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Site access: all sites</td>
+<td>Apply to every site</td>
+<td>Chrome requires host access for header rules, so expect it. Look for ways to limit it with URL filters</td>
+</tr>
+</tbody>
+</table>
+<p>Chrome's own documentation says declarativeNetRequest lets an extension "modify network requests without intercepting them and viewing their content", and that webRequest can no longer block or modify requests in Manifest V3 except for policy-installed extensions. So a header editor that asks for <code>webRequest</code>, <code>scripting</code> or content scripts is doing something beyond editing headers. That does not prove bad intent. It does mean you should ask why.</p>
+<p>Two more checks: is the source public, and does the privacy policy say the extension makes no network requests of its own?</p>
+<h2>Move your rules</h2>
+<ol>
+<li>If ModHeader is still installed, export your profiles to JSON first. If you never exported, you will have to rebuild the rules by hand.</li>
+<li>Install the replacement you picked and import the file. Honest Headers reads ModHeader JSON exports.</li>
+<li>Open each profile and check what carried over. Some rules may be skipped or switched off.</li>
+<li>Chrome only allows the <code>append</code> operation on a short list of request headers. For any other request header, use <code>set</code>. Response headers can be appended freely.</li>
+<li>If a rule does not apply, check whether another extension is changing the same header.</li>
+<li>If you ever typed an API key or token into a header value, consider replacing it as a precaution.</li>
+</ol>
+<p>If you only need to change a header now and then, you may not need an extension at all. See <a href="/honest-guide/en/modify-http-headers-in-chrome/">how to change HTTP headers in Chrome</a> for the built-in DevTools option.</p>
+<div class="item"><p class="iname">Honest Headers (free Chrome extension)</p><p class="ispec">Add, change or remove HTTP request and response headers. Profiles, URL filters, ModHeader JSON import. No data collection.</p><a class="buy own" href="https://chromewebstore.google.com/detail/nomciaobihmigkiocpafmhmhcabpneif" rel="noopener" target="_blank"><span class="shop">Honest Tools</span>Get it on the Chrome Web Store<span class="arrow">›</span></a></div>
+
+<h2>What Honest Headers asks for</h2>
+<p>We make Honest Headers, so judge this against the table above. Version 1.1.x requests <code>declarativeNetRequest</code>, <code>storage</code> and <code>alarms</code> (only for the optional auto-off timer), plus access to all sites, which Chrome requires for header rules. It has no content scripts, no <code>webRequest</code>, no <code>scripting</code>, and the code makes no network requests of its own. The source is public under the MIT license, so you can check this rather than take our word for it.</p>
+<h2>Who this is not for</h2>
+<p>If you have never used ModHeader, nothing here requires action. Teams that need shared rule workspaces or cloud sync need a different kind of tool than a single-user header editor. And if the DevTools overrides cover your case, you do not need to install anything.</p>
+<h2>Sources (checked 2026-10-10)</h2>
+<ul>
+<li>Stripe OLT, threat research on the ModHeader extension: <a href="https://stripeolt.com/knowledge-hub/threat-research/chrome-extension-hidden-data-exfiltration-900k-users/">https://stripeolt.com/knowledge-hub/threat-research/chrome-extension-hidden-data-exfiltration-900k-users/</a></li>
+<li>Chrome for Developers, <code>chrome.declarativeNetRequest</code>: <a href="https://developer.chrome.com/docs/extensions/reference/api/declarativeNetRequest">https://developer.chrome.com/docs/extensions/reference/api/declarativeNetRequest</a></li>
+<li>Chrome for Developers, <code>chrome.webRequest</code>: <a href="https://developer.chrome.com/docs/extensions/reference/api/webRequest">https://developer.chrome.com/docs/extensions/reference/api/webRequest</a></li>
+</ul></article><section class="related"><h2>More guides</h2><ul><li><a href="/honest-guide/en/edit-cookies-in-chrome/">How to view and edit cookies in Chrome (DevTools, or an extension)</a></li><li><a href="/honest-guide/en/modify-http-headers-in-chrome/">How to change HTTP headers in Chrome (response headers in DevTools, request headers with an extension)</a></li><li><a href="/honest-guide/en/samesite-cookie-attribute/">SameSite cookies explained: Strict, Lax and None (and why None needs Secure)</a></li></ul></section></main><footer><div class="wrap"><p>Practical notes on HTTP headers, cookies and browser tools, by Honest Tools. Facts are checked against official documentation; each article lists its sources and the date they were checked.</p><p><a href="/honest-guide/en/about/">About</a> / <a href="/honest-guide/en/privacy/">Privacy</a></p><p>&copy; 2026 Honest Tools</p></div></footer></body></html>

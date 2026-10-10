@@ -8,6 +8,11 @@ Status: todo / on hold (reason) / published. Work **top to bottom**. Topics are 
 | E2 | SameSite cookies: Strict, Lax, None | MDN Set-Cookie, web.dev | cookies | published |
 | E3 | How to change HTTP headers in Chrome | Chrome DevTools overrides, declarativeNetRequest | headers | published |
 | E4 | Security headers checklist (7 to add, 5 to remove) | OWASP, MDN | headers, checklist, templates | published |
+| E21 | ModHeader was removed from the Chrome Web Store: what was reported, and how to check any header extension | Stripe OLT report, Chrome for Developers (declarativeNetRequest, webRequest) | headers | published |
+| E22 | How to read a Chrome extension's permissions before you install it (site access, "on click" vs "all sites") | Chrome for Developers (permissions list, declare permissions), Chrome Help (extension site access) | headers, cookies | todo |
+| E23 | Move your ModHeader rules to another tool: what a JSON export holds, and why `append` fails on some request headers | Chrome for Developers (declarativeNetRequest modifyHeaders append allowlist), MDN (HTTP headers) | headers | todo |
+| E24 | EditThisCookie is gone: move your cookies to another tool (JSON, cookies.txt). Only write the "what happened" part if a primary source is found; otherwise write only the export/import steps | Chrome Help, curl docs (cookie file format), Chrome for Developers (chrome.cookies) | cookies | todo |
+| E25 | Header changes that stopped working in Manifest V3: why, and what still works | Chrome for Developers (Manifest V3 migration, declarativeNetRequest) | headers | todo |
 | E5 | Export Chrome cookies to cookies.txt (Netscape format) for curl / wget | curl docs (cookie file format), wget manual | cookies | todo |
 | E6 | Test CORS locally: which response headers matter | MDN CORS guide, Fetch standard | headers | todo |
 | E7 | Content-Security-Policy: start with Report-Only | MDN CSP, CSP Level 3 spec | headers, templates | todo |

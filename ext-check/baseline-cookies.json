@@ -1,0 +1,15 @@
+{
+  "name": "Honest Cookies",
+  "published_version": "1.0.0",
+  "allowed_permissions": ["cookies", "activeTab"],
+  "allowed_host_permissions": [],
+  "allowed_optional_permissions": [],
+  "allowed_optional_host_permissions": ["<all_urls>"],
+  "allowed_url_prefixes": [
+    "https://github.com/honestheaders/",
+    "https://honesttools.gumroad.com/",
+    "https://developer.chrome.com/",
+    "http://www.w3.org/2000/svg"
+  ],
+  "forbidden_strings": ["booth.pm", "BOOTH"]
+}
