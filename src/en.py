@@ -10,7 +10,7 @@ PRODUCTS = {
                 "https://chromewebstore.google.com/detail/nomciaobihmigkiocpafmhmhcabpneif", "Get it on the Chrome Web Store"),
     "cookies": ("Honest Cookies (free Chrome extension, open source)",
                 "View, edit, add, delete, export and import cookies. Installs with no site access and asks for one site at a time.",
-                "https://github.com/honestheaders/honest-cookies", "See it on GitHub"),
+                "https://chromewebstore.google.com/detail/fajimapdhdmcpbccjflmelfilgfpakci", "Get it on the Chrome Web Store"),
     "checklist": ("Security Headers: 5-Minute Checklist (PDF, pay what you want from $0)",
                   "A 2-page printable version of the checklist, with sources.",
                   "https://honesttools.gumroad.com/l/irlsg", "Get the PDF on Gumroad"),
