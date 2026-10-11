@@ -1,0 +1,84 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="google-site-verification" content="hqAGwjMx_F-TdJl79qigCCcuhYe7_9BUhfd7nEK2TMI"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moving header rules to a new tool: why &quot;append&quot; fails on some request headers in Chrome | Honest Guide</title><meta name="description" content="Chrome only allows the append operation on 21 listed request headers. Which ones, what to use instead, and three other things to check after you move your rules."><link rel="canonical" href="https://honestheaders.github.io/honest-guide/en/move-modheader-rules-append-not-supported/">
+<meta property="og:title" content="Moving header rules to a new tool: why &quot;append&quot; fails on some request headers in Chrome | Honest Guide"><meta property="og:description" content="Chrome only allows the append operation on 21 listed request headers. Which ones, what to use instead, and three other things to check after you move your rules."><meta property="og:type" content="article">
+<link rel="icon" href="/honest-guide/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Honest Guide (English)" href="https://honestheaders.github.io/honest-guide/en/feed.xml"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Moving header rules to a new tool: why \"append\" fails on some request headers in Chrome", "description": "Chrome only allows the append operation on 21 listed request headers. Which ones, what to use instead, and three other things to check after you move your rules.", "inLanguage": "en", "dateModified": "2026-10-12", "author": {"@type": "Organization", "name": "Honest Tools"}, "publisher": {"@type": "Organization", "name": "Honest Tools"}, "mainEntityOfPage": "https://honestheaders.github.io/honest-guide/en/move-modheader-rules-append-not-supported/"}</script>
+<style>:root{--c:#1f4e79;--bg:#fafaf7;--t:#222;--m:#666;--l:#ddd}
+*{box-sizing:border-box}body{margin:0;font-family:"Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;color:var(--t);background:var(--bg);line-height:1.85;font-size:16px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+header{background:var(--c);color:#fff}header .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 16px;gap:8px}
+.logo{color:#fff;font-weight:700;font-size:20px;text-decoration:none}nav a{color:#dbe8f5;margin-left:14px;text-decoration:none;font-size:14px}
+main{padding-top:24px;padding-bottom:40px}h1{font-size:26px;line-height:1.4}h2{font-size:20px;border-left:5px solid var(--c);padding-left:10px;margin-top:36px}
+a{color:var(--c)}table{border-collapse:collapse;width:100%;margin:16px 0;font-size:15px}th,td{border:1px solid var(--l);padding:8px;text-align:left;vertical-align:top}th{background:#eef3f8}
+.plain th{width:30%}.cards{list-style:none;padding:0;display:grid;gap:12px}.cards a{display:block;background:#fff;border:1px solid var(--l);border-radius:10px;padding:14px 16px;text-decoration:none;color:var(--t)}
+.cards b{display:block;color:var(--c)}.cards span{font-size:14px;color:var(--m)}.hero{background:#fff;border:1px solid var(--l);border-radius:12px;padding:20px;text-align:center}
+.pr{font-size:13px;color:var(--m);background:#f1f1ec;padding:8px 12px;border-radius:6px}.date{font-size:13px;color:var(--m)}
+.tool{display:grid;gap:12px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:16px}.tool label{display:block;font-size:14px;color:var(--m)}
+.tool input{display:block;width:100%;font-size:20px;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px}
+.result{background:#fff8dc;border:1px solid #ecd98a;border-radius:10px;padding:8px 16px;margin-top:16px;font-size:18px}.result b{font-size:24px;color:#c00}
+.note{font-size:13px;color:var(--m)}footer{background:#f1f1ec;font-size:13px;color:var(--m);padding:20px 0}
+
+.crumb{font-size:13px;color:var(--m)}.related{margin-top:32px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:4px 16px 12px}.related h2{margin-top:12px;font-size:17px}
+.buy{display:flex;align-items:center;gap:10px;background:#bf0000;color:#fff;text-decoration:none;font-weight:700;border-radius:10px;padding:12px 14px;margin:10px 0;line-height:1.4;box-shadow:0 2px 0 #8c0000}
+.buy:hover,.buy:focus-visible{background:#a30000;outline:none}.buy .shop{font-size:11px;font-weight:700;background:#fff;color:#bf0000;border-radius:4px;padding:2px 6px;white-space:nowrap}
+.buy .arrow{margin-left:auto;font-size:20px}li>.buy{margin:6px 0}article ul:has(.buy){list-style:none;padding-left:0}
+.quick{background:#fff;border:2px solid #f0c9c9;border-radius:12px;padding:12px 14px;margin:18px 0}.quick .qh{margin:0 0 4px;font-weight:700;color:#bf0000}.quick .qn{margin:6px 0 0;font-size:13px;color:var(--m)}
+.item{background:#fff;border:1px solid var(--l);border-radius:12px;padding:14px 16px;margin:14px 0}.item p{margin:0 0 6px}.iname{font-weight:700;font-size:17px;color:var(--c)}
+.ispec{font-size:14px;color:var(--t)}.ifit{font-size:14px;background:#f5f8fb;border-radius:6px;padding:6px 10px}.ifit b{display:block;font-size:12px;color:var(--c)}
+.crumb a{color:var(--c);margin-left:0;font-size:13px}
+.src a,.note a{word-break:break-all}
+article a{overflow-wrap:anywhere}td code{overflow-wrap:anywhere}article table{display:block;overflow-x:auto}body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.7}code{background:#f1f1ec;padding:1px 4px;border-radius:4px;font-size:.92em}pre{background:#f1f1ec;padding:12px;border-radius:8px;overflow-x:auto}pre code{padding:0}.own{background:#1f4e79;box-shadow:0 2px 0 #12304d}.own:hover,.own:focus-visible{background:#163a5c}.own .shop{color:#1f4e79}</style></head><body><header><div class="wrap"><a class="logo" href="/honest-guide/en/">Honest Guide</a><nav><a href="/honest-guide/en/">Guides</a><a href="/honest-guide/en/about/">About</a><a href="/honest-guide/">日本語</a></nav></div></header><main class="wrap"><nav class="crumb"><a href="/honest-guide/en/">Guides</a> › Moving header rules to a new tool: why &quot;append&quot; fails on some request headers in Chrome</nav><article><h1>Moving header rules to a new tool: why &quot;append&quot; fails on some request headers in Chrome</h1><p class="date">Updated 2026-10-12</p><p class="pr">Disclosure: Honest Tools makes Honest Headers, Honest Cookies and the PDFs linked on this site. Links to them are links to our own products. This section has no ads and no affiliate links.</p><p>A rule that appends a value to <code>Authorization</code> or <code>X-Api-Key</code> will not work in a Chrome extension built on declarativeNetRequest, because <code>append</code> is only supported for a short list of request headers. The fix is usually to switch that rule to <code>set</code>. The rest of this page covers the list, and what else tends to differ when you move rules from one header tool to another.</p>
+<h2>The 21 request headers that accept <code>append</code></h2>
+<p>Chrome's declarativeNetRequest documentation says that for request headers, <code>append</code> is supported only for the headers below, and that the list is case sensitive:</p>
+<table>
+<thead>
+<tr>
+<th>Group</th>
+<th>Headers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Content negotiation</td>
+<td><code>accept</code>, <code>accept-encoding</code>, <code>accept-language</code>, <code>content-language</code></td>
+</tr>
+<tr>
+<td>Caching and conditions</td>
+<td><code>cache-control</code>, <code>if-match</code>, <code>if-none-match</code>, <code>range</code>, <code>want-digest</code></td>
+</tr>
+<tr>
+<td>Connection and proxies</td>
+<td><code>connection</code>, <code>keep-alive</code>, <code>te</code>, <code>trailer</code>, <code>transfer-encoding</code>, <code>upgrade</code>, <code>via</code>, <code>forwarded</code>, <code>x-forwarded-for</code></td>
+</tr>
+<tr>
+<td>Other</td>
+<td><code>access-control-request-headers</code>, <code>cookie</code>, <code>user-agent</code></td>
+</tr>
+</tbody>
+</table>
+<p>That grouping is ours; the list itself is Chrome's. Headers that people often try to append and that are <strong>not</strong> on it include <code>authorization</code>, <code>referer</code>, <code>origin</code>, <code>content-type</code> and custom <code>x-</code> headers other than <code>x-forwarded-for</code>.</p>
+<p>Because the list is case sensitive, write the names in lowercase when you write rules by hand.</p>
+<h2>What to do with a rule that fails</h2>
+<p>The documentation describes the three operations like this: <code>append</code> adds a new entry for the header, <code>set</code> replaces any existing entries with the new value, and <code>remove</code> deletes all entries. For a header that is not on the list:</p>
+<ol>
+<li>Change the operation from <code>append</code> to <code>set</code>.</li>
+<li>If the old rule was combining your value with one the page already sends, write the combined value yourself.</li>
+<li>Reload the page, open DevTools, go to the <strong>Network</strong> tab, click a request and check <strong>Request Headers</strong>. That shows what the browser actually sent.</li>
+</ol>
+<p>The same documentation says that when you append to a request or response header, the browser uses the appropriate separator where possible. For response headers it does not state the same restriction on which names are allowed.</p>
+<h2>Three other things to check after the move</h2>
+<ul>
+<li><strong>Page loads.</strong> If a rule does not name any resource types, Chrome applies it to every type except <code>main_frame</code>. A rule that changed the headers of the page itself in your old tool may need <code>main_frame</code> listed explicitly.</li>
+<li><strong>Scope.</strong> Rules can be limited with <code>requestDomains</code> or a <code>urlFilter</code>. If <code>urlFilter</code> is left out, all URLs match. A rule you meant for one test server can end up touching every site.</li>
+<li><strong>Value required.</strong> For <code>append</code> and <code>set</code>, the documentation says a value must be given.</li>
+</ul>
+<p>Chrome also caps how many dynamic rules one extension can add: 30,000, with a separate limit of 5,000 for "unsafe" dynamic rules. Most personal profiles stay far below this.</p>
+<p>If you only want to try a header change once, DevTools can do it without an extension. See <a href="/honest-guide/en/modify-http-headers-in-chrome/">how to change HTTP headers in Chrome</a>. To check what a tool asks for before you install it, see <a href="/honest-guide/en/read-chrome-extension-permissions-before-install/">reading a Chrome extension's permissions</a>.</p>
+<div class="item"><p class="iname">Honest Headers (free Chrome extension)</p><p class="ispec">Add, change or remove HTTP request and response headers. Profiles, URL filters, ModHeader JSON import. No data collection.</p><a class="buy own" href="https://chromewebstore.google.com/detail/nomciaobihmigkiocpafmhmhcabpneif" rel="noopener" target="_blank"><span class="shop">Honest Tools</span>Get it on the Chrome Web Store<span class="arrow">›</span></a></div>
+
+<h2>Who this is not for</h2>
+<p>If your rules only touch headers on the list, such as <code>accept-language</code> or <code>user-agent</code>, <code>append</code> already works and you can skip this page. If you need to change the headers of requests made outside the browser, such as from a script or a server, a browser extension is the wrong tool. And if you need to attach a secret to every request, an extension is a risky place to keep it; use a throwaway test credential.</p>
+<h2>Sources (checked 2026-10-12)</h2>
+<ul>
+<li>Chrome for Developers, <code>chrome.declarativeNetRequest</code> (append allowlist, header operations, resource types, rule limits): <a href="https://developer.chrome.com/docs/extensions/reference/api/declarativeNetRequest">https://developer.chrome.com/docs/extensions/reference/api/declarativeNetRequest</a></li>
+<li>Chrome for Developers, Replace blocking web request listeners (the <code>modifyHeaders</code> rule action in Manifest V3): <a href="https://developer.chrome.com/docs/extensions/develop/migrate/blocking-web-requests">https://developer.chrome.com/docs/extensions/develop/migrate/blocking-web-requests</a></li>
+</ul></article><section class="related"><h2>More guides</h2><ul><li><a href="/honest-guide/en/modheader-removed-from-chrome-what-to-do/">ModHeader was removed from the Chrome Web Store: what was reported, and how to check any header extension</a></li><li><a href="/honest-guide/en/read-chrome-extension-permissions-before-install/">Chrome extension permissions: what &quot;site access&quot; means and how to limit it</a></li><li><a href="/honest-guide/en/edit-cookies-in-chrome/">How to view and edit cookies in Chrome (DevTools, or an extension)</a></li></ul></section></main><footer><div class="wrap"><p>Practical notes on HTTP headers, cookies and browser tools, by Honest Tools. Facts are checked against official documentation; each article lists its sources and the date they were checked.</p><p><a href="/honest-guide/en/about/">About</a> / <a href="/honest-guide/en/privacy/">Privacy</a></p><p>&copy; 2026 Honest Tools</p></div></footer></body></html>
