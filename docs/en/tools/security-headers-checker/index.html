@@ -1,0 +1,79 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="google-site-verification" content="hqAGwjMx_F-TdJl79qigCCcuhYe7_9BUhfd7nEK2TMI"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Security headers checker (paste your headers) | Honest Guide</title><meta name="description" content="Paste response headers from DevTools or curl. See which of the 7 recommended security headers are missing and which 5 old headers to remove."><link rel="canonical" href="https://honestheaders.github.io/honest-guide/en/tools/security-headers-checker/">
+<meta property="og:title" content="Security headers checker (paste your headers) | Honest Guide"><meta property="og:description" content="Paste response headers from DevTools or curl. See which of the 7 recommended security headers are missing and which 5 old headers to remove."><meta property="og:type" content="website">
+<link rel="icon" href="/honest-guide/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Honest Guide (English)" href="https://honestheaders.github.io/honest-guide/en/feed.xml">
+<style>:root{--c:#1f4e79;--bg:#fafaf7;--t:#222;--m:#666;--l:#ddd}
+*{box-sizing:border-box}body{margin:0;font-family:"Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;color:var(--t);background:var(--bg);line-height:1.85;font-size:16px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+header{background:var(--c);color:#fff}header .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 16px;gap:8px}
+.logo{color:#fff;font-weight:700;font-size:20px;text-decoration:none}nav a{color:#dbe8f5;margin-left:14px;text-decoration:none;font-size:14px}
+main{padding-top:24px;padding-bottom:40px}h1{font-size:26px;line-height:1.4}h2{font-size:20px;border-left:5px solid var(--c);padding-left:10px;margin-top:36px}
+a{color:var(--c)}table{border-collapse:collapse;width:100%;margin:16px 0;font-size:15px}th,td{border:1px solid var(--l);padding:8px;text-align:left;vertical-align:top}th{background:#eef3f8}
+.plain th{width:30%}.cards{list-style:none;padding:0;display:grid;gap:12px}.cards a{display:block;background:#fff;border:1px solid var(--l);border-radius:10px;padding:14px 16px;text-decoration:none;color:var(--t)}
+.cards b{display:block;color:var(--c)}.cards span{font-size:14px;color:var(--m)}.hero{background:#fff;border:1px solid var(--l);border-radius:12px;padding:20px;text-align:center}
+.pr{font-size:13px;color:var(--m);background:#f1f1ec;padding:8px 12px;border-radius:6px}.date{font-size:13px;color:var(--m)}
+.tool{display:grid;gap:12px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:16px}.tool label{display:block;font-size:14px;color:var(--m)}
+.tool input{display:block;width:100%;font-size:20px;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px}
+.result{background:#fff8dc;border:1px solid #ecd98a;border-radius:10px;padding:8px 16px;margin-top:16px;font-size:18px}.result b{font-size:24px;color:#c00}
+.note{font-size:13px;color:var(--m)}footer{background:#f1f1ec;font-size:13px;color:var(--m);padding:20px 0}
+
+.crumb{font-size:13px;color:var(--m)}.related{margin-top:32px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:4px 16px 12px}.related h2{margin-top:12px;font-size:17px}
+.buy{display:flex;align-items:center;gap:10px;background:#bf0000;color:#fff;text-decoration:none;font-weight:700;border-radius:10px;padding:12px 14px;margin:10px 0;line-height:1.4;box-shadow:0 2px 0 #8c0000}
+.buy:hover,.buy:focus-visible{background:#a30000;outline:none}.buy .shop{font-size:11px;font-weight:700;background:#fff;color:#bf0000;border-radius:4px;padding:2px 6px;white-space:nowrap}
+.buy .arrow{margin-left:auto;font-size:20px}li>.buy{margin:6px 0}article ul:has(.buy){list-style:none;padding-left:0}
+.quick{background:#fff;border:2px solid #f0c9c9;border-radius:12px;padding:12px 14px;margin:18px 0}.quick .qh{margin:0 0 4px;font-weight:700;color:#bf0000}.quick .qn{margin:6px 0 0;font-size:13px;color:var(--m)}
+.item{background:#fff;border:1px solid var(--l);border-radius:12px;padding:14px 16px;margin:14px 0}.item p{margin:0 0 6px}.iname{font-weight:700;font-size:17px;color:var(--c)}
+.ispec{font-size:14px;color:var(--t)}.ifit{font-size:14px;background:#f5f8fb;border-radius:6px;padding:6px 10px}.ifit b{display:block;font-size:12px;color:var(--c)}
+.crumb a{color:var(--c);margin-left:0;font-size:13px}
+.src a,.note a{word-break:break-all}
+article a{overflow-wrap:anywhere}td code{overflow-wrap:anywhere}article table{display:block;overflow-x:auto}body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.7}code{background:#f1f1ec;padding:1px 4px;border-radius:4px;font-size:.92em}pre{background:#f1f1ec;padding:12px;border-radius:8px;overflow-x:auto}pre code{padding:0}.own{background:#1f4e79;box-shadow:0 2px 0 #12304d}.own:hover,.own:focus-visible{background:#163a5c}.own .shop{color:#1f4e79}.item .iname img{width:28px;height:28px;vertical-align:-7px;margin-right:8px;border-radius:6px}.answer{background:#eef3f8;border-left:5px solid #1f4e79;border-radius:8px;padding:12px 16px;margin:18px 0}.answer .ah{margin:0;font-size:13px;font-weight:700;color:#1f4e79;letter-spacing:.03em}.answer p{margin:4px 0 0}.toc{background:#fff;border:1px solid #ddd;border-radius:10px;padding:10px 16px;margin:18px 0;font-size:15px}.toc p{margin:0;font-size:13px;color:#666}.toc ol{margin:6px 0 0;padding-left:20px}.toc li{margin:2px 0}.toc a{color:#1f4e79;margin-left:0;font-size:inherit;text-decoration:underline}figure.dia{margin:20px auto;max-width:520px;background:#fff;border:1px solid #ddd;border-radius:10px;padding:10px}figure.dia svg,figure.shot img{display:block;width:100%;height:auto}figure.shot{margin:20px auto;max-width:520px}figure.shot img{border:1px solid #ddd;border-radius:10px}figcaption{font-size:13px;color:#666;text-align:center;margin-top:6px}pre{position:relative}.cp{position:absolute;top:6px;right:6px;font:12px system-ui,sans-serif;background:#fff;border:1px solid #bbb;border-radius:6px;padding:3px 8px;cursor:pointer}h2[id]{scroll-margin-top:12px}.tl{background:#fff8dc;border:1px solid #ecd98a;border-radius:8px;padding:8px 12px;font-size:15px}.fix{font-size:13px;color:#666;border-top:1px solid #ddd;padding-top:10px;margin-top:28px}.tool textarea,.tool input[type=text],.tool input[type=number],.tool select{display:block;width:100%;font:15px ui-monospace,Menlo,Consolas,monospace;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px;background:#fff}.tool textarea{min-height:180px}.tool .row{display:flex;flex-wrap:wrap;gap:8px 16px}.tool .row label{display:flex;align-items:center;gap:6px;font-size:15px;color:#222}.btn{font:600 15px system-ui,sans-serif;background:#1f4e79;color:#fff;border:0;border-radius:8px;padding:10px 16px;cursor:pointer}.btn.ghost{background:#fff;color:#1f4e79;border:1px solid #1f4e79}.res{list-style:none;padding:0;margin:8px 0}.res li{background:#fff;border:1px solid #ddd;border-radius:8px;padding:8px 12px;margin:6px 0;font-size:15px}.res li b{display:block}.res .ok{border-left:5px solid #2e7d4f}.res .ng{border-left:5px solid #b3261e}.res .info{border-left:5px solid #b38600}.score{font-size:18px;font-weight:700;margin:12px 0 4px}main code{overflow-wrap:anywhere}.res li{overflow-wrap:anywhere}#out{font:15px ui-monospace,Menlo,Consolas,monospace;background:#f1f1ec;padding:12px;border-radius:8px;overflow-wrap:anywhere}</style></head><body><header><div class="wrap"><a class="logo" href="/honest-guide/en/">Honest Guide</a><nav><a href="/honest-guide/en/">Guides</a><a href="/honest-guide/en/tools/">Tools</a><a href="/honest-guide/en/about/">About</a><a href="/honest-guide/">日本語</a></nav></div></header><main class="wrap"><nav class="crumb"><a href="/honest-guide/en/">Guides</a> › <a href="/honest-guide/en/tools/">Tools</a> › Security headers checker (paste your headers)</nav><article><h1>Security headers checker</h1>
+<div class="answer"><p class="ah">HOW IT WORKS</p><p>Paste the response headers of one page. The checker looks for the 7 headers we recommend adding and the 5 we recommend removing, and says what to change. It runs only in your browser: nothing you paste is sent anywhere.</p></div>
+<div class="tool"><label for="h">Response headers (from DevTools or <code>curl -sI https://your-site.example</code>)</label>
+<textarea id="h" spellcheck="false" placeholder="HTTP/2 200&#10;content-type: text/html&#10;strict-transport-security: max-age=31536000"></textarea>
+<div class="row"><button class="btn" id="go" type="button">Check headers</button><button class="btn ghost" id="ex" type="button">Try an example</button></div></div>
+<div id="r" aria-live="polite"></div>
+<h2 id="where">Where to copy the headers from</h2>
+<ul><li><b>Chrome DevTools:</b> Network panel, reload, click the first (document) request, then in <b>Response Headers</b> turn on <b>Raw</b> and copy.</li>
+<li><b>Command line:</b> <code>curl -sI https://your-site.example</code> prints only the headers.</li></ul>
+<p>What each header does, and example values: <a href="/honest-guide/en/security-headers-checklist/">Security headers checklist: the 7 to add and the 5 to remove</a>.</p>
+<h2 id="not-for">Who this is not for</h2>
+<ul><li>This only looks at whether headers are present and at a few obvious values. It does not judge whether your Content-Security-Policy is strict enough, and it is not a security audit.</li>
+<li>If you want a site scanned from the internet by URL, Mozilla's HTTP Observatory does that.</li></ul>
+<h2 id="sources">Sources (checked 2026-10-12)</h2>
+<ul><li>OWASP HTTP Headers Cheat Sheet: <a href="https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html">https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html</a></li>
+<li>MDN, Strict-Transport-Security: <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Strict-Transport-Security">https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Strict-Transport-Security</a></li>
+<li>MDN, X-Content-Type-Options: <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Content-Type-Options">https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Content-Type-Options</a></li></ul>
+<script>
+(function(){
+var EX="HTTP/2 200\nserver: nginx/1.24.0\ncontent-type: text/html; charset=utf-8\nx-powered-by: Express\nx-frame-options: SAMEORIGIN\nx-xss-protection: 1; mode=block\nstrict-transport-security: max-age=31536000; includeSubDomains\nreferrer-policy: strict-origin-when-cross-origin";
+function parse(t){var h={},L=t.split(/\r?\n/).map(function(s){return s.trim()}).filter(Boolean);
+for(var i=0;i<L.length;i++){var m=L[i].match(/^([A-Za-z0-9-]+)\s*:\s*(.*)$/);
+if(m){h[m[1].toLowerCase()]=m[2];continue}
+if(/^[a-z0-9-]+$/i.test(L[i])&&i+1<L.length&&!/^[A-Za-z0-9-]+\s*:/.test(L[i+1])){h[L[i].toLowerCase()]=L[i+1];i++}}
+return h}
+function esc(s){return s.replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function li(c,t,d){return '<li class="'+c+'"><b>'+t+'</b>'+d+'</li>'}
+function run(){var h=parse(document.getElementById("h").value),add=[],rem=[],n=0,k=0;
+if(!Object.keys(h).length){document.getElementById("r").innerHTML='<p class="score">No headers found. Paste lines like <code>name: value</code>.</p>';return}
+function want(name,ok,fix,hint){var v=h[name];if(v===undefined){add.push(li("ng","✕ "+name+" is missing",fix));return}
+if(ok&&!ok(v)){add.push(li("info","△ "+name+": "+esc(v),hint));return}n++;add.push(li("ok","✓ "+name,esc(v)))}
+want("strict-transport-security",function(v){return /max-age=\d+/i.test(v)},"Add it on HTTPS responses, e.g. <code>max-age=31536000; includeSubDomains</code>.","Needs a <code>max-age</code> value.");
+want("content-security-policy",null,"Start with <code>frame-ancestors 'self'; object-src 'none'; base-uri 'self'</code> and test before tightening.");
+want("x-frame-options",function(v){return /^(deny|sameorigin)$/i.test(v.trim())},"Add <code>DENY</code> or <code>SAMEORIGIN</code> (or use CSP <code>frame-ancestors</code>).","Use <code>DENY</code> or <code>SAMEORIGIN</code>.");
+want("x-content-type-options",function(v){return v.trim().toLowerCase()==="nosniff"},"Add <code>nosniff</code>.","The only valid value is <code>nosniff</code>.");
+want("referrer-policy",null,"Set it explicitly, e.g. <code>strict-origin-when-cross-origin</code>.");
+want("permissions-policy",null,"Turn off features you never use, e.g. <code>geolocation=(), camera=(), microphone=()</code>.");
+want("cross-origin-opener-policy",null,"Add <code>same-origin</code> (or <code>same-origin-allow-popups</code> if you use sign-in or payment popups).");
+function drop(name,bad,fix){var v=h[name];if(v!==undefined&&bad(v)){k++;rem.push(li("ng","✕ Remove: "+name+": "+esc(v),fix))}}
+drop("x-powered-by",function(){return true},"OWASP: remove all X-Powered-By headers. It tells visitors which framework you run.");
+drop("server",function(v){return /\d/.test(v)},"Hide the version number (nginx: <code>server_tokens off;</code>).");
+drop("x-xss-protection",function(v){return v.trim()!=="0"},"OWASP: do not set it, or turn it off with <code>0</code>. Use CSP instead.");
+drop("public-key-pins",function(){return true},"OWASP: do not use.");
+drop("expect-ct",function(){return true},"OWASP: do not use it.");
+document.getElementById("r").innerHTML='<p class="score">'+n+' of 7 recommended headers look right. '+(k?k+' header'+(k>1?'s':'')+' to remove.':'Nothing to remove.')+'</p>'+
+(rem.length?'<h2>Remove first (usually one-line changes)</h2><ul class="res">'+rem.join("")+'</ul>':'')+'<h2>The 7 to add</h2><ul class="res">'+add.join("")+'</ul>'+
+'<p class="note">Add CSP, COOP and HSTS one at a time and test: they can break parts of a site.</p>'}
+document.getElementById("go").onclick=run;
+document.getElementById("ex").onclick=function(){document.getElementById("h").value=EX;run()};
+})();
+</script></article></main><footer><div class="wrap"><p>Practical notes on HTTP headers, cookies and browser tools, by Honest Tools. Facts are checked against official documentation; each article lists its sources and the date they were checked.</p><p><a href="/honest-guide/en/about/">About</a> / <a href="/honest-guide/en/privacy/">Privacy</a></p><p>&copy; 2026 Honest Tools</p></div></footer></body></html>

@@ -1,0 +1,123 @@
+"""Free tools for the English section (/en/tools/...). They run only in the visitor's browser.
+Every rule shown by a tool comes from the sources listed on its page (checked dates included)."""
+
+TOOLS = [
+    ("security-headers-checker", "Security headers checker (paste your headers)",
+     "Paste response headers from DevTools or curl. See which of the 7 recommended security headers are missing and which 5 old headers to remove."),
+    ("set-cookie-builder", "Set-Cookie builder and checker",
+     "Build a Set-Cookie header with Secure, HttpOnly, SameSite, Partitioned and prefixes, and see which combinations browsers reject."),
+]
+
+TOOL_CSS = ('.tool textarea,.tool input[type=text],.tool input[type=number],.tool select{display:block;width:100%;font:15px ui-monospace,Menlo,Consolas,monospace;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px;background:#fff}'
+            '.tool textarea{min-height:180px}.tool .row{display:flex;flex-wrap:wrap;gap:8px 16px}.tool .row label{display:flex;align-items:center;gap:6px;font-size:15px;color:#222}'
+            '.btn{font:600 15px system-ui,sans-serif;background:#1f4e79;color:#fff;border:0;border-radius:8px;padding:10px 16px;cursor:pointer}.btn.ghost{background:#fff;color:#1f4e79;border:1px solid #1f4e79}'
+            '.res{list-style:none;padding:0;margin:8px 0}.res li{background:#fff;border:1px solid #ddd;border-radius:8px;padding:8px 12px;margin:6px 0;font-size:15px}.res li b{display:block}'
+            '.res .ok{border-left:5px solid #2e7d4f}.res .ng{border-left:5px solid #b3261e}.res .info{border-left:5px solid #b38600}.score{font-size:18px;font-weight:700;margin:12px 0 4px}'
+            'main code{overflow-wrap:anywhere}.res li{overflow-wrap:anywhere}#out{font:15px ui-monospace,Menlo,Consolas,monospace;background:#f1f1ec;padding:12px;border-radius:8px;overflow-wrap:anywhere}')
+
+CHECKER = r'''<h1>Security headers checker</h1>
+<div class="answer"><p class="ah">HOW IT WORKS</p><p>Paste the response headers of one page. The checker looks for the 7 headers we recommend adding and the 5 we recommend removing, and says what to change. It runs only in your browser: nothing you paste is sent anywhere.</p></div>
+<div class="tool"><label for="h">Response headers (from DevTools or <code>curl -sI https://your-site.example</code>)</label>
+<textarea id="h" spellcheck="false" placeholder="HTTP/2 200&#10;content-type: text/html&#10;strict-transport-security: max-age=31536000"></textarea>
+<div class="row"><button class="btn" id="go" type="button">Check headers</button><button class="btn ghost" id="ex" type="button">Try an example</button></div></div>
+<div id="r" aria-live="polite"></div>
+<h2 id="where">Where to copy the headers from</h2>
+<ul><li><b>Chrome DevTools:</b> Network panel, reload, click the first (document) request, then in <b>Response Headers</b> turn on <b>Raw</b> and copy.</li>
+<li><b>Command line:</b> <code>curl -sI https://your-site.example</code> prints only the headers.</li></ul>
+<p>What each header does, and example values: <a href="BASE/security-headers-checklist/">Security headers checklist: the 7 to add and the 5 to remove</a>.</p>
+<h2 id="not-for">Who this is not for</h2>
+<ul><li>This only looks at whether headers are present and at a few obvious values. It does not judge whether your Content-Security-Policy is strict enough, and it is not a security audit.</li>
+<li>If you want a site scanned from the internet by URL, Mozilla's HTTP Observatory does that.</li></ul>
+<h2 id="sources">Sources (checked 2026-10-12)</h2>
+<ul><li>OWASP HTTP Headers Cheat Sheet: <a href="https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html">https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html</a></li>
+<li>MDN, Strict-Transport-Security: <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Strict-Transport-Security">https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Strict-Transport-Security</a></li>
+<li>MDN, X-Content-Type-Options: <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Content-Type-Options">https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Content-Type-Options</a></li></ul>
+<script>
+(function(){
+var EX="HTTP/2 200\nserver: nginx/1.24.0\ncontent-type: text/html; charset=utf-8\nx-powered-by: Express\nx-frame-options: SAMEORIGIN\nx-xss-protection: 1; mode=block\nstrict-transport-security: max-age=31536000; includeSubDomains\nreferrer-policy: strict-origin-when-cross-origin";
+function parse(t){var h={},L=t.split(/\r?\n/).map(function(s){return s.trim()}).filter(Boolean);
+for(var i=0;i<L.length;i++){var m=L[i].match(/^([A-Za-z0-9-]+)\s*:\s*(.*)$/);
+if(m){h[m[1].toLowerCase()]=m[2];continue}
+if(/^[a-z0-9-]+$/i.test(L[i])&&i+1<L.length&&!/^[A-Za-z0-9-]+\s*:/.test(L[i+1])){h[L[i].toLowerCase()]=L[i+1];i++}}
+return h}
+function esc(s){return s.replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function li(c,t,d){return '<li class="'+c+'"><b>'+t+'</b>'+d+'</li>'}
+function run(){var h=parse(document.getElementById("h").value),add=[],rem=[],n=0,k=0;
+if(!Object.keys(h).length){document.getElementById("r").innerHTML='<p class="score">No headers found. Paste lines like <code>name: value</code>.</p>';return}
+function want(name,ok,fix,hint){var v=h[name];if(v===undefined){add.push(li("ng","✕ "+name+" is missing",fix));return}
+if(ok&&!ok(v)){add.push(li("info","△ "+name+": "+esc(v),hint));return}n++;add.push(li("ok","✓ "+name,esc(v)))}
+want("strict-transport-security",function(v){return /max-age=\d+/i.test(v)},"Add it on HTTPS responses, e.g. <code>max-age=31536000; includeSubDomains</code>.","Needs a <code>max-age</code> value.");
+want("content-security-policy",null,"Start with <code>frame-ancestors 'self'; object-src 'none'; base-uri 'self'</code> and test before tightening.");
+want("x-frame-options",function(v){return /^(deny|sameorigin)$/i.test(v.trim())},"Add <code>DENY</code> or <code>SAMEORIGIN</code> (or use CSP <code>frame-ancestors</code>).","Use <code>DENY</code> or <code>SAMEORIGIN</code>.");
+want("x-content-type-options",function(v){return v.trim().toLowerCase()==="nosniff"},"Add <code>nosniff</code>.","The only valid value is <code>nosniff</code>.");
+want("referrer-policy",null,"Set it explicitly, e.g. <code>strict-origin-when-cross-origin</code>.");
+want("permissions-policy",null,"Turn off features you never use, e.g. <code>geolocation=(), camera=(), microphone=()</code>.");
+want("cross-origin-opener-policy",null,"Add <code>same-origin</code> (or <code>same-origin-allow-popups</code> if you use sign-in or payment popups).");
+function drop(name,bad,fix){var v=h[name];if(v!==undefined&&bad(v)){k++;rem.push(li("ng","✕ Remove: "+name+": "+esc(v),fix))}}
+drop("x-powered-by",function(){return true},"OWASP: remove all X-Powered-By headers. It tells visitors which framework you run.");
+drop("server",function(v){return /\d/.test(v)},"Hide the version number (nginx: <code>server_tokens off;</code>).");
+drop("x-xss-protection",function(v){return v.trim()!=="0"},"OWASP: do not set it, or turn it off with <code>0</code>. Use CSP instead.");
+drop("public-key-pins",function(){return true},"OWASP: do not use.");
+drop("expect-ct",function(){return true},"OWASP: do not use it.");
+document.getElementById("r").innerHTML='<p class="score">'+n+' of 7 recommended headers look right. '+(k?k+' header'+(k>1?'s':'')+' to remove.':'Nothing to remove.')+'</p>'+
+(rem.length?'<h2>Remove first (usually one-line changes)</h2><ul class="res">'+rem.join("")+'</ul>':'')+'<h2>The 7 to add</h2><ul class="res">'+add.join("")+'</ul>'+
+'<p class="note">Add CSP, COOP and HSTS one at a time and test: they can break parts of a site.</p>'}
+document.getElementById("go").onclick=run;
+document.getElementById("ex").onclick=function(){document.getElementById("h").value=EX;run()};
+})();
+</script>'''
+
+COOKIE = r'''<h1>Set-Cookie builder and checker</h1>
+<div class="answer"><p class="ah">HOW IT WORKS</p><p>Fill in the cookie and pick its attributes. You get the <code>Set-Cookie</code> line to copy, and a warning for each combination that browsers reject or that is easy to get wrong. It runs only in your browser.</p></div>
+<div class="tool">
+<div><label for="cn">Name</label><input type="text" id="cn" value="session" spellcheck="false"></div>
+<div><label for="cv">Value</label><input type="text" id="cv" value="abc123" spellcheck="false"></div>
+<div><label for="cp">Path</label><input type="text" id="cp" value="/" spellcheck="false"></div>
+<div><label for="cd">Domain (leave empty for this host only)</label><input type="text" id="cd" value="" spellcheck="false" placeholder="example.com"></div>
+<div><label for="cm">Max-Age in seconds (leave empty for a session cookie)</label><input type="number" id="cm" value="" min="0" placeholder="86400 = 1 day"></div>
+<div><label for="cs">SameSite</label><select id="cs"><option value="">(not set)</option><option>Strict</option><option selected>Lax</option><option>None</option></select></div>
+<div class="row"><label><input type="checkbox" id="sec" checked> Secure</label><label><input type="checkbox" id="ho" checked> HttpOnly</label><label><input type="checkbox" id="pt"> Partitioned</label></div>
+</div>
+<p class="score">Your header</p><div id="out"></div><p><button class="btn ghost" id="copy" type="button">Copy</button></p>
+<ul class="res" id="warn" aria-live="polite"></ul>
+<h2 id="rules">The rules this checks</h2>
+<ul><li><code>SameSite=None</code> needs <code>Secure</code>. MDN: "The <code>Secure</code> attribute must also be set when using this value."</li>
+<li><code>Partitioned</code> needs <code>Secure</code>.</li>
+<li>A name starting with <code>__Secure-</code> needs <code>Secure</code>. A name starting with <code>__Host-</code> needs <code>Secure</code>, <code>Path=/</code> and no <code>Domain</code>.</li>
+<li>Without <code>SameSite</code>, Chrome treats the cookie as <code>Lax</code>.</li>
+<li>If both <code>Expires</code> and <code>Max-Age</code> are set, <code>Max-Age</code> wins, so this tool only uses <code>Max-Age</code>.</li></ul>
+<p>More on the three SameSite values: <a href="BASE/samesite-cookie-attribute/">SameSite cookies explained</a>. To see and edit the cookies a site has already set: <a href="BASE/edit-cookies-in-chrome/">How to view and edit cookies in Chrome</a>.</p>
+<h2 id="not-for">Who this is not for</h2>
+<ul><li>This builds one header line. It does not check what your server or framework actually sends; look at the real response in DevTools for that.</li>
+<li>It does not encode special characters in the value for you. Keep values to letters, numbers and <code>-_.</code>, or encode them in your code.</li></ul>
+<h2 id="sources">Sources (checked 2026-10-12)</h2>
+<ul><li>MDN, Set-Cookie: <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie">https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie</a></li>
+<li>web.dev, SameSite cookies explained: <a href="https://web.dev/articles/samesite-cookies-explained">https://web.dev/articles/samesite-cookies-explained</a></li></ul>
+<script>
+(function(){
+function $(i){return document.getElementById(i)}
+function esc(s){return s.replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function li(c,t){return '<li class="'+c+'">'+t+'</li>'}
+function run(){var n=$("cn").value.trim(),v=$("cv").value.trim(),p=$("cp").value.trim(),d=$("cd").value.trim(),m=$("cm").value.trim(),s=$("cs").value,sec=$("sec").checked,ho=$("ho").checked,pt=$("pt").checked,w=[];
+var a=[n+"="+v];if(p)a.push("Path="+p);if(d)a.push("Domain="+d);if(m!=="")a.push("Max-Age="+m);if(sec)a.push("Secure");if(ho)a.push("HttpOnly");if(s)a.push("SameSite="+s);if(pt)a.push("Partitioned");
+var line="Set-Cookie: "+a.join("; ");$("out").textContent=line;
+if(!n)w.push(li("ng","✕ The cookie needs a name."));
+if(/[\s;,\\"]/.test(v))w.push(li("ng","✕ The value contains a space, comma, semicolon, quote or backslash. Encode it first."));
+if(s==="None"&&!sec)w.push(li("ng","✕ SameSite=None without Secure: browsers reject this cookie. Turn on Secure."));
+if(pt&&!sec)w.push(li("ng","✕ Partitioned without Secure: turn on Secure."));
+if(/^__Secure-/.test(n)&&!sec)w.push(li("ng","✕ A __Secure- name needs Secure."));
+if(/^__Host-/.test(n)){if(!sec)w.push(li("ng","✕ A __Host- name needs Secure."));if(d)w.push(li("ng","✕ A __Host- name must not have a Domain."));if(p!=="/")w.push(li("ng","✕ A __Host- name needs Path=/."))}
+if(!s)w.push(li("info","△ No SameSite: Chrome treats the cookie as Lax. Set the value you mean."));
+if(!ho)w.push(li("info","△ No HttpOnly: page JavaScript can read this cookie through document.cookie. Turn it on unless your scripts need to read it."));
+if(!sec&&s!=="None")w.push(li("info","△ No Secure: the cookie is also sent on plain http:// requests."));
+if(d)w.push(li("info","△ With Domain set, the cookie is also sent to subdomains. Leave it empty to keep it to this host only."));
+if(m==="")w.push(li("info","△ No Max-Age: this is a session cookie."));
+if(m!==""&&Number(m)<=0)w.push(li("info","△ Max-Age of 0 or less expires the cookie immediately (this is how you delete one)."));
+if(!w.length)w.push(li("ok","✓ No problems found with these attributes."));
+$("warn").innerHTML=w.join("")}
+["cn","cv","cp","cd","cm","cs","sec","ho","pt"].forEach(function(i){$(i).addEventListener("input",run);$(i).addEventListener("change",run)});
+$("copy").onclick=function(){navigator.clipboard.writeText($("out").textContent).then(function(){$("copy").textContent="Copied";setTimeout(function(){$("copy").textContent="Copy"},1500)})};
+run()})();
+</script>'''
+
+BODIES = {"security-headers-checker": CHECKER, "set-cookie-builder": COOKIE}

@@ -3,6 +3,7 @@ the only product links are to Honest Tools' own extensions and Gumroad products,
 {{product:headers}}, {{product:cookies}}, {{product:checklist}} or {{product:templates}}."""
 import json, re, html, datetime, pathlib, shutil
 import markdown
+from en_tools import TOOLS, BODIES, TOOL_CSS
 
 PRODUCTS = {
     "headers": ("Honest Headers (free Chrome extension)",
@@ -26,6 +27,8 @@ CSS_EN = 'article a{overflow-wrap:anywhere}td code{overflow-wrap:anywhere}articl
 
 ICONS = {"headers": "honest-headers-48.png", "cookies": "honest-cookies-48.png"}
 SRC = pathlib.Path(__file__).resolve().parent
+TOOL_FOR = {"security-headers-checklist": "security-headers-checker", "samesite-cookie-attribute": "set-cookie-builder", "edit-cookies-in-chrome": "set-cookie-builder"}
+REPORT = '<p class="fix">Found a mistake or something out of date? <a href="https://github.com/honestheaders/honest-headers/issues">Tell us on GitHub</a>. We check each fact against the sources above.</p>'
 
 CSS_EN += ('.item .iname img{width:28px;height:28px;vertical-align:-7px;margin-right:8px;border-radius:6px}'
            '.answer{background:#eef3f8;border-left:5px solid #1f4e79;border-radius:8px;padding:12px 16px;margin:18px 0}.answer .ah{margin:0;font-size:13px;font-weight:700;color:#1f4e79;letter-spacing:.03em}.answer p{margin:4px 0 0}'
@@ -33,7 +36,7 @@ CSS_EN += ('.item .iname img{width:28px;height:28px;vertical-align:-7px;margin-r
            'figure.dia{margin:20px auto;max-width:520px;background:#fff;border:1px solid #ddd;border-radius:10px;padding:10px}figure.dia svg,figure.shot img{display:block;width:100%;height:auto}'
            'figure.shot{margin:20px auto;max-width:520px}figure.shot img{border:1px solid #ddd;border-radius:10px}figcaption{font-size:13px;color:#666;text-align:center;margin-top:6px}'
            'pre{position:relative}.cp{position:absolute;top:6px;right:6px;font:12px system-ui,sans-serif;background:#fff;border:1px solid #bbb;border-radius:6px;padding:3px 8px;cursor:pointer}'
-           'h2[id]{scroll-margin-top:12px}')
+           'h2[id]{scroll-margin-top:12px}.tl{background:#fff8dc;border:1px solid #ecd98a;border-radius:8px;padding:8px 12px;font-size:15px}.fix{font-size:13px;color:#666;border-top:1px solid #ddd;padding-top:10px;margin-top:28px}' + TOOL_CSS)
 
 COPY_JS = ('<script>document.querySelectorAll("article pre").forEach(function(p){var b=document.createElement("button");b.type="button";b.className="cp";b.textContent="Copy";'
            'b.onclick=function(){navigator.clipboard.writeText((p.querySelector("code")||p).innerText).then(function(){b.textContent="Copied";setTimeout(function(){b.textContent="Copy"},1500)})};p.appendChild(b)})</script>')
@@ -47,13 +50,13 @@ def diagram(name, caption):
     svg = (SRC / "diagrams" / f"{name}.svg").read_text(encoding="utf-8").strip()
     return f'<figure class="dia">{svg}<figcaption>{html.escape(caption)}</figcaption></figure>'
 
-def enhance(body_html):
+def enhance(body_html, extra=""):
     """Short-answer box, table of contents with reading time, diagrams and screenshots."""
     body_html = re.sub(r"<p>\{\{diagram:([\w-]+)\|([^}]*)\}\}</p>", lambda m: diagram(m.group(1), m.group(2)), body_html)
     def first(m):
         inner = re.sub(r"^(<strong>)?Short answer:?(</strong>)?:?\s*", "", m.group(1))
         inner = re.sub(r"^(<[^>]+>)?([a-z])", lambda x: (x.group(1) or "") + x.group(2).upper(), inner)
-        return f'<div class="answer"><p class="ah">THE SHORT ANSWER</p><p>{inner}</p></div>'
+        return f'<div class="answer"><p class="ah">THE SHORT ANSWER</p><p>{inner}</p></div>{extra}'
     body_html = re.sub(r"^\s*<p>(.*?)</p>", first, body_html, count=1, flags=re.S)
     heads, used = [], set()
     def anchor(m):
@@ -69,7 +72,7 @@ def enhance(body_html):
     if len(heads) >= 3:
         items = "".join(f'<li><a href="#{h}">{t}</a></li>' for h, t in heads)
         toc = f'<nav class="toc" aria-label="On this page"><p>On this page · about {max(1, round(words / 220))} min read</p><ol>{items}</ol></nav>'
-        body_html = body_html.replace("</div>", "</div>" + toc, 1) if body_html.startswith('<div class="answer">') else toc + body_html
+        body_html = body_html.replace("</div>" + extra, "</div>" + extra + toc, 1) if body_html.startswith('<div class="answer">') else toc + body_html
     return body_html
 
 def product_card(key, base=""):
@@ -87,7 +90,7 @@ def build(OUT, CFG, CSS, ROOT):
     def page(path, title, desc, body, article=False, extra_head=""):
         canon = f"{URL}{path}"
         nav = (f'<header><div class="wrap"><a class="logo" href="{BASE}/">Honest Guide</a>'
-               f'<nav><a href="{BASE}/">Guides</a><a href="{BASE}/about/">About</a><a href="{CFG["base_path"]}/">日本語</a></nav></div></header>')
+               f'<nav><a href="{BASE}/">Guides</a><a href="{BASE}/tools/">Tools</a><a href="{BASE}/about/">About</a><a href="{CFG["base_path"]}/">日本語</a></nav></div></header>')
         foot = (f'<footer><div class="wrap"><p>Practical notes on HTTP headers, cookies and browser tools, by {CFG["operator"]}. '
                 f'Facts are checked against official documentation; each article lists its sources and the date they were checked.</p>'
                 f'<p><a href="{BASE}/about/">About</a> / <a href="{BASE}/privacy/">Privacy</a></p><p>&copy; {year} {CFG["operator"]}</p></div></footer>')
@@ -114,7 +117,9 @@ def build(OUT, CFG, CSS, ROOT):
         meta = {k.strip(): v.strip() for k, v in (l.split(":", 1) for l in m.group(1).splitlines() if ":" in l)}
         body_md = re.sub(r"\{\{product:(\w+)\}\}", lambda x: product_card(x.group(1), BASE), m.group(2))
         body_md = re.sub(r"\{\{shot:([\w.-]+)\|([^}]*)\}\}", lambda x: f'<figure class="shot"><img src="{BASE}/img/{x.group(1)}" alt="{html.escape(x.group(2))}" loading="lazy"><figcaption>{html.escape(x.group(2))}</figcaption></figure>', body_md)
-        arts.append((f.stem, meta, enhance(markdown.markdown(body_md, extensions=["tables", "fenced_code"]))))
+        tool = TOOL_FOR.get(f.stem)
+        extra = (f'<p class="tl">Free tool: <a href="{BASE}/tools/{tool}/">{html.escape(dict((t[0], t[1]) for t in TOOLS)[tool])}</a>, runs in your browser.</p>') if tool else ""
+        arts.append((f.stem, meta, enhance(markdown.markdown(body_md, extensions=["tables", "fenced_code"]), extra)))
     arts.sort(key=lambda a: a[1].get("updated", ""), reverse=True)
 
     for slug, meta, body_html in arts:
@@ -126,14 +131,20 @@ def build(OUT, CFG, CSS, ROOT):
                          "inLanguage": "en", "dateModified": meta.get("updated", TODAY), "author": {"@type": "Organization", "name": CFG["operator"]},
                          "publisher": {"@type": "Organization", "name": CFG["operator"]}, "mainEntityOfPage": f"{URL}/{slug}/"})
         body = (f'<nav class="crumb"><a href="{BASE}/">Guides</a> › {html.escape(meta["title"])}</nav><article><h1>{html.escape(meta["title"])}</h1>'
-                f'<p class="date">Updated {meta.get("updated", TODAY)}</p>{DISCLOSURE}{body_html}</article>{related}{COPY_JS if "<pre>" in body_html else ""}')
+                f'<p class="date">Updated {meta.get("updated", TODAY)}</p>{DISCLOSURE}{body_html}{REPORT}</article>{related}{COPY_JS if "<pre>" in body_html else ""}')
         pages.append(page(f"/{slug}/", f'{meta["title"]} | Honest Guide', meta.get("description", ""), body, True, f'<script type="application/ld+json">{ld}</script>'))
 
     lst = "".join(f'<li><a href="{BASE}/{s}/"><b>{html.escape(m["title"])}</b><span>{html.escape(m.get("description", ""))}</span></a></li>' for s, m, _ in arts) or "<li>Coming soon.</li>"
     tools = "".join(f'<li><a href="{u}" rel="noopener" target="_blank"><b>{html.escape(n)}</b><span>{html.escape(d)}</span></a></li>' for n, d, u, _ in PRODUCTS.values())
+    free = "".join(f'<li><a href="{BASE}/tools/{sl}/"><b>{html.escape(t)}</b><span>{html.escape(d)}</span></a></li>' for sl, t, d in TOOLS)
+    for sl, t, d in TOOLS:
+        crumb = f'<nav class="crumb"><a href="{BASE}/">Guides</a> › <a href="{BASE}/tools/">Tools</a> › {html.escape(t)}</nav>'
+        pages.append(page(f"/tools/{sl}/", f"{t} | Honest Guide", d, crumb + "<article>" + BODIES[sl].replace("BASE/", BASE + "/") + "</article>"))
+    pages.append(page("/tools/", "Free tools for HTTP headers and cookies | Honest Guide", "Free browser tools: check security headers and build Set-Cookie headers. Nothing is sent to a server.",
+                      f'<h1>Free tools</h1><p>Small tools that run only in your browser. Nothing you type is sent anywhere.</p><ul class="cards">{free}</ul>'))
     top = (f'<section class="hero"><h1>Honest Guide</h1><p>Plain answers about HTTP headers, cookies and browser developer tools. '
            f'Checked against official docs, with sources and dates.</p></section><h2>Guides</h2><ul class="cards">{lst}</ul>'
-           f'<h2>Tools we make</h2><ul class="cards">{tools}</ul>')
+           f'<h2>Free tools (run in your browser)</h2><ul class="cards">{free}</ul><h2>Tools we make</h2><ul class="cards">{tools}</ul>')
     pages.append(page("/", "Honest Guide | HTTP headers, cookies and browser dev tools, explained", "Plain answers about HTTP headers, cookies and browser developer tools, checked against official documentation.", top))
 
     about = f'''<h1>About</h1><p>Honest Guide is written by {CFG["operator"]}, a small maker of browser tools. We write about the problems our tools solve: HTTP headers, cookies and browser developer tools.</p>
