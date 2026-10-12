@@ -1,0 +1,23 @@
+<svg viewBox="0 0 360 300" role="img" aria-labelledby="hf-t" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+<title id="hf-t">Request headers go from the browser to the server and can be changed by an extension. Response headers come back from the server and can be overridden in DevTools or by an extension.</title>
+<defs><marker id="hf-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1f4e79"/></marker></defs>
+<rect x="10" y="8" width="340" height="46" rx="10" fill="#eef3f8" stroke="#1f4e79"/>
+<text x="180" y="37" text-anchor="middle" font-size="16" font-weight="700" fill="#1f4e79">Your browser (Chrome)</text>
+<rect x="10" y="246" width="340" height="46" rx="10" fill="#f1f1ec" stroke="#666"/>
+<text x="180" y="275" text-anchor="middle" font-size="16" font-weight="700" fill="#222">Server</text>
+<line x1="34" y1="58" x2="34" y2="240" stroke="#1f4e79" stroke-width="3" marker-end="url(#hf-a)"/>
+<line x1="326" y1="242" x2="326" y2="60" stroke="#1f4e79" stroke-width="3" marker-end="url(#hf-a)"/>
+<text x="48" y="104" font-size="14" font-weight="700" fill="#222">Request headers</text>
+<text x="48" y="126" font-size="12" fill="#444">e.g. Authorization,</text>
+<text x="48" y="142" font-size="12" fill="#444">X-Debug, User-Agent</text>
+<rect x="48" y="156" width="128" height="40" rx="6" fill="#fff8dc" stroke="#ecd98a"/>
+<text x="56" y="173" font-size="12" font-weight="700" fill="#222">Change with</text>
+<text x="56" y="189" font-size="12" font-weight="700" fill="#222">an extension</text>
+<text x="312" y="104" text-anchor="end" font-size="14" font-weight="700" fill="#222">Response headers</text>
+<text x="312" y="126" text-anchor="end" font-size="12" fill="#444">e.g. CSP, CORS,</text>
+<text x="312" y="142" text-anchor="end" font-size="12" fill="#444">Cache-Control</text>
+<rect x="184" y="156" width="128" height="56" rx="6" fill="#fff8dc" stroke="#ecd98a"/>
+<text x="304" y="173" text-anchor="end" font-size="12" font-weight="700" fill="#222">DevTools override</text>
+<text x="304" y="189" text-anchor="end" font-size="12" fill="#444">(Network panel)</text>
+<text x="304" y="205" text-anchor="end" font-size="12" fill="#444">or an extension</text>
+</svg>

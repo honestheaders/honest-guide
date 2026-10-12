@@ -1,7 +1,7 @@
 """English section (/en/). Articles live in content_en/*.md. No affiliate links here:
 the only product links are to Honest Tools' own extensions and Gumroad products, written as
 {{product:headers}}, {{product:cookies}}, {{product:checklist}} or {{product:templates}}."""
-import json, re, html, datetime, pathlib
+import json, re, html, datetime, pathlib, shutil
 import markdown
 
 PRODUCTS = {
@@ -24,9 +24,58 @@ DISCLOSURE = ('<p class="pr">Disclosure: Honest Tools makes Honest Headers, Hone
 
 CSS_EN = 'article a{overflow-wrap:anywhere}td code{overflow-wrap:anywhere}article table{display:block;overflow-x:auto}body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.7}code{background:#f1f1ec;padding:1px 4px;border-radius:4px;font-size:.92em}pre{background:#f1f1ec;padding:12px;border-radius:8px;overflow-x:auto}pre code{padding:0}.own{background:#1f4e79;box-shadow:0 2px 0 #12304d}.own:hover,.own:focus-visible{background:#163a5c}.own .shop{color:#1f4e79}'
 
-def product_card(key):
+ICONS = {"headers": "honest-headers-48.png", "cookies": "honest-cookies-48.png"}
+SRC = pathlib.Path(__file__).resolve().parent
+
+CSS_EN += ('.item .iname img{width:28px;height:28px;vertical-align:-7px;margin-right:8px;border-radius:6px}'
+           '.answer{background:#eef3f8;border-left:5px solid #1f4e79;border-radius:8px;padding:12px 16px;margin:18px 0}.answer .ah{margin:0;font-size:13px;font-weight:700;color:#1f4e79;letter-spacing:.03em}.answer p{margin:4px 0 0}'
+           '.toc{background:#fff;border:1px solid #ddd;border-radius:10px;padding:10px 16px;margin:18px 0;font-size:15px}.toc p{margin:0;font-size:13px;color:#666}.toc ol{margin:6px 0 0;padding-left:20px}.toc li{margin:2px 0}.toc a{color:#1f4e79;margin-left:0;font-size:inherit;text-decoration:underline}'
+           'figure.dia{margin:20px auto;max-width:520px;background:#fff;border:1px solid #ddd;border-radius:10px;padding:10px}figure.dia svg,figure.shot img{display:block;width:100%;height:auto}'
+           'figure.shot{margin:20px auto;max-width:520px}figure.shot img{border:1px solid #ddd;border-radius:10px}figcaption{font-size:13px;color:#666;text-align:center;margin-top:6px}'
+           'pre{position:relative}.cp{position:absolute;top:6px;right:6px;font:12px system-ui,sans-serif;background:#fff;border:1px solid #bbb;border-radius:6px;padding:3px 8px;cursor:pointer}'
+           'h2[id]{scroll-margin-top:12px}')
+
+COPY_JS = ('<script>document.querySelectorAll("article pre").forEach(function(p){var b=document.createElement("button");b.type="button";b.className="cp";b.textContent="Copy";'
+           'b.onclick=function(){navigator.clipboard.writeText((p.querySelector("code")||p).innerText).then(function(){b.textContent="Copied";setTimeout(function(){b.textContent="Copy"},1500)})};p.appendChild(b)})</script>')
+
+STOP = set("a an and the to of in on for with how what why is it its your you or by from vs do does chrome".split())
+
+def topic_words(title):
+    return {w for w in re.findall(r"[a-z]+", title.lower()) if w not in STOP and len(w) > 2} | {w.rstrip("s") for w in re.findall(r"[a-z]+", title.lower()) if len(w) > 3}
+
+def diagram(name, caption):
+    svg = (SRC / "diagrams" / f"{name}.svg").read_text(encoding="utf-8").strip()
+    return f'<figure class="dia">{svg}<figcaption>{html.escape(caption)}</figcaption></figure>'
+
+def enhance(body_html):
+    """Short-answer box, table of contents with reading time, diagrams and screenshots."""
+    body_html = re.sub(r"<p>\{\{diagram:([\w-]+)\|([^}]*)\}\}</p>", lambda m: diagram(m.group(1), m.group(2)), body_html)
+    def first(m):
+        inner = re.sub(r"^(<strong>)?Short answer:?(</strong>)?:?\s*", "", m.group(1))
+        inner = re.sub(r"^(<[^>]+>)?([a-z])", lambda x: (x.group(1) or "") + x.group(2).upper(), inner)
+        return f'<div class="answer"><p class="ah">THE SHORT ANSWER</p><p>{inner}</p></div>'
+    body_html = re.sub(r"^\s*<p>(.*?)</p>", first, body_html, count=1, flags=re.S)
+    heads, used = [], set()
+    def anchor(m):
+        text = re.sub(r"<[^>]+>", "", m.group(1))
+        hid = re.sub(r"[^a-z0-9]+", "-", html.unescape(text).lower()).strip("-")[:48] or "s"
+        while hid in used:
+            hid += "-2"
+        used.add(hid)
+        heads.append((hid, text))
+        return f'<h2 id="{hid}">{m.group(1)}</h2>'
+    body_html = re.sub(r"<h2>(.*?)</h2>", anchor, body_html)
+    words = len(re.findall(r"[A-Za-z0-9'-]+", re.sub(r"<svg.*?</svg>|<[^>]+>", " ", body_html, flags=re.S)))
+    if len(heads) >= 3:
+        items = "".join(f'<li><a href="#{h}">{t}</a></li>' for h, t in heads)
+        toc = f'<nav class="toc" aria-label="On this page"><p>On this page · about {max(1, round(words / 220))} min read</p><ol>{items}</ol></nav>'
+        body_html = body_html.replace("</div>", "</div>" + toc, 1) if body_html.startswith('<div class="answer">') else toc + body_html
+    return body_html
+
+def product_card(key, base=""):
     name, desc, url, label = PRODUCTS[key]
-    return (f'<div class="item"><p class="iname">{html.escape(name)}</p><p class="ispec">{html.escape(desc)}</p>'
+    icon = f'<img src="{base}/img/{ICONS[key]}" alt="" width="28" height="28">' if key in ICONS else ""
+    return (f'<div class="item"><p class="iname">{icon}{html.escape(name)}</p><p class="ispec">{html.escape(desc)}</p>'
             f'<a class="buy own" href="{url}" rel="noopener" target="_blank"><span class="shop">Honest Tools</span>{html.escape(label)}<span class="arrow">›</span></a></div>')
 
 def build(OUT, CFG, CSS, ROOT):
@@ -52,25 +101,32 @@ def build(OUT, CFG, CSS, ROOT):
         (d / "index.html").write_text(doc, encoding="utf-8")
         return "/en" + path
 
+    img_out = OUT / "en" / "img"
+    img_out.mkdir(parents=True, exist_ok=True)
+    for f in (SRC / "img").glob("*"):
+        shutil.copyfile(f, img_out / f.name)
+
     pages, arts = [], []
     for f in sorted((ROOT / "content_en").glob("*.md")):
         m = re.match(r"---\n(.*?)\n---\n(.*)", f.read_text(encoding="utf-8"), re.S)
         if not m:
             continue
         meta = {k.strip(): v.strip() for k, v in (l.split(":", 1) for l in m.group(1).splitlines() if ":" in l)}
-        body_md = re.sub(r"\{\{product:(\w+)\}\}", lambda x: product_card(x.group(1)), m.group(2))
-        arts.append((f.stem, meta, markdown.markdown(body_md, extensions=["tables", "fenced_code"])))
+        body_md = re.sub(r"\{\{product:(\w+)\}\}", lambda x: product_card(x.group(1), BASE), m.group(2))
+        body_md = re.sub(r"\{\{shot:([\w.-]+)\|([^}]*)\}\}", lambda x: f'<figure class="shot"><img src="{BASE}/img/{x.group(1)}" alt="{html.escape(x.group(2))}" loading="lazy"><figcaption>{html.escape(x.group(2))}</figcaption></figure>', body_md)
+        arts.append((f.stem, meta, enhance(markdown.markdown(body_md, extensions=["tables", "fenced_code"]))))
     arts.sort(key=lambda a: a[1].get("updated", ""), reverse=True)
 
     for slug, meta, body_html in arts:
-        rel = [a for a in arts if a[0] != slug][:3]
+        mine = topic_words(meta["title"])
+        rel = sorted((a for a in arts if a[0] != slug), key=lambda a: -len(mine & topic_words(a[1]["title"])))[:3]
         rel_html = "".join(f'<li><a href="{BASE}/{r[0]}/">{html.escape(r[1]["title"])}</a></li>' for r in rel)
         related = f'<section class="related"><h2>More guides</h2><ul>{rel_html}</ul></section>' if rel else ""
         ld = json.dumps({"@context": "https://schema.org", "@type": "Article", "headline": meta["title"], "description": meta.get("description", ""),
                          "inLanguage": "en", "dateModified": meta.get("updated", TODAY), "author": {"@type": "Organization", "name": CFG["operator"]},
                          "publisher": {"@type": "Organization", "name": CFG["operator"]}, "mainEntityOfPage": f"{URL}/{slug}/"})
         body = (f'<nav class="crumb"><a href="{BASE}/">Guides</a> › {html.escape(meta["title"])}</nav><article><h1>{html.escape(meta["title"])}</h1>'
-                f'<p class="date">Updated {meta.get("updated", TODAY)}</p>{DISCLOSURE}{body_html}</article>{related}')
+                f'<p class="date">Updated {meta.get("updated", TODAY)}</p>{DISCLOSURE}{body_html}</article>{related}{COPY_JS if "<pre>" in body_html else ""}')
         pages.append(page(f"/{slug}/", f'{meta["title"]} | Honest Guide', meta.get("description", ""), body, True, f'<script type="application/ld+json">{ld}</script>'))
 
     lst = "".join(f'<li><a href="{BASE}/{s}/"><b>{html.escape(m["title"])}</b><span>{html.escape(m.get("description", ""))}</span></a></li>' for s, m, _ in arts) or "<li>Coming soon.</li>"

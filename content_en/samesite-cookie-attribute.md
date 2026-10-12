@@ -14,6 +14,8 @@ Short answer: **Strict** sends the cookie only on requests from the same site. *
 | `Lax` | Yes | Only for top-level navigations with a safe method (for example clicking a link) | Most login and session cookies |
 | `None` | Yes | Yes, but the cookie must also have `Secure` | Cookies used inside iframes or by embedded widgets on other sites |
 
+{{diagram:samesite-grid|When Chrome sends a cookie, by SameSite value}}
+
 MDN on `None`: "The `Secure` attribute must also be set when using this value."
 
 ## What happens when SameSite is missing

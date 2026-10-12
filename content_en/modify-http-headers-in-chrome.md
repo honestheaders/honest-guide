@@ -15,6 +15,8 @@ Short answer: to change **response** headers, use DevTools: in the **Network** p
 | Remove a header the server sends | DevTools overrides, or an extension |
 | Switch between sets of headers quickly | An extension with profiles |
 
+{{diagram:header-flow|Request headers leave your browser; response headers come back. Each has its own tool.}}
+
 ## Override response headers in DevTools
 
 1. Open DevTools and the **Network** panel. Reload the page.

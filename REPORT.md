@@ -21,3 +21,4 @@
 - 2026-10-10: 英語記事「ModHeader was removed from the Chrome Web Store…」を公開(出典: Stripe OLT の調査、Chrome for Developers の declarativeNetRequest / webRequest)。ModHeader削除(2026-07-10)で乗り換え先を探す人向け。あわせて拡張の出す前チェック ext-check/ を追加し、themes_en.md に旬のテーマ E22〜E25 を先頭に追加。
 - 2026-10-11: 英語記事「Chrome extension permissions: what "site access" means and how to limit it」を公開(E22)。出典: Chrome for Developers(Declare permissions・activeTab・Permission warning guidelines)、Chrome Help(Install and manage extensions)。チェックは1回で合格。
 - 2026-10-12: 英語記事「Moving header rules to a new tool: why "append" fails on some request headers in Chrome」を公開(E23)。出典: Chrome for Developers(declarativeNetRequest、Replace blocking web request listeners)。ModHeaderのJSONの中身は公式で確認できなかったので書いていない。チェックは1回で合格。
+- 2026-10-12: 英語記事を「文字だけ」から読みやすい形に。全記事に「答えの箱」「目次と読む時間」、コードの「Copy」ボタン、内容の近い「More guides」を自動で追加。図2つ(ヘッダーの流れ、SameSite の早見図)と、自社拡張(Honest Cookies)の画面写真1枚を追加。商品カードにアイコン。

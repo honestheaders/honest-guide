@@ -41,6 +41,8 @@ We make one that works this way. It installs with no site access and asks for th
 
 {{product:cookies}}
 
+{{shot:honest-cookies-popup.webp|Honest Cookies (our extension) showing the cookies of a local test site}}
+
 ## Who this is not for
 
 - If you only need to change a cookie once or twice, DevTools is enough. Do not install an extension you will not use again.

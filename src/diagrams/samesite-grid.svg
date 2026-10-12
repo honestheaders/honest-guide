@@ -1,0 +1,24 @@
+<svg viewBox="0 0 360 236" role="img" aria-labelledby="ss-t" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+<title id="ss-t">When the browser sends a cookie. Strict: same-site requests only. Lax: same-site requests and cross-site top-level links with a safe method such as GET. None: all requests, and the cookie must also be Secure.</title>
+<g font-size="11" fill="#444" text-anchor="middle">
+<text x="120" y="20">Same-site</text><text x="120" y="35">request</text>
+<text x="216" y="20">Cross-site link</text><text x="216" y="35">(top-level GET)</text>
+<text x="312" y="20">Other cross-site</text><text x="312" y="35">(iframe, fetch)</text>
+</g>
+<g font-size="14" font-weight="700" fill="#222">
+<text x="8" y="76">Strict</text><text x="8" y="124">Lax</text><text x="8" y="172">None</text>
+</g>
+<g font-size="12" font-weight="700" text-anchor="middle">
+<rect x="74" y="50" width="92" height="40" rx="6" fill="#e6f4ea"/><text x="120" y="75" fill="#1e6b34">✓ Sent</text>
+<rect x="170" y="50" width="92" height="40" rx="6" fill="#fbe9e9"/><text x="216" y="75" fill="#a11d1d">✕ Not sent</text>
+<rect x="266" y="50" width="92" height="40" rx="6" fill="#fbe9e9"/><text x="312" y="75" fill="#a11d1d">✕ Not sent</text>
+<rect x="74" y="98" width="92" height="40" rx="6" fill="#e6f4ea"/><text x="120" y="123" fill="#1e6b34">✓ Sent</text>
+<rect x="170" y="98" width="92" height="40" rx="6" fill="#e6f4ea"/><text x="216" y="123" fill="#1e6b34">✓ Sent</text>
+<rect x="266" y="98" width="92" height="40" rx="6" fill="#fbe9e9"/><text x="312" y="123" fill="#a11d1d">✕ Not sent</text>
+<rect x="74" y="146" width="92" height="40" rx="6" fill="#e6f4ea"/><text x="120" y="171" fill="#1e6b34">✓ Sent</text>
+<rect x="170" y="146" width="92" height="40" rx="6" fill="#e6f4ea"/><text x="216" y="171" fill="#1e6b34">✓ Sent</text>
+<rect x="266" y="146" width="92" height="40" rx="6" fill="#e6f4ea"/><text x="312" y="171" fill="#1e6b34">✓ Sent</text>
+</g>
+<text x="8" y="210" font-size="12" fill="#444">None works only with Secure. No SameSite at all:</text>
+<text x="8" y="227" font-size="12" fill="#444">Chrome treats the cookie as Lax.</text>
+</svg>
