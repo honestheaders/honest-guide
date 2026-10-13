@@ -65,13 +65,13 @@ def quick_box(body_html):
 
 PR = '<p class="pr">※この記事にはプロモーション(広告)が含まれます。商品リンクから購入されると、当サイトに報酬が入ることがあります。</p>'
 
-def page(path, title, desc, body, article=False, extra_head=""):
+def page(path, title, desc, body, article=False, extra_head="", lang="ja"):
     canon = f'{CFG["base_url"]}{path}'
     nav = f'''<header><div class="wrap"><a class="logo" href="{BASE}/">{CFG["site_name"]}</a>
 <nav><a href="{BASE}/tools/">計算ツール</a><a href="{BASE}/guides/">えらび方ガイド</a><a href="{BASE}/templates/">手続き表</a><a href="{BASE}/about/">運営者情報</a><a href="{BASE}/en/" hreflang="en">English</a></nav></div></header>'''
     foot = f'''<footer><div class="wrap"><p>当サイトは、楽天アフィリエイトなどのアフィリエイトプログラムに参加しています。商品リンクを通じて報酬を得ることがあります。</p>
-<p><a href="{BASE}/about/">運営者情報</a> / <a href="{BASE}/privacy/">プライバシーポリシー</a></p><p>&copy; {datetime.date.today().year} {CFG["operator"]}</p></div></footer>'''
-    doc = f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="google-site-verification" content="hqAGwjMx_F-TdJl79qigCCcuhYe7_9BUhfd7nEK2TMI"><meta name="viewport" content="width=device-width,initial-scale=1">
+<p><a href="{BASE}/about/">運営者情報</a> / <a href="{BASE}/privacy/">プライバシーポリシー(Privacy Policy)</a> / <a href="{BASE}/terms/">利用規約(Terms of Service)</a></p><p>&copy; {datetime.date.today().year} {CFG["operator"]}</p></div></footer>'''
+    doc = f'''<!doctype html><html lang="{lang}"><head><meta charset="utf-8"><meta name="google-site-verification" content="hqAGwjMx_F-TdJl79qigCCcuhYe7_9BUhfd7nEK2TMI"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{html.escape(title)}</title><meta name="description" content="{html.escape(desc)}"><link rel="canonical" href="{canon}">
 <meta property="og:title" content="{html.escape(title)}"><meta property="og:description" content="{html.escape(desc)}"><meta property="og:type" content="{'article' if article else 'website'}">
 <link rel="icon" href="{BASE}/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="{CFG["site_name"]}" href="{CFG["base_url"]}/feed.xml">
@@ -188,13 +188,9 @@ about = f'''<h1>運営者情報</h1><table class="plain"><tr><th>サイト名</t
 <h2>AIの利用について</h2><p>記事の下書きや調べものに、AI(Claude)を使っています。公開前に内容を確認しています。</p>'''
 pages.append(page("/about/", "運営者情報|Honest Guide", "運営者情報と、広告・AI利用についてのご案内。", about))
 
-privacy = '''<h1>プライバシーポリシー</h1>
-<h2>個人情報の取り扱い</h2><p>当サイトでは、お問い合わせの際に、お名前やメールアドレスなどの個人情報をお伺いすることがあります。いただいた情報は、お問い合わせへの返信のためだけに使い、法令に基づく場合を除き、第三者に渡すことはありません。</p>
-<h2>アクセス解析・広告について</h2><p>当サイトは、今後、アクセス解析ツールや広告サービスを利用することがあります。これらは、Cookie(クッキー)を使って、閲覧の情報を集めることがあります。この情報から、個人が特定されることはありません。Cookieは、お使いのブラウザの設定で無効にできます。</p>
-<h2>アフィリエイトプログラムについて</h2><p>当サイトは、楽天アフィリエイトなどに参加しています。商品リンクをクリックすると、リンク先のサービスがCookieを使って、購入の情報を記録することがあります。</p>
-<h2>免責事項</h2><p>当サイトの情報は、できるだけ正確に載せるよう努めていますが、正確さや安全さを保証するものではありません。当サイトの情報で生じた損害について、責任を負いかねます。</p>
-<h2>改定</h2><p>この内容は、予告なく変えることがあります。</p>'''
-pages.append(page("/privacy/", "プライバシーポリシー|Honest Guide", "当サイトのプライバシーポリシー。", privacy))
+import legal
+pages.append(page("/privacy/", "Privacy Policy | Honest Tools", "Privacy policy for Honest Guide, the Honest Tools Chrome extensions, Gumroad products and our YouTube upload app.", legal.privacy(BASE), lang="en"))
+pages.append(page("/terms/", "Terms of Service | Honest Tools", "Terms of service for Honest Guide, the Honest Tools Chrome extensions, Gumroad products and our YouTube upload app.", legal.terms(BASE), lang="en"))
 
 # ---------- トップ ----------
 top = f'''<section class="hero"><h1>{CFG["site_name"]}</h1><p>{CFG["tagline"]}</p></section>

@@ -96,7 +96,7 @@ def build(OUT, CFG, CSS, ROOT):
                f'<nav><a href="{BASE}/">Guides</a><a href="{BASE}/tools/">Tools</a><a href="{BASE}/about/">About</a><a href="{CFG["base_path"]}/">日本語</a></nav></div></header>')
         foot = (f'<footer><div class="wrap"><p>Practical notes on HTTP headers, cookies and browser tools, by {CFG["operator"]}. '
                 f'Facts are checked against official documentation; each article lists its sources and the date they were checked.</p>'
-                f'<p><a href="{BASE}/about/">About</a> / <a href="{BASE}/privacy/">Privacy</a></p><p>&copy; {year} {CFG["operator"]}</p></div></footer>')
+                f'<p><a href="{BASE}/about/">About</a> / <a href="{CFG["base_path"]}/privacy/">Privacy Policy</a> / <a href="{CFG["base_path"]}/terms/">Terms of Service</a></p><p>&copy; {year} {CFG["operator"]}</p></div></footer>')
         doc = f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="google-site-verification" content="hqAGwjMx_F-TdJl79qigCCcuhYe7_9BUhfd7nEK2TMI"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{html.escape(title)}</title><meta name="description" content="{html.escape(desc)}"><link rel="canonical" href="{canon}">
 <meta property="og:title" content="{html.escape(title)}"><meta property="og:description" content="{html.escape(desc)}"><meta property="og:type" content="{'article' if article else 'website'}">
@@ -157,9 +157,8 @@ def build(OUT, CFG, CSS, ROOT):
 <h2>Our products</h2><p>We make Honest Headers, Honest Cookies, Honest Scraper and a few PDFs. When an article mentions them, it says so. There are no ads or affiliate links in the English section.</p>
 <h2>Contact</h2><p>Please open an issue on <a href="https://github.com/honestheaders/honest-headers/issues">GitHub</a>.</p>'''
     pages.append(page("/about/", "About | Honest Guide", "Who writes Honest Guide and how articles are checked.", about))
-    privacy = '''<h1>Privacy</h1><p>This site is a static site hosted on GitHub Pages. We do not run analytics, ads or tracking scripts, and we do not set cookies. GitHub may log technical information such as IP addresses when serving pages; see GitHub's privacy statement.</p>
-<p>Links to Gumroad and the Chrome Web Store take you to those services, which have their own privacy policies.</p><p>This policy may change; the current version is always on this page.</p>'''
-    pages.append(page("/privacy/", "Privacy | Honest Guide", "Privacy policy for the English section of Honest Guide.", privacy))
+    import legal
+    pages.append(page("/privacy/", "Privacy Policy | Honest Guide", "Privacy policy for Honest Guide and Honest Tools.", legal.privacy(CFG["base_path"])))
 
     items = "".join(f'<item><title>{html.escape(m["title"])}</title><link>{URL}/{s}/</link><guid>{URL}/{s}/</guid><description>{html.escape(m.get("description", ""))}</description>'
                     f'<pubDate>{datetime.datetime.strptime(m.get("updated", TODAY), "%Y-%m-%d").strftime("%a, %d %b %Y 00:00:00 +0000")}</pubDate></item>' for s, m, _ in arts)
