@@ -74,7 +74,7 @@
 オーナーの決定(2026-10-09): 海外向け(英語)に集中する。日本語の記事は公開済みのものを残し、新しい記事は英語で書く。
 - 記事は `content_en/スラッグ.md`(英語のスラッグ)。先頭の形式は日本語と同じ(title / description / updated)。title は引用符で囲まない。`python3 build.py` で `/en/スラッグ/` にできる。
 - テーマは `themes_en.md` の上から順に。読者は海外の開発者。テーマは「自分たちの道具(Honest Headers / Honest Cookies / Gumroad のPDF)が本当に役に立つ悩み」にする。
-- 楽天リンクは使わない(日本向けのため)。商品は `{{product:headers}}` `{{product:cookies}}` `{{product:checklist}}` `{{product:templates}}` のカードだけ。1記事3個まで。自社商品であることの表示は build が自動で入れる。
+- 楽天リンクは使わない(日本向けのため)。商品は `{{product:headers}}` `{{product:cookies}}` `{{product:scraper}}` `{{product:checklist}}` `{{product:templates}}` のカードだけ。1記事3個まで。自社商品であることの表示は build が自動で入れる。
 - 事実・手順・数値は公式の一次情報(MDN、Chrome for Developers、OWASP、RFC、各サービスの公式ドキュメント)で確認し、末尾の Sources に URL と確認日を書く。まとめサイトやブログは出典にしない。
 - 最初の3行で答えを書く(書き出しの言い回しは毎回変える)。"Who this is not for" を必ず書く。使っていない体験談、他社製品の順位づけ、"best" "#1" などの言い方、保証表現("guaranteed", "always secure")は書かない。他社の拡張機能を悪く言わない。
 - 書き出しと見出しは毎回変える。似た記事を大量に作らない。
@@ -83,5 +83,6 @@
 - **push のあとは「本当に届いたか」を確かめる。** `git fetch origin main` のあと `git log origin/main -1` が自分のコミットか確認する。違えば1回だけ `git pull --rebase origin main` → push をやり直す。それでも届かなければ「公開できなかった」と正直に報告する(「成功」と言わない)。
 - **テーマの選び方(2026-10-10 追加):** 読者がいま検索している悩みを優先する。上の todo から順に書くが、themes_en.md の E21 以降(ModHeader削除・権限の見方・移行)は旬の話題なので先に進める。他社の拡張機能は、出典のある事実を日付つきで書くのはよいが、「危険」「避けよ」などの評価や順位はつけない。
 - Honest Cookies は 2026-10-11 にストアで非公開にした(公開枠が2つまでのため、Honest Scraper と入れ替え)。カードのリンク先は GitHub のリポジトリ(`src/en.py` の PRODUCTS)。ストアのリンクに戻さない。
+- Honest Scraper(似た要素を表にする・XPath)は 2026-10-12 にストアで公開。カードは `{{product:scraper}}`。ウェブのデータを表にしたい・XPathを試したい悩みの記事で使える。
 - **図と画面写真(2026-10-12 追加):** 文字だけにしない。説明が図で早くわかる記事には `{{diagram:名前|説明}}`(図は `src/diagrams/名前.svg`、横幅360で描く)を1つ入れてよい。自社の道具の画面写真は `{{shot:ファイル名|説明}}`(画像は `src/img/`)。図の中身も本文と同じく出典で確かめた事実だけ。答えの箱・目次・Copyボタンは build が自動で入れる。
 - **無料ツール(2026-10-12 追加):** 英語の無料ツールは `src/en_tools.py`(TOOLS と BODIES)で /en/tools/<slug>/ にできる。ブラウザの中だけで動かし、入力を外に送らない。ルールは公式(MDN、OWASP など)で確かめ、ページの Sources に確認日を書く。記事とツールのつながりは `src/en.py` の TOOL_FOR。ツールは人が来る入口なので、記事に合うツールがなければ足すことを考える(1回に1つまで)。

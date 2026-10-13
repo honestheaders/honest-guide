@@ -1,6 +1,6 @@
 """English section (/en/). Articles live in content_en/*.md. No affiliate links here:
 the only product links are to Honest Tools' own extensions and Gumroad products, written as
-{{product:headers}}, {{product:cookies}}, {{product:checklist}} or {{product:templates}}."""
+{{product:headers}}, {{product:cookies}}, {{product:scraper}}, {{product:checklist}} or {{product:templates}}."""
 import json, re, html, datetime, pathlib, shutil
 import markdown
 from en_tools import TOOLS, BODIES, TOOL_CSS
@@ -12,6 +12,9 @@ PRODUCTS = {
     "cookies": ("Honest Cookies (free Chrome extension, open source)",
                 "View, edit, add, delete, export and import cookies. Installs with no site access and asks for one site at a time.",
                 "https://github.com/honestheaders/honest-cookies", "Get the source on GitHub"),
+    "scraper": ("Honest Scraper (free Chrome extension, open source)",
+                "Pick one element and get every similar one as a table, with a live XPath tester. Copy to Google Sheets or Excel, or save CSV. No site access until you click.",
+                "https://chromewebstore.google.com/detail/cjannokcnbkomcfalmhahpiffpkjbfla", "Get it on the Chrome Web Store"),
     "checklist": ("Security Headers: 5-Minute Checklist (PDF, pay what you want from $0)",
                   "A 2-page printable version of the checklist, with sources.",
                   "https://honesttools.gumroad.com/l/irlsg", "Get the PDF on Gumroad"),
@@ -20,12 +23,12 @@ PRODUCTS = {
                   "https://honesttools.gumroad.com/l/ypsvgk", "See it on Gumroad"),
 }
 
-DISCLOSURE = ('<p class="pr">Disclosure: Honest Tools makes Honest Headers, Honest Cookies and the PDFs linked on this site. '
+DISCLOSURE = ('<p class="pr">Disclosure: Honest Tools makes Honest Headers, Honest Cookies, Honest Scraper and the PDFs linked on this site. '
               'Links to them are links to our own products. This section has no ads and no affiliate links.</p>')
 
 CSS_EN = 'article a{overflow-wrap:anywhere}td code{overflow-wrap:anywhere}article table{display:block;overflow-x:auto}body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.7}code{background:#f1f1ec;padding:1px 4px;border-radius:4px;font-size:.92em}pre{background:#f1f1ec;padding:12px;border-radius:8px;overflow-x:auto}pre code{padding:0}.own{background:#1f4e79;box-shadow:0 2px 0 #12304d}.own:hover,.own:focus-visible{background:#163a5c}.own .shop{color:#1f4e79}'
 
-ICONS = {"headers": "honest-headers-48.png", "cookies": "honest-cookies-48.png"}
+ICONS = {"headers": "honest-headers-48.png", "cookies": "honest-cookies-48.png", "scraper": "honest-scraper-48.png"}
 SRC = pathlib.Path(__file__).resolve().parent
 TOOL_FOR = {"security-headers-checklist": "security-headers-checker", "samesite-cookie-attribute": "set-cookie-builder", "edit-cookies-in-chrome": "set-cookie-builder"}
 REPORT = '<p class="fix">Found a mistake or something out of date? <a href="https://github.com/honestheaders/honest-headers/issues">Tell us on GitHub</a>. We check each fact against the sources above.</p>'
@@ -151,7 +154,7 @@ def build(OUT, CFG, CSS, ROOT):
 <h2>How we write</h2><ul><li>Facts, numbers and steps come from official documentation (MDN, Chrome for Developers, OWASP, vendor docs). Every article lists its sources and the date we checked them.</li>
 <li>We do not write fake reviews or made-up experiences, and we do not rank products we have not measured.</li>
 <li>Each article says who the approach is <em>not</em> for.</li><li>We use AI (Claude) to help draft and research. Articles are checked against the sources before publishing.</li></ul>
-<h2>Our products</h2><p>We make Honest Headers, Honest Cookies and a few PDFs. When an article mentions them, it says so. There are no ads or affiliate links in the English section.</p>
+<h2>Our products</h2><p>We make Honest Headers, Honest Cookies, Honest Scraper and a few PDFs. When an article mentions them, it says so. There are no ads or affiliate links in the English section.</p>
 <h2>Contact</h2><p>Please open an issue on <a href="https://github.com/honestheaders/honest-headers/issues">GitHub</a>.</p>'''
     pages.append(page("/about/", "About | Honest Guide", "Who writes Honest Guide and how articles are checked.", about))
     privacy = '''<h1>Privacy</h1><p>This site is a static site hosted on GitHub Pages. We do not run analytics, ads or tracking scripts, and we do not set cookies. GitHub may log technical information such as IP addresses when serving pages; see GitHub's privacy statement.</p>

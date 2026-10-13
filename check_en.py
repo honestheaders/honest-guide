@@ -17,7 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 MIN_WORDS, MAX_WORDS = 400, 1800
 MAX_PRODUCTS = 3
-PRODUCTS = {"headers", "cookies", "checklist", "templates"}
+PRODUCTS = {"headers", "cookies", "scraper", "checklist", "templates"}
 # 保証表現・順位づけ(CLAUDE.md の英語コーナーのルール)
 BANNED = [
     r"\bguarantee(d|s)?\b", r"\balways secure\b", r"\b100% (safe|secure)\b",
