@@ -6,6 +6,8 @@ TOOLS = [
      "Paste response headers from DevTools or curl. See which of the 7 recommended security headers are missing and which 5 old headers to remove."),
     ("set-cookie-builder", "Set-Cookie builder and checker",
      "Build a Set-Cookie header with Secure, HttpOnly, SameSite, Partitioned and prefixes, and see which combinations browsers reject."),
+    ("xpath-tester", "XPath tester (paste HTML, see what matches)",
+     "Paste some HTML and an XPath expression. See the match count, the text of each match, and copy the results, one per line."),
 ]
 
 TOOL_CSS = ('.tool textarea,.tool input[type=text],.tool input[type=number],.tool select{display:block;width:100%;font:15px ui-monospace,Menlo,Consolas,monospace;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px;background:#fff}'
@@ -120,4 +122,55 @@ $("copy").onclick=function(){navigator.clipboard.writeText($("out").textContent)
 run()})();
 </script>'''
 
-BODIES = {"security-headers-checker": CHECKER, "set-cookie-builder": COOKIE}
+XPATH = r'''<h1>XPath tester</h1>
+<div class="answer"><p class="ah">HOW IT WORKS</p><p>Paste HTML (for example, copied with <b>Copy outerHTML</b> in Chrome DevTools) and type an XPath. You see how many nodes match and the text of each one. It runs only in your browser: the HTML is parsed with <code>DOMParser</code>, which does not run its scripts, and nothing is sent anywhere.</p></div>
+<div class="tool">
+<label for="src">HTML</label><textarea id="src" spellcheck="false"></textarea>
+<label for="xp">XPath</label><input type="text" id="xp" spellcheck="false" value="//li/a">
+<div class="row"><button class="btn" id="go" type="button">Test</button><button class="btn ghost" id="ex" type="button">Try an example</button><button class="btn ghost" id="cp" type="button">Copy results</button></div>
+</div>
+<p class="score" id="cnt" aria-live="polite"></p><ul class="res" id="list"></ul>
+<h2 id="examples">XPath you will use most</h2>
+<ul><li><code>//li</code>: every <code>li</code> element in the page.</li>
+<li><code>//ul[@id='news']/li</code>: the <code>li</code> children of the list whose id is <code>news</code>.</li>
+<li><code>//a/@href</code>: the <code>href</code> value of every link (an attribute, not the element).</li>
+<li><code>//table//tr[td]</code>: table rows that have data cells, which skips a header row made of <code>th</code>.</li>
+<li><code>(//li)[1]</code>: the first <code>li</code> in the whole page. <code>//li[1]</code> is different: the first <code>li</code> inside each parent.</li>
+<li><code>//h3[contains(., 'Price')]</code>: <code>h3</code> elements whose text contains "Price".</li>
+<li><code>count(//li)</code>: a number instead of nodes.</li></ul>
+<h2 id="in-chrome">Testing on a live page instead</h2>
+<p>In Chrome DevTools, open the Console and type <code>$x("//li/a")</code>. Chrome's documentation says <code>$x(path)</code> "returns an array of DOM elements that match the given XPath expression". To pick an element and get every similar one as a table, our free extension Honest Scraper does that on the page itself.</p>
+<h2 id="not-for">Who this is not for</h2>
+<ul><li>The HTML you paste is a snapshot. Content that a page adds later with JavaScript is only there if it was in the DOM when you copied it.</li>
+<li>Browsers support XPath 1.0 through <code>document.evaluate</code>. XPath 2.0 and 3.1 functions such as <code>matches()</code> or <code>lower-case()</code> are not available here, and will not work in the browser either.</li></ul>
+<h2 id="sources">Sources (checked 2026-10-14)</h2>
+<ul><li>MDN, Document: evaluate() method: <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/evaluate">https://developer.mozilla.org/en-US/docs/Web/API/Document/evaluate</a></li>
+<li>MDN, DOMParser: parseFromString() method: <a href="https://developer.mozilla.org/en-US/docs/Web/API/DOMParser/parseFromString">https://developer.mozilla.org/en-US/docs/Web/API/DOMParser/parseFromString</a></li>
+<li>Chrome for Developers, Console Utilities API reference ($x): <a href="https://developer.chrome.com/docs/devtools/console/utilities">https://developer.chrome.com/docs/devtools/console/utilities</a></li></ul>
+<script>
+(function(){
+function $(i){return document.getElementById(i)}
+var EX='<ul id="news">\n  <li><a href="/post/1">First post</a> <span class="date">2026-10-01</span></li>\n  <li><a href="/post/2">Second post</a> <span class="date">2026-10-05</span></li>\n  <li><a href="/post/3">Third post</a> <span class="date">2026-10-09</span></li>\n</ul>';
+var last=[];
+function txt(n){if(n.nodeType===2)return n.value;return (n.textContent||"").replace(/\s+/g," ").trim()}
+function label(n){if(n.nodeType===2)return "@"+n.name;if(n.nodeType===1)return "<"+n.localName+">";if(n.nodeType===3)return "text";return "node"}
+function add(cls,head,body){var li=document.createElement("li");li.className=cls;var b=document.createElement("b");b.textContent=head;li.appendChild(b);if(body!==undefined){var s=document.createElement("span");s.textContent=body;li.appendChild(s)}$("list").appendChild(li)}
+function run(){$("list").textContent="";last=[];
+var doc=new DOMParser().parseFromString($("src").value,"text/html"),r;
+try{r=doc.evaluate($("xp").value,doc,null,XPathResult.ANY_TYPE,null)}catch(e){$("cnt").textContent="This XPath has an error.";add("ng","✕ "+e.message);return}
+if(r.resultType===XPathResult.NUMBER_TYPE){$("cnt").textContent="Number: "+r.numberValue;last=[String(r.numberValue)];return}
+if(r.resultType===XPathResult.STRING_TYPE){$("cnt").textContent="Text result";add("ok",JSON.stringify(r.stringValue));last=[r.stringValue];return}
+if(r.resultType===XPathResult.BOOLEAN_TYPE){$("cnt").textContent="True/false: "+r.booleanValue;last=[String(r.booleanValue)];return}
+var nodes=[],n;while((n=r.iterateNext()))nodes.push(n);
+$("cnt").textContent=nodes.length+(nodes.length===1?" match":" matches");
+if(!nodes.length){add("info","△ Nothing matched. Check the spelling of element names and attribute values; HTML element names are lower case here.");return}
+nodes.slice(0,500).forEach(function(x,i){var t=txt(x);last.push(t);add("ok",(i+1)+". "+label(x),t||"(empty)")});
+if(nodes.length>500)add("info","△ Showing the first 500.")}
+$("go").onclick=run;
+$("xp").addEventListener("keydown",function(e){if(e.key==="Enter")run()});
+$("ex").onclick=function(){$("src").value=EX;$("xp").value="//ul[@id='news']/li/a/@href";run()};
+$("cp").onclick=function(){navigator.clipboard.writeText(last.join("\n")).then(function(){$("cp").textContent="Copied";setTimeout(function(){$("cp").textContent="Copy results"},1500)})};
+})();
+</script>'''
+
+BODIES = {"security-headers-checker": CHECKER, "set-cookie-builder": COOKIE, "xpath-tester": XPATH}
