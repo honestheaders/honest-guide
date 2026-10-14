@@ -1,0 +1,161 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="google-site-verification" content="hqAGwjMx_F-TdJl79qigCCcuhYe7_9BUhfd7nEK2TMI"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cookie editor export to cookies.txt: the 7 fields curl expects | Honest Guide</title><meta name="description" content="If your cookie editor gave you a JSON list, curl still wants a tab-separated file with seven fields. How each Chrome cookie property maps to them, with a small script."><link rel="canonical" href="https://honestheaders.github.io/honest-guide/en/cookie-editor-json-to-cookies-txt-for-curl/">
+<meta property="og:title" content="Cookie editor export to cookies.txt: the 7 fields curl expects | Honest Guide"><meta property="og:description" content="If your cookie editor gave you a JSON list, curl still wants a tab-separated file with seven fields. How each Chrome cookie property maps to them, with a small script."><meta property="og:type" content="article">
+<link rel="icon" href="/honest-guide/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Honest Guide (English)" href="https://honestheaders.github.io/honest-guide/en/feed.xml"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Cookie editor export to cookies.txt: the 7 fields curl expects", "description": "If your cookie editor gave you a JSON list, curl still wants a tab-separated file with seven fields. How each Chrome cookie property maps to them, with a small script.", "inLanguage": "en", "dateModified": "2026-10-14", "author": {"@type": "Organization", "name": "Honest Tools"}, "publisher": {"@type": "Organization", "name": "Honest Tools"}, "mainEntityOfPage": "https://honestheaders.github.io/honest-guide/en/cookie-editor-json-to-cookies-txt-for-curl/"}</script>
+<style>:root{--c:#1f4e79;--bg:#fafaf7;--t:#222;--m:#666;--l:#ddd}
+*{box-sizing:border-box}body{margin:0;font-family:"Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;color:var(--t);background:var(--bg);line-height:1.85;font-size:16px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+header{background:var(--c);color:#fff}header .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 16px;gap:8px}
+.logo{color:#fff;font-weight:700;font-size:20px;text-decoration:none}nav a{color:#dbe8f5;margin-left:14px;text-decoration:none;font-size:14px}
+main{padding-top:24px;padding-bottom:40px}h1{font-size:26px;line-height:1.4}h2{font-size:20px;border-left:5px solid var(--c);padding-left:10px;margin-top:36px}
+a{color:var(--c)}table{border-collapse:collapse;width:100%;margin:16px 0;font-size:15px}th,td{border:1px solid var(--l);padding:8px;text-align:left;vertical-align:top}th{background:#eef3f8}
+.plain th{width:30%}.cards{list-style:none;padding:0;display:grid;gap:12px}.cards a{display:block;background:#fff;border:1px solid var(--l);border-radius:10px;padding:14px 16px;text-decoration:none;color:var(--t)}
+.cards b{display:block;color:var(--c)}.cards span{font-size:14px;color:var(--m)}.hero{background:#fff;border:1px solid var(--l);border-radius:12px;padding:20px;text-align:center}
+.pr{font-size:13px;color:var(--m);background:#f1f1ec;padding:8px 12px;border-radius:6px}.date{font-size:13px;color:var(--m)}
+.tool{display:grid;gap:12px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:16px}.tool label{display:block;font-size:14px;color:var(--m)}
+.tool input{display:block;width:100%;font-size:20px;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px}
+.result{background:#fff8dc;border:1px solid #ecd98a;border-radius:10px;padding:8px 16px;margin-top:16px;font-size:18px}.result b{font-size:24px;color:#c00}
+.note{font-size:13px;color:var(--m)}footer{background:#f1f1ec;font-size:13px;color:var(--m);padding:20px 0}
+
+.crumb{font-size:13px;color:var(--m)}.related{margin-top:32px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:4px 16px 12px}.related h2{margin-top:12px;font-size:17px}
+.buy{display:flex;align-items:center;gap:10px;background:#bf0000;color:#fff;text-decoration:none;font-weight:700;border-radius:10px;padding:12px 14px;margin:10px 0;line-height:1.4;box-shadow:0 2px 0 #8c0000}
+.buy:hover,.buy:focus-visible{background:#a30000;outline:none}.buy .shop{font-size:11px;font-weight:700;background:#fff;color:#bf0000;border-radius:4px;padding:2px 6px;white-space:nowrap}
+.buy .arrow{margin-left:auto;font-size:20px}li>.buy{margin:6px 0}article ul:has(.buy){list-style:none;padding-left:0}
+.quick{background:#fff;border:2px solid #f0c9c9;border-radius:12px;padding:12px 14px;margin:18px 0}.quick .qh{margin:0 0 4px;font-weight:700;color:#bf0000}.quick .qn{margin:6px 0 0;font-size:13px;color:var(--m)}
+.item{background:#fff;border:1px solid var(--l);border-radius:12px;padding:14px 16px;margin:14px 0}.item p{margin:0 0 6px}.iname{font-weight:700;font-size:17px;color:var(--c)}
+.ispec{font-size:14px;color:var(--t)}.ifit{font-size:14px;background:#f5f8fb;border-radius:6px;padding:6px 10px}.ifit b{display:block;font-size:12px;color:var(--c)}
+.crumb a{color:var(--c);margin-left:0;font-size:13px}
+.src a,.note a{word-break:break-all}
+article a{overflow-wrap:anywhere}td code{overflow-wrap:anywhere}article table{display:block;overflow-x:auto}body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.7}code{background:#f1f1ec;padding:1px 4px;border-radius:4px;font-size:.92em}pre{background:#f1f1ec;padding:12px;border-radius:8px;overflow-x:auto}pre code{padding:0}.own{background:#1f4e79;box-shadow:0 2px 0 #12304d}.own:hover,.own:focus-visible{background:#163a5c}.own .shop{color:#1f4e79}.item .iname img{width:28px;height:28px;vertical-align:-7px;margin-right:8px;border-radius:6px}.answer{background:#eef3f8;border-left:5px solid #1f4e79;border-radius:8px;padding:12px 16px;margin:18px 0}.answer .ah{margin:0;font-size:13px;font-weight:700;color:#1f4e79;letter-spacing:.03em}.answer p{margin:4px 0 0}.toc{background:#fff;border:1px solid #ddd;border-radius:10px;padding:10px 16px;margin:18px 0;font-size:15px}.toc p{margin:0;font-size:13px;color:#666}.toc ol{margin:6px 0 0;padding-left:20px}.toc li{margin:2px 0}.toc a{color:#1f4e79;margin-left:0;font-size:inherit;text-decoration:underline}figure.dia{margin:20px auto;max-width:520px;background:#fff;border:1px solid #ddd;border-radius:10px;padding:10px}figure.dia svg,figure.shot img{display:block;width:100%;height:auto}figure.shot{margin:20px auto;max-width:520px}figure.shot img{border:1px solid #ddd;border-radius:10px}figcaption{font-size:13px;color:#666;text-align:center;margin-top:6px}pre{position:relative}.cp{position:absolute;top:6px;right:6px;font:12px system-ui,sans-serif;background:#fff;border:1px solid #bbb;border-radius:6px;padding:3px 8px;cursor:pointer}h2[id]{scroll-margin-top:12px}.tl{background:#fff8dc;border:1px solid #ecd98a;border-radius:8px;padding:8px 12px;font-size:15px}.fix{font-size:13px;color:#666;border-top:1px solid #ddd;padding-top:10px;margin-top:28px}.tool textarea,.tool input[type=text],.tool input[type=number],.tool select{display:block;width:100%;font:15px ui-monospace,Menlo,Consolas,monospace;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px;background:#fff}.tool textarea{min-height:180px}.tool .row{display:flex;flex-wrap:wrap;gap:8px 16px}.tool .row label{display:flex;align-items:center;gap:6px;font-size:15px;color:#222}.btn{font:600 15px system-ui,sans-serif;background:#1f4e79;color:#fff;border:0;border-radius:8px;padding:10px 16px;cursor:pointer}.btn.ghost{background:#fff;color:#1f4e79;border:1px solid #1f4e79}.res{list-style:none;padding:0;margin:8px 0}.res li{background:#fff;border:1px solid #ddd;border-radius:8px;padding:8px 12px;margin:6px 0;font-size:15px}.res li b{display:block}.res .ok{border-left:5px solid #2e7d4f}.res .ng{border-left:5px solid #b3261e}.res .info{border-left:5px solid #b38600}.score{font-size:18px;font-weight:700;margin:12px 0 4px}main code{overflow-wrap:anywhere}.res li{overflow-wrap:anywhere}#out{font:15px ui-monospace,Menlo,Consolas,monospace;background:#f1f1ec;padding:12px;border-radius:8px;overflow-wrap:anywhere}</style></head><body><header><div class="wrap"><a class="logo" href="/honest-guide/en/">Honest Guide</a><nav><a href="/honest-guide/en/">Guides</a><a href="/honest-guide/en/tools/">Tools</a><a href="/honest-guide/en/about/">About</a><a href="/honest-guide/">日本語</a></nav></div></header><main class="wrap"><nav class="crumb"><a href="/honest-guide/en/">Guides</a> › Cookie editor export to cookies.txt: the 7 fields curl expects</nav><article><h1>Cookie editor export to cookies.txt: the 7 fields curl expects</h1><p class="date">Updated 2026-10-14</p><p class="pr">Disclosure: Honest Tools makes Honest Headers, Honest Cookies, Honest Scraper and the PDFs linked on this site. Links to them are links to our own products. This section has no ads and no affiliate links.</p><div class="answer"><p class="ah">THE SHORT ANSWER</p><p>Curl reads cookies from a plain text file with one cookie per line and seven fields separated by TAB characters. Most cookie editors for Chrome export JSON instead, using the property names from Chrome's <code>chrome.cookies</code> API. This page shows how the two line up, so you can carry cookies from a retired or replaced editor into <code>curl -b cookies.txt</code>.</p></div><nav class="toc" aria-label="On this page"><p>On this page · about 4 min read</p><ol><li><a href="#what-curl-expects">What curl expects</a></li><li><a href="#what-chrome-s-cookie-properties-look-like">What Chrome's cookie properties look like</a></li><li><a href="#the-mapping-we-use">The mapping we use</a></li><li><a href="#a-small-converter">A small converter</a></li><li><a href="#keep-the-file-private">Keep the file private</a></li><li><a href="#who-this-is-not-for">Who this is not for</a></li><li><a href="#sources-checked-2026-10-14">Sources (checked 2026-10-14)</a></li></ol></nav>
+<p>We have not found an official statement about any particular editor's export format, so nothing here assumes one. The mapping below starts from Chrome's own cookie properties, which many editors reuse. Open your export and check that the field names match before you run anything.</p>
+<h2 id="what-curl-expects">What curl expects</h2>
+<p>The curl documentation describes the file like this: it is text based, one cookie per line, and lines starting with <code>#</code> are comments. The exception is a line starting with <code>#HttpOnly_</code>, which is the prefix for a cookie that has the <code>HttpOnly</code> attribute. Each cookie line has seven fields separated by TABs, and a valid line must end with a newline.</p>
+<table>
+<thead>
+<tr>
+<th>Position</th>
+<th>Field</th>
+<th>Example from curl's docs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Domain name</td>
+<td><code>example.com</code></td>
+</tr>
+<tr>
+<td>1</td>
+<td>Include subdomains (TRUE/FALSE)</td>
+<td><code>FALSE</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Path</td>
+<td><code>/foobar/</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>HTTPS only (TRUE/FALSE)</td>
+<td><code>TRUE</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Expiry, seconds since Jan 1st 1970, or 0</td>
+<td><code>0</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Cookie name</td>
+<td><code>person</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Cookie value</td>
+<td><code>daniel</code></td>
+</tr>
+</tbody>
+</table>
+<p>curl's <code>--cookie</code> option takes a file name when the argument has no <code>=</code> in it, and says the file should be in the Netscape/Mozilla format. It discourages the HTTP-header style. <code>--cookie-jar</code> writes the same Netscape format.</p>
+<h2 id="what-chrome-s-cookie-properties-look-like">What Chrome's cookie properties look like</h2>
+<p>Chrome's <code>chrome.cookies</code> documentation lists these properties on a cookie: <code>domain</code>, <code>name</code>, <code>value</code>, <code>path</code>, <code>hostOnly</code>, <code>httpOnly</code>, <code>secure</code>, <code>session</code>, <code>expirationDate</code>, <code>sameSite</code> and <code>storeId</code>, plus <code>partitionKey</code> in Chrome 119 and later. <code>expirationDate</code> is in seconds since the UNIX epoch and is not provided for session cookies. <code>hostOnly</code> is <code>true</code> if a request's host must exactly match the cookie's domain.</p>
+<h2 id="the-mapping-we-use">The mapping we use</h2>
+<table>
+<thead>
+<tr>
+<th>curl field</th>
+<th>From the JSON</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Domain</td>
+<td><code>domain</code></td>
+<td>Written as it appears in the export</td>
+</tr>
+<tr>
+<td>Include subdomains</td>
+<td><code>NOT hostOnly</code></td>
+<td>Our reading: a host-only cookie does not apply to subdomains</td>
+</tr>
+<tr>
+<td>Path</td>
+<td><code>path</code></td>
+<td></td>
+</tr>
+<tr>
+<td>HTTPS only</td>
+<td><code>secure</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Expiry</td>
+<td><code>expirationDate</code>, or <code>0</code></td>
+<td>Session cookies have no <code>expirationDate</code></td>
+</tr>
+<tr>
+<td>Name, value</td>
+<td><code>name</code>, <code>value</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>#HttpOnly_</code> prefix</td>
+<td><code>httpOnly</code> is <code>true</code></td>
+<td>Put the prefix at the start of the line</td>
+</tr>
+</tbody>
+</table>
+<p>Two points are not covered by the curl page we checked: whether a leading dot on the domain matters, and what an expiry of <code>0</code> means beyond the wording "or 0". Treat our handling of both as a starting point and test against a server you control.</p>
+<h2 id="a-small-converter">A small converter</h2>
+<p>This Python script reads a JSON list of cookies with the properties above and writes a curl-style file. It uses only the standard library.</p>
+<pre><code class="language-python">import json, sys
+
+cookies = json.load(open(sys.argv[1]))
+out = [&quot;# Netscape HTTP Cookie File&quot;]
+for c in cookies:
+    domain = c[&quot;domain&quot;]
+    if c.get(&quot;httpOnly&quot;):
+        domain = &quot;#HttpOnly_&quot; + domain
+    sub = &quot;FALSE&quot; if c.get(&quot;hostOnly&quot;) else &quot;TRUE&quot;
+    secure = &quot;TRUE&quot; if c.get(&quot;secure&quot;) else &quot;FALSE&quot;
+    expiry = str(int(c[&quot;expirationDate&quot;])) if &quot;expirationDate&quot; in c else &quot;0&quot;
+    out.append(&quot;\t&quot;.join([domain, sub, c[&quot;path&quot;], secure, expiry, c[&quot;name&quot;], c[&quot;value&quot;]]))
+open(sys.argv[2], &quot;w&quot;, newline=&quot;\n&quot;).write(&quot;\n&quot;.join(out) + &quot;\n&quot;)
+</code></pre>
+<p>Run it as <code>python3 convert.py cookies.json cookies.txt</code>, then try <code>curl -v -b cookies.txt https://your-test-site.example/</code>. With <code>-v</code>, curl prints the request it sends, so you can see whether the <code>Cookie:</code> header is there.</p>
+<p>If the export does not have these property names, rename them in the script rather than guessing.</p>
+<h2 id="keep-the-file-private">Keep the file private</h2>
+<p>The file holds live session values. Anyone who has a logged-in session cookie can usually act as you on that site until it expires or is revoked. Store the file outside any Git repository, do not paste it into a bug report, and delete it when the test is done.</p>
+<p>For viewing and editing a cookie in the browser first, see <a href="/honest-guide/en/edit-cookies-in-chrome/">how to view and edit cookies in Chrome</a>. To understand why a cookie is or is not sent, read <a href="/honest-guide/en/samesite-cookie-attribute/">the SameSite attribute explained</a>.</p>
+<div class="item"><p class="iname"><img src="/honest-guide/en/img/honest-cookies-48.png" alt="" width="28" height="28">Honest Cookies (free Chrome extension, open source)</p><p class="ispec">View, edit, add, delete, export and import cookies. Installs with no site access and asks for one site at a time.</p><a class="buy own" href="https://github.com/honestheaders/honest-cookies" rel="noopener" target="_blank"><span class="shop">Honest Tools</span>Get the source on GitHub<span class="arrow">›</span></a></div>
+
+<h2 id="who-this-is-not-for">Who this is not for</h2>
+<p>If you only need to look at one cookie, Chrome DevTools can show it without any export. If you need cookies for a site you do not own or have no permission to test, do not export them; follow that site's terms. And if your goal is to automate a login, a cookie file is a fragile way to do it, because session cookies expire. Use an API token meant for scripts where the service offers one.</p>
+<h2 id="sources-checked-2026-10-14">Sources (checked 2026-10-14)</h2>
+<ul>
+<li>curl, HTTP cookies (file structure and the seven fields): <a href="https://curl.se/docs/http-cookies.html">https://curl.se/docs/http-cookies.html</a></li>
+<li>curl, command line manual (<code>--cookie</code>, <code>--cookie-jar</code>): <a href="https://curl.se/docs/manpage.html">https://curl.se/docs/manpage.html</a></li>
+<li>curl, CURLOPT_COOKIEFILE (Netscape or Set-Cookie style data): <a href="https://curl.se/libcurl/c/CURLOPT_COOKIEFILE.html">https://curl.se/libcurl/c/CURLOPT_COOKIEFILE.html</a></li>
+<li>Chrome for Developers, <code>chrome.cookies</code> (cookie properties): <a href="https://developer.chrome.com/docs/extensions/reference/api/cookies">https://developer.chrome.com/docs/extensions/reference/api/cookies</a></li>
+</ul><p class="fix">Found a mistake or something out of date? <a href="https://github.com/honestheaders/honest-headers/issues">Tell us on GitHub</a>. We check each fact against the sources above.</p></article><section class="related"><h2>More guides</h2><ul><li><a href="/honest-guide/en/edit-cookies-in-chrome/">How to view and edit cookies in Chrome (DevTools, or an extension)</a></li><li><a href="/honest-guide/en/samesite-cookie-attribute/">SameSite cookies explained: Strict, Lax and None (and why None needs Secure)</a></li><li><a href="/honest-guide/en/move-modheader-rules-append-not-supported/">Moving header rules to a new tool: why &quot;append&quot; fails on some request headers in Chrome</a></li></ul></section><script>document.querySelectorAll("article pre").forEach(function(p){var b=document.createElement("button");b.type="button";b.className="cp";b.textContent="Copy";b.onclick=function(){navigator.clipboard.writeText((p.querySelector("code")||p).innerText).then(function(){b.textContent="Copied";setTimeout(function(){b.textContent="Copy"},1500)})};p.appendChild(b)})</script></main><footer><div class="wrap"><p>Practical notes on HTTP headers, cookies and browser tools, by Honest Tools. Facts are checked against official documentation; each article lists its sources and the date they were checked.</p><p><a href="/honest-guide/en/about/">About</a> / <a href="/honest-guide/privacy/">Privacy Policy</a> / <a href="/honest-guide/terms/">Terms of Service</a></p><p>&copy; 2026 Honest Tools</p></div></footer></body></html>
