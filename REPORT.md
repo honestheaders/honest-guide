@@ -24,3 +24,4 @@
 - 2026-10-12: 英語記事を「文字だけ」から読みやすい形に。全記事に「答えの箱」「目次と読む時間」、コードの「Copy」ボタン、内容の近い「More guides」を自動で追加。図2つ(ヘッダーの流れ、SameSite の早見図)と、自社拡張(Honest Cookies)の画面写真1枚を追加。商品カードにアイコン。
 - 2026-10-12: 人の多い同じジャンルのサイト(MDN、securityheaders.com)を参考に、英語コーナーに無料ツール2つを追加。「Security headers checker」(ヘッダーを貼ると、足す7つ・消す5つを判定)と「Set-Cookie builder」(MDNのルールでまちがいを警告)。どちらもブラウザの中だけで動く。メニューに Tools、関係する3記事からツールへのリンク、全記事の最後に「まちがいを見つけたら GitHub へ」を追加。
 - 2026-10-15: 英語記事「Cookie editor export to cookies.txt: the 7 fields curl expects」を公開(E24)。出典: curl公式(http-cookies、manpage、CURLOPT_COOKIEFILE)、Chrome for Developers(chrome.cookies)。EditThisCookieに何があったかは公式の出典が見つからなかったので書かず、書き出し・変換の手順だけにした。チェックは1回で合格。
+- 2026-10-16: 英語記事「Header changes not working in Manifest V3? What changed and what still works」を公開(E25)。出典: Chrome for Developers(Replace blocking web request listeners、webRequest、declarativeNetRequest)。チェックは2回目で合格(1回目は「guaranteed」の語で不合格)。
