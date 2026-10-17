@@ -1,0 +1,100 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="google-site-verification" content="hqAGwjMx_F-TdJl79qigCCcuhYe7_9BUhfd7nEK2TMI"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Copy a web page table into a spreadsheet with XPath and the Console, no scraper needed | Honest Guide</title><meta name="description" content="A short DevTools snippet that turns table rows into tab-separated text you can paste into a spreadsheet, how relative XPath per column works, and when you should not collect data from a page at all."><link rel="canonical" href="https://honestheaders.github.io/honest-guide/en/web-page-table-to-spreadsheet-xpath/">
+<meta property="og:title" content="Copy a web page table into a spreadsheet with XPath and the Console, no scraper needed | Honest Guide"><meta property="og:description" content="A short DevTools snippet that turns table rows into tab-separated text you can paste into a spreadsheet, how relative XPath per column works, and when you should not collect data from a page at all."><meta property="og:type" content="article">
+<link rel="icon" href="/honest-guide/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Honest Guide (English)" href="https://honestheaders.github.io/honest-guide/en/feed.xml"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Copy a web page table into a spreadsheet with XPath and the Console, no scraper needed", "description": "A short DevTools snippet that turns table rows into tab-separated text you can paste into a spreadsheet, how relative XPath per column works, and when you should not collect data from a page at all.", "inLanguage": "en", "dateModified": "2026-10-18", "author": {"@type": "Organization", "name": "Honest Tools"}, "publisher": {"@type": "Organization", "name": "Honest Tools"}, "mainEntityOfPage": "https://honestheaders.github.io/honest-guide/en/web-page-table-to-spreadsheet-xpath/"}</script>
+<style>:root{--c:#1f4e79;--bg:#fafaf7;--t:#222;--m:#666;--l:#ddd}
+*{box-sizing:border-box}body{margin:0;font-family:"Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;color:var(--t);background:var(--bg);line-height:1.85;font-size:16px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+header{background:var(--c);color:#fff}header .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 16px;gap:8px}
+.logo{color:#fff;font-weight:700;font-size:20px;text-decoration:none}nav a{color:#dbe8f5;margin-left:14px;text-decoration:none;font-size:14px}
+main{padding-top:24px;padding-bottom:40px}h1{font-size:26px;line-height:1.4}h2{font-size:20px;border-left:5px solid var(--c);padding-left:10px;margin-top:36px}
+a{color:var(--c)}table{border-collapse:collapse;width:100%;margin:16px 0;font-size:15px}th,td{border:1px solid var(--l);padding:8px;text-align:left;vertical-align:top}th{background:#eef3f8}
+.plain th{width:30%}.cards{list-style:none;padding:0;display:grid;gap:12px}.cards a{display:block;background:#fff;border:1px solid var(--l);border-radius:10px;padding:14px 16px;text-decoration:none;color:var(--t)}
+.cards b{display:block;color:var(--c)}.cards span{font-size:14px;color:var(--m)}.hero{background:#fff;border:1px solid var(--l);border-radius:12px;padding:20px;text-align:center}
+.pr{font-size:13px;color:var(--m);background:#f1f1ec;padding:8px 12px;border-radius:6px}.date{font-size:13px;color:var(--m)}
+.tool{display:grid;gap:12px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:16px}.tool label{display:block;font-size:14px;color:var(--m)}
+.tool input{display:block;width:100%;font-size:20px;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px}
+.result{background:#fff8dc;border:1px solid #ecd98a;border-radius:10px;padding:8px 16px;margin-top:16px;font-size:18px}.result b{font-size:24px;color:#c00}
+.note{font-size:13px;color:var(--m)}footer{background:#f1f1ec;font-size:13px;color:var(--m);padding:20px 0}
+
+.crumb{font-size:13px;color:var(--m)}.related{margin-top:32px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:4px 16px 12px}.related h2{margin-top:12px;font-size:17px}
+.buy{display:flex;align-items:center;gap:10px;background:#bf0000;color:#fff;text-decoration:none;font-weight:700;border-radius:10px;padding:12px 14px;margin:10px 0;line-height:1.4;box-shadow:0 2px 0 #8c0000}
+.buy:hover,.buy:focus-visible{background:#a30000;outline:none}.buy .shop{font-size:11px;font-weight:700;background:#fff;color:#bf0000;border-radius:4px;padding:2px 6px;white-space:nowrap}
+.buy .arrow{margin-left:auto;font-size:20px}li>.buy{margin:6px 0}article ul:has(.buy){list-style:none;padding-left:0}
+.quick{background:#fff;border:2px solid #f0c9c9;border-radius:12px;padding:12px 14px;margin:18px 0}.quick .qh{margin:0 0 4px;font-weight:700;color:#bf0000}.quick .qn{margin:6px 0 0;font-size:13px;color:var(--m)}
+.item{background:#fff;border:1px solid var(--l);border-radius:12px;padding:14px 16px;margin:14px 0}.item p{margin:0 0 6px}.iname{font-weight:700;font-size:17px;color:var(--c)}
+.ispec{font-size:14px;color:var(--t)}.ifit{font-size:14px;background:#f5f8fb;border-radius:6px;padding:6px 10px}.ifit b{display:block;font-size:12px;color:var(--c)}
+.crumb a{color:var(--c);margin-left:0;font-size:13px}
+.src a,.note a{word-break:break-all}
+article a{overflow-wrap:anywhere}td code{overflow-wrap:anywhere}article table{display:block;overflow-x:auto}body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.7}code{background:#f1f1ec;padding:1px 4px;border-radius:4px;font-size:.92em}pre{background:#f1f1ec;padding:12px;border-radius:8px;overflow-x:auto}pre code{padding:0}.own{background:#1f4e79;box-shadow:0 2px 0 #12304d}.own:hover,.own:focus-visible{background:#163a5c}.own .shop{color:#1f4e79}.item .iname img{width:28px;height:28px;vertical-align:-7px;margin-right:8px;border-radius:6px}.answer{background:#eef3f8;border-left:5px solid #1f4e79;border-radius:8px;padding:12px 16px;margin:18px 0}.answer .ah{margin:0;font-size:13px;font-weight:700;color:#1f4e79;letter-spacing:.03em}.answer p{margin:4px 0 0}.toc{background:#fff;border:1px solid #ddd;border-radius:10px;padding:10px 16px;margin:18px 0;font-size:15px}.toc p{margin:0;font-size:13px;color:#666}.toc ol{margin:6px 0 0;padding-left:20px}.toc li{margin:2px 0}.toc a{color:#1f4e79;margin-left:0;font-size:inherit;text-decoration:underline}figure.dia{margin:20px auto;max-width:520px;background:#fff;border:1px solid #ddd;border-radius:10px;padding:10px}figure.dia svg,figure.shot img{display:block;width:100%;height:auto}figure.shot{margin:20px auto;max-width:520px}figure.shot img{border:1px solid #ddd;border-radius:10px}figcaption{font-size:13px;color:#666;text-align:center;margin-top:6px}pre{position:relative}.cp{position:absolute;top:6px;right:6px;font:12px system-ui,sans-serif;background:#fff;border:1px solid #bbb;border-radius:6px;padding:3px 8px;cursor:pointer}h2[id]{scroll-margin-top:12px}.tl{background:#fff8dc;border:1px solid #ecd98a;border-radius:8px;padding:8px 12px;font-size:15px}.fix{font-size:13px;color:#666;border-top:1px solid #ddd;padding-top:10px;margin-top:28px}.tool textarea,.tool input[type=text],.tool input[type=number],.tool select{display:block;width:100%;font:15px ui-monospace,Menlo,Consolas,monospace;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px;background:#fff}.tool textarea{min-height:180px}.tool .row{display:flex;flex-wrap:wrap;gap:8px 16px}.tool .row label{display:flex;align-items:center;gap:6px;font-size:15px;color:#222}.btn{font:600 15px system-ui,sans-serif;background:#1f4e79;color:#fff;border:0;border-radius:8px;padding:10px 16px;cursor:pointer}.btn.ghost{background:#fff;color:#1f4e79;border:1px solid #1f4e79}.res{list-style:none;padding:0;margin:8px 0}.res li{background:#fff;border:1px solid #ddd;border-radius:8px;padding:8px 12px;margin:6px 0;font-size:15px}.res li b{display:block}.res .ok{border-left:5px solid #2e7d4f}.res .ng{border-left:5px solid #b3261e}.res .info{border-left:5px solid #b38600}.score{font-size:18px;font-weight:700;margin:12px 0 4px}main code{overflow-wrap:anywhere}.res li{overflow-wrap:anywhere}#out{font:15px ui-monospace,Menlo,Consolas,monospace;background:#f1f1ec;padding:12px;border-radius:8px;overflow-wrap:anywhere}</style></head><body><header><div class="wrap"><a class="logo" href="/honest-guide/en/">Honest Guide</a><nav><a href="/honest-guide/en/">Guides</a><a href="/honest-guide/en/tools/">Tools</a><a href="/honest-guide/en/about/">About</a><a href="/honest-guide/">日本語</a></nav></div></header><main class="wrap"><nav class="crumb"><a href="/honest-guide/en/">Guides</a> › Copy a web page table into a spreadsheet with XPath and the Console, no scraper needed</nav><article><h1>Copy a web page table into a spreadsheet with XPath and the Console, no scraper needed</h1><p class="date">Updated 2026-10-18</p><p class="pr">Disclosure: Honest Tools makes Honest Headers, Honest Cookies, Honest Scraper and the PDFs linked on this site. Links to them are links to our own products. This section has no ads and no affiliate links.</p><div class="answer"><p class="ah">THE SHORT ANSWER</p><p>Chrome's Console can do this for you: find the rows with one XPath, read each column with a short XPath that starts from that row, join the cells with tab characters, and send the result to your clipboard with <code>copy()</code>. About ten lines of JavaScript, no extension and no library. Paste the text into a spreadsheet and the columns line up.</p></div><p class="tl">Free tool: <a href="/honest-guide/en/tools/xpath-tester/">XPath tester (paste HTML, see what matches)</a>, runs in your browser.</p><nav class="toc" aria-label="On this page"><p>On this page · about 5 min read</p><ol><li><a href="#the-snippet">The snippet</a></li><li><a href="#why-each-column-path-starts-with-a-dot">Why each column path starts with a dot</a></li><li><a href="#why-each-path-is-wrapped-in-string">Why each path is wrapped in string()</a></li><li><a href="#when-the-rows-are-not-in-a-table">When the rows are not in a &lt;table&gt;</a></li><li><a href="#check-the-snapshot-when-the-page-changes">Check the snapshot when the page changes</a></li><li><a href="#before-you-collect-data-from-a-page">Before you collect data from a page</a></li><li><a href="#who-this-is-not-for">Who this is not for</a></li><li><a href="#sources-checked-2026-10-18">Sources (checked 2026-10-18)</a></li></ol></nav>
+<h2 id="the-snippet">The snippet</h2>
+<p>This version assumes an HTML <code>&lt;table&gt;</code> whose body rows hold <code>&lt;td&gt;</code> cells. Change the three column paths to fit your page.</p>
+<pre><code class="language-js">const rows = document.evaluate(
+  &quot;//table//tr[td]&quot;, document, null,
+  XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null
+);
+const cols = [&quot;./td[1]&quot;, &quot;./td[2]&quot;, &quot;.//a/@href&quot;];
+const out = [];
+for (let i = 0; i &lt; rows.snapshotLength; i++) {
+  const row = rows.snapshotItem(i);
+  const cells = cols.map(c =&gt;
+    document.evaluate(&quot;string(&quot; + c + &quot;)&quot;, row, null,
+      XPathResult.STRING_TYPE, null)
+      .stringValue.trim().replace(/\s+/g, &quot; &quot;)
+  );
+  out.push(cells.join(&quot;\t&quot;));
+}
+copy(out.join(&quot;\n&quot;));
+</code></pre>
+<p>Run it in the Console, then paste into a cell in your spreadsheet app. If the paste lands in one column, check that the tabs survived: run <code>console.log(out[0])</code> and look for the gaps between cells.</p>
+<h2 id="why-each-column-path-starts-with-a-dot">Why each column path starts with a dot</h2>
+<p>The first XPath finds the rows. Each column path is then evaluated with one row as the context node, and the leading dot says "start from here". MDN's <code>document.evaluate()</code> page makes the same point with its <code>.//h2</code> example: with the dot, the query starts from the context node you passed, and without it (<code>//h2</code>) the query "would start from the root node (<code>html</code>)". For a table, that is the difference between "the first cell of this row" and "the first cell on the whole page", repeated for every row.</p>
+<p>Here is how the three paths in the snippet read:</p>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>./td[1]</code></td>
+<td>The first <code>td</code> child of the current row</td>
+</tr>
+<tr>
+<td><code>./td[2]</code></td>
+<td>The second <code>td</code> child of the current row</td>
+</tr>
+<tr>
+<td><code>.//a/@href</code></td>
+<td>The <code>href</code> attribute of any link inside the current row</td>
+</tr>
+</tbody>
+</table>
+<h2 id="why-each-path-is-wrapped-in-string">Why each path is wrapped in <code>string()</code></h2>
+<p>MDN's page on the XPath <code>string()</code> function says that for a node-set, the string value of the first node in the set is returned. So <code>string(./td[2])</code> gives you the text of the cell, and <code>string(.//a/@href)</code> gives you the first link's address, or an empty string if the row has no link. The snippet asks for <code>XPathResult.STRING_TYPE</code> and reads <code>stringValue</code>, which is how MDN's XPath guide says to read a string result.</p>
+<p>The <code>.trim().replace(/\s+/g, " ")</code> part is plain JavaScript housekeeping. It strips line breaks and runs of spaces so a cell cannot break the one-row-per-line layout.</p>
+<h2 id="when-the-rows-are-not-in-a-table">When the rows are not in a <code>&lt;table&gt;</code></h2>
+<p>Many pages build lists out of <code>&lt;div&gt;</code> or <code>&lt;li&gt;</code> elements. The idea is the same: write one XPath that matches exactly one node per record, then write relative paths for the fields. For example:</p>
+<pre><code class="language-js">// rows:   //ul[@class=&quot;results&quot;]/li
+// fields: ./h3        ./span[@class=&quot;price&quot;]        .//a/@href
+</code></pre>
+<p>Count your rows first with <code>$x('//ul[@class="results"]/li').length</code>. Chrome's Console Utilities reference says <code>$x(path)</code> returns an array of the DOM elements that match, so the length is your record count. If the number is not what you see on the screen, fix the row path before touching the columns. Our guide to <a href="/honest-guide/en/test-xpath-in-chrome-devtools/">testing an XPath in Chrome DevTools</a> covers the <code>//li[1]</code> trap that often causes a wrong count.</p>
+<h2 id="check-the-snapshot-when-the-page-changes">Check the snapshot when the page changes</h2>
+<p>The snippet uses a snapshot result. MDN notes that snapshots do not change with document mutations, so a snapshot "may not correspond to the current document". If the page loads more rows as you scroll, run the snippet again after they appear, and do not reuse an old snapshot.</p>
+<h2 id="before-you-collect-data-from-a-page">Before you collect data from a page</h2>
+<p>Being able to read a page with XPath does not mean you may copy it in bulk. Check the site's terms of use first. Also look at its <code>robots.txt</code>, but know what that file is: Google's documentation says it tells crawlers which URLs they can access, and that it is "not a mechanism for keeping a web page out of Google". It is not access control either, because crawlers have to choose to follow it. So a missing <code>Disallow</code> line is not permission by itself; the site's terms still apply, and a <code>Disallow</code> line for the pages you want is a reason to stop and ask.</p>
+<p>If you want to try the paths without touching a live page, paste a saved snippet of HTML into our free <a href="/honest-guide/en/tools/xpath-tester/">XPath tester</a>. To pick one element and get every similar one as a table without writing code, our free Honest Scraper extension does that on the page:</p>
+<div class="item"><p class="iname"><img src="/honest-guide/en/img/honest-scraper-48.png" alt="" width="28" height="28">Honest Scraper (free Chrome extension, open source)</p><p class="ispec">Pick one element and get every similar one as a table, with a live XPath tester. Copy to Google Sheets or Excel, or save CSV. No site access until you click.</p><a class="buy own" href="https://chromewebstore.google.com/detail/cjannokcnbkomcfalmhahpiffpkjbfla" rel="noopener" target="_blank"><span class="shop">Honest Tools</span>Get it on the Chrome Web Store<span class="arrow">›</span></a></div>
+
+<h2 id="who-this-is-not-for">Who this is not for</h2>
+<p>Skip this snippet if the page shows its data in a canvas, an image or a PDF viewer, because there is no DOM text to read. If the rows load only when you scroll or after you sign in, the Console will only see what is on the screen at that moment, so you will need to expand the page first. And if the site forbids copying its data, or the data is personal information about other people, do not collect it.</p>
+<h2 id="sources-checked-2026-10-18">Sources (checked 2026-10-18)</h2>
+<ul>
+<li>MDN, <code>Document.evaluate()</code> (signature, result type constants, <code>.//h2</code> relative-path note): <a href="https://developer.mozilla.org/docs/Web/API/Document/evaluate">https://developer.mozilla.org/docs/Web/API/Document/evaluate</a></li>
+<li>MDN, Introduction to using XPath in JavaScript (snapshots, <code>snapshotItem</code>, <code>stringValue</code> for <code>STRING_TYPE</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/XML/XPath/Guides/Introduction_to_using_XPath_in_JavaScript">https://developer.mozilla.org/en-US/docs/Web/XML/XPath/Guides/Introduction_to_using_XPath_in_JavaScript</a></li>
+<li>MDN, XPath <code>string()</code> (node-set returns the first node's string value; French version of the page): <a href="https://developer.mozilla.org/fr/docs/Web/XML/XPath/Reference/Functions/string">https://developer.mozilla.org/fr/docs/Web/XML/XPath/Reference/Functions/string</a></li>
+<li>Chrome for Developers, Console Utilities API reference (<code>$x(path [, startNode])</code>, <code>copy(object)</code>): <a href="https://developer.chrome.com/docs/devtools/console/utilities">https://developer.chrome.com/docs/devtools/console/utilities</a></li>
+<li>Google Search Central, Introduction to robots.txt (what it is for, and that it is not a way to keep a page out of Google or an access control): <a href="https://developers.google.com/search/docs/crawling-indexing/robots/intro">https://developers.google.com/search/docs/crawling-indexing/robots/intro</a></li>
+</ul><p class="fix">Found a mistake or something out of date? <a href="https://github.com/honestheaders/honest-headers/issues">Tell us on GitHub</a>. We check each fact against the sources above.</p></article><section class="related"><h2>More guides</h2><ul><li><a href="/honest-guide/en/test-xpath-in-chrome-devtools/">Test an XPath in Chrome DevTools: $x(), Elements search and document.evaluate</a></li><li><a href="/honest-guide/en/modheader-removed-from-chrome-what-to-do/">ModHeader was removed from the Chrome Web Store: what was reported, and how to check any header extension</a></li><li><a href="/honest-guide/en/modify-http-headers-in-chrome/">How to change HTTP headers in Chrome (response headers in DevTools, request headers with an extension)</a></li></ul></section><script>document.querySelectorAll("article pre").forEach(function(p){var b=document.createElement("button");b.type="button";b.className="cp";b.textContent="Copy";b.onclick=function(){navigator.clipboard.writeText((p.querySelector("code")||p).innerText).then(function(){b.textContent="Copied";setTimeout(function(){b.textContent="Copy"},1500)})};p.appendChild(b)})</script></main><footer><div class="wrap"><p>Practical notes on HTTP headers, cookies and browser tools, by Honest Tools. Facts are checked against official documentation; each article lists its sources and the date they were checked.</p><p><a href="/honest-guide/en/about/">About</a> / <a href="/honest-guide/privacy/">Privacy Policy</a> / <a href="/honest-guide/terms/">Terms of Service</a></p><p>&copy; 2026 Honest Tools</p></div></footer></body></html>

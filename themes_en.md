@@ -14,7 +14,7 @@ Status: todo / on hold (reason) / published. Work **top to bottom**. Topics are 
 | E24 | EditThisCookie is gone: move your cookies to another tool (JSON, cookies.txt). Only write the "what happened" part if a primary source is found; otherwise write only the export/import steps | Chrome Help, curl docs (cookie file format), Chrome for Developers (chrome.cookies) | cookies | published |
 | E25 | Header changes that stopped working in Manifest V3: why, and what still works | Chrome for Developers (Manifest V3 migration, declarativeNetRequest) | headers | published |
 | E26 | Test an XPath in Chrome: the DevTools `$x()` function and Elements search, with examples (text, attribute, nth item) | Chrome for Developers (Console utilities `$x`, Elements search), MDN (XPath, document.evaluate) | scraper | published |
-| E27 | Turn a list or table on a web page into a spreadsheet without code (copy as tab-separated, relative XPath per column), and when not to scrape (site terms, robots.txt, logins) | MDN (XPath, document.evaluate), Google Search Central (robots.txt intro) | scraper | todo |
+| E27 | Turn a list or table on a web page into a spreadsheet without code (copy as tab-separated, relative XPath per column), and when not to scrape (site terms, robots.txt, logins) | MDN (XPath, document.evaluate), Google Search Central (robots.txt intro) | scraper | published |
 | E5 | Export Chrome cookies to cookies.txt (Netscape format) for curl / wget | curl docs (cookie file format), wget manual | cookies | todo |
 | E6 | Test CORS locally: which response headers matter | MDN CORS guide, Fetch standard | headers | todo |
 | E7 | Content-Security-Policy: start with Report-Only | MDN CSP, CSP Level 3 spec | headers, templates | todo |
