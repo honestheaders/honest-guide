@@ -1,6 +1,6 @@
 {
   "name": "Honest Headers",
-  "published_version": "1.1.1",
+  "published_version": "1.1.2",
   "allowed_permissions": ["declarativeNetRequest", "storage", "alarms"],
   "allowed_host_permissions": ["<all_urls>"],
   "allowed_optional_permissions": [],
