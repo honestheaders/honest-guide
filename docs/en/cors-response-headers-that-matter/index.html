@@ -1,0 +1,96 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="google-site-verification" content="hqAGwjMx_F-TdJl79qigCCcuhYe7_9BUhfd7nEK2TMI"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CORS errors in local development: the response headers that matter | Honest Guide</title><meta name="description" content="A short map of the CORS response headers your server must send for simple requests, preflights and credentialed requests, with the browser error message each missing header produces."><link rel="canonical" href="https://honestheaders.github.io/honest-guide/en/cors-response-headers-that-matter/">
+<meta property="og:title" content="CORS errors in local development: the response headers that matter | Honest Guide"><meta property="og:description" content="A short map of the CORS response headers your server must send for simple requests, preflights and credentialed requests, with the browser error message each missing header produces."><meta property="og:type" content="article">
+<link rel="icon" href="/honest-guide/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Honest Guide (English)" href="https://honestheaders.github.io/honest-guide/en/feed.xml"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "CORS errors in local development: the response headers that matter", "description": "A short map of the CORS response headers your server must send for simple requests, preflights and credentialed requests, with the browser error message each missing header produces.", "inLanguage": "en", "dateModified": "2026-10-19", "author": {"@type": "Organization", "name": "Honest Tools"}, "publisher": {"@type": "Organization", "name": "Honest Tools"}, "mainEntityOfPage": "https://honestheaders.github.io/honest-guide/en/cors-response-headers-that-matter/"}</script>
+<style>:root{--c:#1f4e79;--bg:#fafaf7;--t:#222;--m:#666;--l:#ddd}
+*{box-sizing:border-box}body{margin:0;font-family:"Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;color:var(--t);background:var(--bg);line-height:1.85;font-size:16px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+header{background:var(--c);color:#fff}header .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 16px;gap:8px}
+.logo{color:#fff;font-weight:700;font-size:20px;text-decoration:none}nav a{color:#dbe8f5;margin-left:14px;text-decoration:none;font-size:14px}
+main{padding-top:24px;padding-bottom:40px}h1{font-size:26px;line-height:1.4}h2{font-size:20px;border-left:5px solid var(--c);padding-left:10px;margin-top:36px}
+a{color:var(--c)}table{border-collapse:collapse;width:100%;margin:16px 0;font-size:15px}th,td{border:1px solid var(--l);padding:8px;text-align:left;vertical-align:top}th{background:#eef3f8}
+.plain th{width:30%}.cards{list-style:none;padding:0;display:grid;gap:12px}.cards a{display:block;background:#fff;border:1px solid var(--l);border-radius:10px;padding:14px 16px;text-decoration:none;color:var(--t)}
+.cards b{display:block;color:var(--c)}.cards span{font-size:14px;color:var(--m)}.hero{background:#fff;border:1px solid var(--l);border-radius:12px;padding:20px;text-align:center}
+.pr{font-size:13px;color:var(--m);background:#f1f1ec;padding:8px 12px;border-radius:6px}.date{font-size:13px;color:var(--m)}
+.tool{display:grid;gap:12px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:16px}.tool label{display:block;font-size:14px;color:var(--m)}
+.tool input{display:block;width:100%;font-size:20px;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px}
+.result{background:#fff8dc;border:1px solid #ecd98a;border-radius:10px;padding:8px 16px;margin-top:16px;font-size:18px}.result b{font-size:24px;color:#c00}
+.note{font-size:13px;color:var(--m)}footer{background:#f1f1ec;font-size:13px;color:var(--m);padding:20px 0}
+
+.crumb{font-size:13px;color:var(--m)}.related{margin-top:32px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:4px 16px 12px}.related h2{margin-top:12px;font-size:17px}
+.buy{display:flex;align-items:center;gap:10px;background:#bf0000;color:#fff;text-decoration:none;font-weight:700;border-radius:10px;padding:12px 14px;margin:10px 0;line-height:1.4;box-shadow:0 2px 0 #8c0000}
+.buy:hover,.buy:focus-visible{background:#a30000;outline:none}.buy .shop{font-size:11px;font-weight:700;background:#fff;color:#bf0000;border-radius:4px;padding:2px 6px;white-space:nowrap}
+.buy .arrow{margin-left:auto;font-size:20px}li>.buy{margin:6px 0}article ul:has(.buy){list-style:none;padding-left:0}
+.quick{background:#fff;border:2px solid #f0c9c9;border-radius:12px;padding:12px 14px;margin:18px 0}.quick .qh{margin:0 0 4px;font-weight:700;color:#bf0000}.quick .qn{margin:6px 0 0;font-size:13px;color:var(--m)}
+.item{background:#fff;border:1px solid var(--l);border-radius:12px;padding:14px 16px;margin:14px 0}.item p{margin:0 0 6px}.iname{font-weight:700;font-size:17px;color:var(--c)}
+.ispec{font-size:14px;color:var(--t)}.ifit{font-size:14px;background:#f5f8fb;border-radius:6px;padding:6px 10px}.ifit b{display:block;font-size:12px;color:var(--c)}
+.crumb a{color:var(--c);margin-left:0;font-size:13px}
+.src a,.note a{word-break:break-all}
+article a{overflow-wrap:anywhere}td code{overflow-wrap:anywhere}article table{display:block;overflow-x:auto}body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.7}code{background:#f1f1ec;padding:1px 4px;border-radius:4px;font-size:.92em}pre{background:#f1f1ec;padding:12px;border-radius:8px;overflow-x:auto}pre code{padding:0}.own{background:#1f4e79;box-shadow:0 2px 0 #12304d}.own:hover,.own:focus-visible{background:#163a5c}.own .shop{color:#1f4e79}.item .iname img{width:28px;height:28px;vertical-align:-7px;margin-right:8px;border-radius:6px}.answer{background:#eef3f8;border-left:5px solid #1f4e79;border-radius:8px;padding:12px 16px;margin:18px 0}.answer .ah{margin:0;font-size:13px;font-weight:700;color:#1f4e79;letter-spacing:.03em}.answer p{margin:4px 0 0}.toc{background:#fff;border:1px solid #ddd;border-radius:10px;padding:10px 16px;margin:18px 0;font-size:15px}.toc p{margin:0;font-size:13px;color:#666}.toc ol{margin:6px 0 0;padding-left:20px}.toc li{margin:2px 0}.toc a{color:#1f4e79;margin-left:0;font-size:inherit;text-decoration:underline}figure.dia{margin:20px auto;max-width:520px;background:#fff;border:1px solid #ddd;border-radius:10px;padding:10px}figure.dia svg,figure.shot img{display:block;width:100%;height:auto}figure.shot{margin:20px auto;max-width:520px}figure.shot img{border:1px solid #ddd;border-radius:10px}figcaption{font-size:13px;color:#666;text-align:center;margin-top:6px}pre{position:relative}.cp{position:absolute;top:6px;right:6px;font:12px system-ui,sans-serif;background:#fff;border:1px solid #bbb;border-radius:6px;padding:3px 8px;cursor:pointer}h2[id]{scroll-margin-top:12px}.tl{background:#fff8dc;border:1px solid #ecd98a;border-radius:8px;padding:8px 12px;font-size:15px}.fix{font-size:13px;color:#666;border-top:1px solid #ddd;padding-top:10px;margin-top:28px}.tool textarea,.tool input[type=text],.tool input[type=number],.tool select{display:block;width:100%;font:15px ui-monospace,Menlo,Consolas,monospace;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px;background:#fff}.tool textarea{min-height:180px}.tool .row{display:flex;flex-wrap:wrap;gap:8px 16px}.tool .row label{display:flex;align-items:center;gap:6px;font-size:15px;color:#222}.btn{font:600 15px system-ui,sans-serif;background:#1f4e79;color:#fff;border:0;border-radius:8px;padding:10px 16px;cursor:pointer}.btn.ghost{background:#fff;color:#1f4e79;border:1px solid #1f4e79}.res{list-style:none;padding:0;margin:8px 0}.res li{background:#fff;border:1px solid #ddd;border-radius:8px;padding:8px 12px;margin:6px 0;font-size:15px}.res li b{display:block}.res .ok{border-left:5px solid #2e7d4f}.res .ng{border-left:5px solid #b3261e}.res .info{border-left:5px solid #b38600}.score{font-size:18px;font-weight:700;margin:12px 0 4px}main code{overflow-wrap:anywhere}.res li{overflow-wrap:anywhere}#out{font:15px ui-monospace,Menlo,Consolas,monospace;background:#f1f1ec;padding:12px;border-radius:8px;overflow-wrap:anywhere}</style></head><body><header><div class="wrap"><a class="logo" href="/honest-guide/en/">Honest Guide</a><nav><a href="/honest-guide/en/">Guides</a><a href="/honest-guide/en/tools/">Tools</a><a href="/honest-guide/en/about/">About</a><a href="/honest-guide/">日本語</a></nav></div></header><main class="wrap"><nav class="crumb"><a href="/honest-guide/en/">Guides</a> › CORS errors in local development: the response headers that matter</nav><article><h1>CORS errors in local development: the response headers that matter</h1><p class="date">Updated 2026-10-19</p><p class="pr">Disclosure: Honest Tools makes Honest Headers, Honest Cookies, Honest Scraper and the PDFs linked on this site. Links to them are links to our own products. This section has no ads and no affiliate links.</p><div class="answer"><p class="ah">THE SHORT ANSWER</p><p>When a page on <code>http://localhost:3000</code> calls an API on another origin and the browser blocks it, the fix is almost always on the server: the response needs the right <code>Access-Control-*</code> headers. Which ones depends on three things: is the request "simple", does it need a preflight, and does it send credentials.</p></div><nav class="toc" aria-label="On this page"><p>On this page · about 3 min read</p><ol><li><a href="#step-1-is-it-a-simple-request">Step 1: is it a simple request?</a></li><li><a href="#step-2-answer-the-preflight">Step 2: answer the preflight</a></li><li><a href="#step-3-credentials-change-the-rules">Step 3: credentials change the rules</a></li><li><a href="#if-you-echo-the-origin-add-vary">If you echo the origin, add Vary</a></li><li><a href="#a-quick-way-to-check">A quick way to check</a></li><li><a href="#who-this-is-not-for">Who this is not for</a></li><li><a href="#sources-checked-2026-10-19">Sources (checked 2026-10-19)</a></li></ol></nav>
+<h2 id="step-1-is-it-a-simple-request">Step 1: is it a simple request?</h2>
+<p>MDN's CORS guide says a simple request meets all of these conditions: the method is <code>GET</code>, <code>HEAD</code> or <code>POST</code>; only CORS-safelisted headers are set by hand (<code>Accept</code>, <code>Accept-Language</code>, <code>Content-Language</code>, <code>Content-Type</code> with extra requirements, and <code>Range</code>); and <code>Content-Type</code> is one of <code>application/x-www-form-urlencoded</code>, <code>multipart/form-data</code> or <code>text/plain</code>.</p>
+<p>For a simple request the browser sends it straight away. The response only needs <code>Access-Control-Allow-Origin</code> set to your page's origin (or <code>*</code>). Without it, Firefox reports <code>Reason: CORS header 'Access-Control-Allow-Origin' missing</code>.</p>
+<p>A common surprise: a <code>fetch()</code> that posts JSON with <code>Content-Type: application/json</code> is not simple, because that type is not on the list above. It gets a preflight.</p>
+<h2 id="step-2-answer-the-preflight">Step 2: answer the preflight</h2>
+<p>For a non-simple request, the browser first sends an <code>OPTIONS</code> request "in order to determine if the actual request is safe to send", as the guide puts it. MDN's glossary says that request carries <code>Access-Control-Request-Method</code>, <code>Origin</code>, and optionally <code>Access-Control-Request-Headers</code>.</p>
+<p>Your server must answer that <code>OPTIONS</code> request itself. MDN's example response looks like this:</p>
+<pre><code class="language-http">HTTP/1.1 204 No Content
+Access-Control-Allow-Origin: https://foo.example
+Access-Control-Allow-Methods: POST, GET, OPTIONS
+Access-Control-Allow-Headers: X-PINGOTHER, Content-Type
+Access-Control-Max-Age: 86400
+Vary: Accept-Encoding, Origin
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Header</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Access-Control-Allow-Origin</code></td>
+<td>Names the origin allowed to read the response.</td>
+</tr>
+<tr>
+<td><code>Access-Control-Allow-Methods</code></td>
+<td>Lists the methods the actual request may use.</td>
+</tr>
+<tr>
+<td><code>Access-Control-Allow-Headers</code></td>
+<td>Lists the request headers the actual request may carry. MDN says it is required if the preflight has <code>Access-Control-Request-Headers</code>.</td>
+</tr>
+<tr>
+<td><code>Access-Control-Max-Age</code></td>
+<td>How many seconds the preflight answer may be cached. MDN gives the default as 5 seconds and says each browser has its own maximum that takes precedence.</td>
+</tr>
+</tbody>
+</table>
+<p>The guide's examples use <code>204</code> for the preflight response, but it does not say that status is mandatory. It does say the actual request does not repeat the <code>Access-Control-Request-*</code> headers; they exist only on the <code>OPTIONS</code> request.</p>
+<p>If your server returns an error for <code>OPTIONS</code> (a framework route that only allows <code>POST</code>, say), Firefox shows <code>Reason: CORS preflight channel did not succeed</code>. If the preflight works but a header you send is missing from <code>Access-Control-Allow-Headers</code>, you get <code>Reason: missing token 'xyz' in CORS header 'Access-Control-Allow-Headers' from CORS preflight channel</code>. MDN's CORS errors page lists both messages.</p>
+<h2 id="step-3-credentials-change-the-rules">Step 3: credentials change the rules</h2>
+<p>If the request carries cookies or HTTP authentication (<code>credentials: "include"</code> in <code>fetch</code>), MDN lists extra requirements:</p>
+<ul>
+<li>The response must include <code>Access-Control-Allow-Credentials: true</code>, or the browser rejects it.</li>
+<li>The preflight response must also carry <code>Access-Control-Allow-Credentials: true</code>, and the preflight itself never includes credentials.</li>
+<li><code>Access-Control-Allow-Origin</code>, <code>-Allow-Headers</code>, <code>-Allow-Methods</code> and <code>-Expose-Headers</code> must not be the <code>*</code> wildcard; use explicit values.</li>
+<li><code>Access-Control-Allow-Headers</code> documentation adds that <code>Authorization</code> does not accept the wildcard and must be listed explicitly.</li>
+</ul>
+<p>The matching Firefox message is <code>Reason: Credential is not supported if the CORS header 'Access-Control-Allow-Origin' is '*'</code>.</p>
+<h2 id="if-you-echo-the-origin-add-vary">If you echo the origin, add Vary</h2>
+<p>Servers often compare the request's <code>Origin</code> to an allowlist and reply with that single origin. MDN says that in this case the server "should also include <code>Origin</code> in the <code>Vary</code> response header", so caches know responses differ by origin:</p>
+<pre><code class="language-http">Access-Control-Allow-Origin: https://mozilla.org
+Vary: Origin
+</code></pre>
+<h2 id="a-quick-way-to-check">A quick way to check</h2>
+<p>Open DevTools, go to the Network tab, click the failing request and read the response headers. For a preflight, look for the <code>OPTIONS</code> row just above it. Compare what you see with the table above. The browser console message names the missing piece, but MDN notes that JavaScript cannot see the specific reason, so the console is where to look. For general header inspection in Chrome, see <a href="/honest-guide/en/modify-http-headers-in-chrome/">how to change HTTP headers in Chrome</a>; for the headers that protect your own pages, see the <a href="/honest-guide/en/security-headers-checklist/">security headers checklist</a>.</p>
+<h2 id="who-this-is-not-for">Who this is not for</h2>
+<p>This page covers response headers only. If the request never reaches the server because of a network failure, or the page is blocked by something other than CORS (for example a Content-Security-Policy rule), these headers will not help.</p>
+<h2 id="sources-checked-2026-10-19">Sources (checked 2026-10-19)</h2>
+<ul>
+<li>MDN, Cross-Origin Resource Sharing (CORS): <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS">https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS</a></li>
+<li>MDN, CORS errors (reason messages): <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS/Errors">https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS/Errors</a></li>
+<li>MDN, Access-Control-Allow-Headers: <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Headers">https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Headers</a></li>
+<li>MDN Glossary, Preflight request: <a href="https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request">https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request</a></li>
+</ul><p class="fix">Found a mistake or something out of date? <a href="https://github.com/honestheaders/honest-headers/issues">Tell us on GitHub</a>. We check each fact against the sources above.</p></article><section class="related"><h2>More guides</h2><ul><li><a href="/honest-guide/en/modify-http-headers-in-chrome/">How to change HTTP headers in Chrome (response headers in DevTools, request headers with an extension)</a></li><li><a href="/honest-guide/en/move-modheader-rules-append-not-supported/">Moving header rules to a new tool: why &quot;append&quot; fails on some request headers in Chrome</a></li><li><a href="/honest-guide/en/security-headers-checklist/">Security headers checklist: the 7 to add and the 5 to remove</a></li></ul></section><script>document.querySelectorAll("article pre").forEach(function(p){var b=document.createElement("button");b.type="button";b.className="cp";b.textContent="Copy";b.onclick=function(){navigator.clipboard.writeText((p.querySelector("code")||p).innerText).then(function(){b.textContent="Copied";setTimeout(function(){b.textContent="Copy"},1500)})};p.appendChild(b)})</script></main><footer><div class="wrap"><p>Practical notes on HTTP headers, cookies and browser tools, by Honest Tools. Facts are checked against official documentation; each article lists its sources and the date they were checked.</p><p><a href="/honest-guide/en/about/">About</a> / <a href="/honest-guide/privacy/">Privacy Policy</a> / <a href="/honest-guide/terms/">Terms of Service</a></p><p>&copy; 2026 Honest Tools</p></div></footer></body></html>

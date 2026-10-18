@@ -15,8 +15,8 @@ Status: todo / on hold (reason) / published. Work **top to bottom**. Topics are 
 | E25 | Header changes that stopped working in Manifest V3: why, and what still works | Chrome for Developers (Manifest V3 migration, declarativeNetRequest) | headers | published |
 | E26 | Test an XPath in Chrome: the DevTools `$x()` function and Elements search, with examples (text, attribute, nth item) | Chrome for Developers (Console utilities `$x`, Elements search), MDN (XPath, document.evaluate) | scraper | published |
 | E27 | Turn a list or table on a web page into a spreadsheet without code (copy as tab-separated, relative XPath per column), and when not to scrape (site terms, robots.txt, logins) | MDN (XPath, document.evaluate), Google Search Central (robots.txt intro) | scraper | published |
-| E5 | Export Chrome cookies to cookies.txt (Netscape format) for curl / wget | curl docs (cookie file format), wget manual | cookies | todo |
-| E6 | Test CORS locally: which response headers matter | MDN CORS guide, Fetch standard | headers | todo |
+| E5 | Export Chrome cookies to cookies.txt (Netscape format) for curl / wget | curl docs (cookie file format), wget manual | cookies | on hold (already covered by the E24 article on cookies.txt for curl) |
+| E6 | Test CORS locally: which response headers matter | MDN CORS guide, Fetch standard | headers | published |
 | E7 | Content-Security-Policy: start with Report-Only | MDN CSP, CSP Level 3 spec | headers, templates | todo |
 | E8 | HSTS max-age and preload: a safe rollout order | MDN HSTS, hstspreload.org | templates | todo |
 | E9 | Partitioned cookies (CHIPS) explained | MDN, Chrome for Developers (privacy sandbox docs) | cookies | todo |
