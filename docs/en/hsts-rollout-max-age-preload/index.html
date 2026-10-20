@@ -1,0 +1,85 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="google-site-verification" content="hqAGwjMx_F-TdJl79qigCCcuhYe7_9BUhfd7nEK2TMI"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HSTS rollout order: ramp up max-age in three stages before you preload | Honest Guide</title><meta name="description" content="A safe order for rolling out Strict-Transport-Security: check every subdomain, ramp max-age from 5 minutes to 1 month, then decide on preload, which hstspreload.org says cannot easily be undone."><link rel="canonical" href="https://honestheaders.github.io/honest-guide/en/hsts-rollout-max-age-preload/">
+<meta property="og:title" content="HSTS rollout order: ramp up max-age in three stages before you preload | Honest Guide"><meta property="og:description" content="A safe order for rolling out Strict-Transport-Security: check every subdomain, ramp max-age from 5 minutes to 1 month, then decide on preload, which hstspreload.org says cannot easily be undone."><meta property="og:type" content="article">
+<link rel="icon" href="/honest-guide/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Honest Guide (English)" href="https://honestheaders.github.io/honest-guide/en/feed.xml"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "HSTS rollout order: ramp up max-age in three stages before you preload", "description": "A safe order for rolling out Strict-Transport-Security: check every subdomain, ramp max-age from 5 minutes to 1 month, then decide on preload, which hstspreload.org says cannot easily be undone.", "inLanguage": "en", "dateModified": "2026-10-21", "author": {"@type": "Organization", "name": "Honest Tools"}, "publisher": {"@type": "Organization", "name": "Honest Tools"}, "mainEntityOfPage": "https://honestheaders.github.io/honest-guide/en/hsts-rollout-max-age-preload/"}</script>
+<style>:root{--c:#1f4e79;--bg:#fafaf7;--t:#222;--m:#666;--l:#ddd}
+*{box-sizing:border-box}body{margin:0;font-family:"Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;color:var(--t);background:var(--bg);line-height:1.85;font-size:16px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+header{background:var(--c);color:#fff}header .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 16px;gap:8px}
+.logo{color:#fff;font-weight:700;font-size:20px;text-decoration:none}nav a{color:#dbe8f5;margin-left:14px;text-decoration:none;font-size:14px}
+main{padding-top:24px;padding-bottom:40px}h1{font-size:26px;line-height:1.4}h2{font-size:20px;border-left:5px solid var(--c);padding-left:10px;margin-top:36px}
+a{color:var(--c)}table{border-collapse:collapse;width:100%;margin:16px 0;font-size:15px}th,td{border:1px solid var(--l);padding:8px;text-align:left;vertical-align:top}th{background:#eef3f8}
+.plain th{width:30%}.cards{list-style:none;padding:0;display:grid;gap:12px}.cards a{display:block;background:#fff;border:1px solid var(--l);border-radius:10px;padding:14px 16px;text-decoration:none;color:var(--t)}
+.cards b{display:block;color:var(--c)}.cards span{font-size:14px;color:var(--m)}.hero{background:#fff;border:1px solid var(--l);border-radius:12px;padding:20px;text-align:center}
+.pr{font-size:13px;color:var(--m);background:#f1f1ec;padding:8px 12px;border-radius:6px}.date{font-size:13px;color:var(--m)}
+.tool{display:grid;gap:12px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:16px}.tool label{display:block;font-size:14px;color:var(--m)}
+.tool input{display:block;width:100%;font-size:20px;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px}
+.result{background:#fff8dc;border:1px solid #ecd98a;border-radius:10px;padding:8px 16px;margin-top:16px;font-size:18px}.result b{font-size:24px;color:#c00}
+.note{font-size:13px;color:var(--m)}footer{background:#f1f1ec;font-size:13px;color:var(--m);padding:20px 0}
+
+.crumb{font-size:13px;color:var(--m)}.related{margin-top:32px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:4px 16px 12px}.related h2{margin-top:12px;font-size:17px}
+.buy{display:flex;align-items:center;gap:10px;background:#bf0000;color:#fff;text-decoration:none;font-weight:700;border-radius:10px;padding:12px 14px;margin:10px 0;line-height:1.4;box-shadow:0 2px 0 #8c0000}
+.buy:hover,.buy:focus-visible{background:#a30000;outline:none}.buy .shop{font-size:11px;font-weight:700;background:#fff;color:#bf0000;border-radius:4px;padding:2px 6px;white-space:nowrap}
+.buy .arrow{margin-left:auto;font-size:20px}li>.buy{margin:6px 0}article ul:has(.buy){list-style:none;padding-left:0}
+.quick{background:#fff;border:2px solid #f0c9c9;border-radius:12px;padding:12px 14px;margin:18px 0}.quick .qh{margin:0 0 4px;font-weight:700;color:#bf0000}.quick .qn{margin:6px 0 0;font-size:13px;color:var(--m)}
+.item{background:#fff;border:1px solid var(--l);border-radius:12px;padding:14px 16px;margin:14px 0}.item p{margin:0 0 6px}.iname{font-weight:700;font-size:17px;color:var(--c)}
+.ispec{font-size:14px;color:var(--t)}.ifit{font-size:14px;background:#f5f8fb;border-radius:6px;padding:6px 10px}.ifit b{display:block;font-size:12px;color:var(--c)}
+.crumb a{color:var(--c);margin-left:0;font-size:13px}
+.src a,.note a{word-break:break-all}
+article a{overflow-wrap:anywhere}td code{overflow-wrap:anywhere}article table{display:block;overflow-x:auto}body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.7}code{background:#f1f1ec;padding:1px 4px;border-radius:4px;font-size:.92em}pre{background:#f1f1ec;padding:12px;border-radius:8px;overflow-x:auto}pre code{padding:0}.own{background:#1f4e79;box-shadow:0 2px 0 #12304d}.own:hover,.own:focus-visible{background:#163a5c}.own .shop{color:#1f4e79}.item .iname img{width:28px;height:28px;vertical-align:-7px;margin-right:8px;border-radius:6px}.answer{background:#eef3f8;border-left:5px solid #1f4e79;border-radius:8px;padding:12px 16px;margin:18px 0}.answer .ah{margin:0;font-size:13px;font-weight:700;color:#1f4e79;letter-spacing:.03em}.answer p{margin:4px 0 0}.toc{background:#fff;border:1px solid #ddd;border-radius:10px;padding:10px 16px;margin:18px 0;font-size:15px}.toc p{margin:0;font-size:13px;color:#666}.toc ol{margin:6px 0 0;padding-left:20px}.toc li{margin:2px 0}.toc a{color:#1f4e79;margin-left:0;font-size:inherit;text-decoration:underline}figure.dia{margin:20px auto;max-width:520px;background:#fff;border:1px solid #ddd;border-radius:10px;padding:10px}figure.dia svg,figure.shot img{display:block;width:100%;height:auto}figure.shot{margin:20px auto;max-width:520px}figure.shot img{border:1px solid #ddd;border-radius:10px}figcaption{font-size:13px;color:#666;text-align:center;margin-top:6px}pre{position:relative}.cp{position:absolute;top:6px;right:6px;font:12px system-ui,sans-serif;background:#fff;border:1px solid #bbb;border-radius:6px;padding:3px 8px;cursor:pointer}h2[id]{scroll-margin-top:12px}.tl{background:#fff8dc;border:1px solid #ecd98a;border-radius:8px;padding:8px 12px;font-size:15px}.fix{font-size:13px;color:#666;border-top:1px solid #ddd;padding-top:10px;margin-top:28px}.tool textarea,.tool input[type=text],.tool input[type=number],.tool select{display:block;width:100%;font:15px ui-monospace,Menlo,Consolas,monospace;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px;background:#fff}.tool textarea{min-height:180px}.tool .row{display:flex;flex-wrap:wrap;gap:8px 16px}.tool .row label{display:flex;align-items:center;gap:6px;font-size:15px;color:#222}.btn{font:600 15px system-ui,sans-serif;background:#1f4e79;color:#fff;border:0;border-radius:8px;padding:10px 16px;cursor:pointer}.btn.ghost{background:#fff;color:#1f4e79;border:1px solid #1f4e79}.res{list-style:none;padding:0;margin:8px 0}.res li{background:#fff;border:1px solid #ddd;border-radius:8px;padding:8px 12px;margin:6px 0;font-size:15px}.res li b{display:block}.res .ok{border-left:5px solid #2e7d4f}.res .ng{border-left:5px solid #b3261e}.res .info{border-left:5px solid #b38600}.score{font-size:18px;font-weight:700;margin:12px 0 4px}main code{overflow-wrap:anywhere}.res li{overflow-wrap:anywhere}#out{font:15px ui-monospace,Menlo,Consolas,monospace;background:#f1f1ec;padding:12px;border-radius:8px;overflow-wrap:anywhere}</style></head><body><header><div class="wrap"><a class="logo" href="/honest-guide/en/">Honest Guide</a><nav><a href="/honest-guide/en/">Guides</a><a href="/honest-guide/en/tools/">Tools</a><a href="/honest-guide/en/about/">About</a><a href="/honest-guide/">日本語</a></nav></div></header><main class="wrap"><nav class="crumb"><a href="/honest-guide/en/">Guides</a> › HSTS rollout order: ramp up max-age in three stages before you preload</nav><article><h1>HSTS rollout order: ramp up max-age in three stages before you preload</h1><p class="date">Updated 2026-10-21</p><p class="pr">Disclosure: Honest Tools makes Honest Headers, Honest Cookies, Honest Scraper and the PDFs linked on this site. Links to them are links to our own products. This section has no ads and no affiliate links.</p><div class="answer"><p class="ah">THE SHORT ANSWER</p><p>Do not start with <code>max-age=31536000; includeSubDomains; preload</code>. The preload site hstspreload.org recommends ramping up <code>max-age</code> in three stages (5 minutes, 1 week, 1 month), checking subdomains first, and adding <code>preload</code> only at the end, because inclusion in the preload list "cannot easily be undone". This page follows that order.</p></div><nav class="toc" aria-label="On this page"><p>On this page · about 3 min read</p><ol><li><a href="#why-the-order-matters">Why the order matters</a></li><li><a href="#step-0-list-every-subdomain-and-test-it-over-htt">Step 0: list every subdomain and test it over HTTPS</a></li><li><a href="#step-1-three-stages-one-header-each">Step 1: three stages, one header each</a></li><li><a href="#step-2-decide-on-preload-separately">Step 2: decide on preload separately</a></li><li><a href="#what-removal-looks-like">What removal looks like</a></li><li><a href="#who-this-is-not-for">Who this is not for</a></li><li><a href="#sources-checked-2026-10-21">Sources (checked 2026-10-21)</a></li></ol></nav>
+<h2 id="why-the-order-matters">Why the order matters</h2>
+<p>The preload site describes HSTS as the way to have browsers "enforce that your page is loaded only over HTTPS". The risk is that the rule covers more than you may expect. The same page says HSTS preloading applies to all subdomains, "including internal subdomains that are not publicly accessible". A forgotten host that only serves plain <code>http://</code> is one way this can go wrong.</p>
+<h2 id="step-0-list-every-subdomain-and-test-it-over-htt">Step 0: list every subdomain and test it over HTTPS</h2>
+<p>Before sending any header, examine all subdomains and nested subdomains and make sure they work properly over HTTPS. That includes internal ones. If a <code>www</code> DNS record exists, it needs to serve HTTPS too.</p>
+<h2 id="step-1-three-stages-one-header-each">Step 1: three stages, one header each</h2>
+<p>Add <code>Strict-Transport-Security</code> to all HTTPS responses and raise <code>max-age</code> in stages. The values below are the ones hstspreload.org gives:</p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Wait</th>
+<th>Header value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>5 minutes</td>
+<td><code>max-age=300; includeSubDomains</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>1 week</td>
+<td><code>max-age=604800; includeSubDomains</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>1 month</td>
+<td><code>max-age=2592000; includeSubDomains</code></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-http">Strict-Transport-Security: max-age=300; includeSubDomains
+</code></pre>
+<p>During each stage, check for broken pages and watch your site metrics such as traffic and revenue. Fix problems, then "wait the full <code>max-age</code> of the stage before you move on", for example a month in the last stage. If you have employees or users who can beta test, the page suggests trying the first few stages on them, then going through all stages for everyone from the beginning.</p>
+<p>You can try each header value in your own browser first, without a server change. See <a href="/honest-guide/en/modify-http-headers-in-chrome/">How to change HTTP headers in Chrome</a>. The other headers worth reviewing at the same time are in the <a href="/honest-guide/en/security-headers-checklist/">security headers checklist</a>.</p>
+<h2 id="step-2-decide-on-preload-separately">Step 2: decide on preload separately</h2>
+<p>Preloading is a different decision from sending HSTS. To be accepted, hstspreload.org lists these requirements:</p>
+<ul>
+<li>Serve a valid certificate.</li>
+<li>If the host listens on port 80, redirect HTTP to HTTPS on the same host.</li>
+<li>Serve all subdomains over HTTPS.</li>
+<li>Send an HSTS header on the base domain for HTTPS requests with <code>max-age</code> of at least <code>31536000</code> seconds (1 year), plus <code>includeSubDomains</code> and <code>preload</code>. Any redirect from the HTTPS site must also carry the header.</li>
+</ul>
+<p>The site must keep meeting these requirements, and it says sites may be removed automatically if they stop doing so.</p>
+<h2 id="what-removal-looks-like">What removal looks like</h2>
+<p>The preload page warns: "Don't request inclusion unless you're sure that you can support HTTPS for your entire site." To leave the list, the removal page says the site must be preloaded or pending preload, serve HTTPS with a valid certificate, and send a valid HSTS header that does not contain <code>preload</code>. It also says removal "may take 6-12 weeks to reach most Chrome users, and may take longer for other browsers". So treat the third stage as a long trial run, not a formality.</p>
+<div class="item"><p class="iname">Security Headers Config Templates ($7 PDF)</p><p class="ispec">Copy-paste settings for nginx, Apache, Cloudflare and Vercel, with a safe rollout order.</p><a class="buy own" href="https://honesttools.gumroad.com/l/ypsvgk" rel="noopener" target="_blank"><span class="shop">Honest Tools</span>See it on Gumroad<span class="arrow">›</span></a></div>
+
+<h2 id="who-this-is-not-for">Who this is not for</h2>
+<p>If any subdomain must stay on plain HTTP, such as an old internal tool, <code>includeSubDomains</code> and preload do not fit until that is fixed. This page does not cover how to set the header in nginx, Vercel or Cloudflare, or the exact browser behavior defined in the HSTS specification, which I did not open for this article. It is also not a complete security review: HSTS is one header among several.</p>
+<h2 id="sources-checked-2026-10-21">Sources (checked 2026-10-21)</h2>
+<ul>
+<li>HSTS Preload List Submission, deployment recommendations and requirements: <a href="https://hstspreload.org/">https://hstspreload.org/</a></li>
+<li>HSTS Preload List, removal requirements: <a href="https://hstspreload.org/removal/">https://hstspreload.org/removal/</a></li>
+</ul><p class="fix">Found a mistake or something out of date? <a href="https://github.com/honestheaders/honest-headers/issues">Tell us on GitHub</a>. We check each fact against the sources above.</p></article><section class="related"><h2>More guides</h2><ul><li><a href="/honest-guide/en/content-security-policy-report-only-first/">Content-Security-Policy Report-Only: the safe way to send your first CSP</a></li><li><a href="/honest-guide/en/cors-response-headers-that-matter/">CORS errors in local development: the response headers that matter</a></li><li><a href="/honest-guide/en/web-page-table-to-spreadsheet-xpath/">Copy a web page table into a spreadsheet with XPath and the Console, no scraper needed</a></li></ul></section><script>document.querySelectorAll("article pre").forEach(function(p){var b=document.createElement("button");b.type="button";b.className="cp";b.textContent="Copy";b.onclick=function(){navigator.clipboard.writeText((p.querySelector("code")||p).innerText).then(function(){b.textContent="Copied";setTimeout(function(){b.textContent="Copy"},1500)})};p.appendChild(b)})</script></main><footer><div class="wrap"><p>Practical notes on HTTP headers, cookies and browser tools, by Honest Tools. Facts are checked against official documentation; each article lists its sources and the date they were checked.</p><p><a href="/honest-guide/en/about/">About</a> / <a href="/honest-guide/privacy/">Privacy Policy</a> / <a href="/honest-guide/terms/">Terms of Service</a></p><p>&copy; 2026 Honest Tools</p></div></footer></body></html>

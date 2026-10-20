@@ -18,7 +18,7 @@ Status: todo / on hold (reason) / published. Work **top to bottom**. Topics are 
 | E5 | Export Chrome cookies to cookies.txt (Netscape format) for curl / wget | curl docs (cookie file format), wget manual | cookies | on hold (already covered by the E24 article on cookies.txt for curl) |
 | E6 | Test CORS locally: which response headers matter | MDN CORS guide, Fetch standard | headers | published |
 | E7 | Content-Security-Policy: start with Report-Only | MDN CSP, CSP Level 3 spec | headers, templates | published |
-| E8 | HSTS max-age and preload: a safe rollout order | MDN HSTS, hstspreload.org | templates | todo |
+| E8 | HSTS max-age and preload: a safe rollout order | MDN HSTS, hstspreload.org | templates | published |
 | E9 | Partitioned cookies (CHIPS) explained | MDN, Chrome for Developers (privacy sandbox docs) | cookies | todo |
 | E10 | HttpOnly and Secure cookies: what they do and don't stop | MDN Set-Cookie, OWASP Session Management Cheat Sheet | cookies | todo |
 | E11 | Cookie size and count limits | RFC 6265 / 6265bis, MDN | cookies | todo |

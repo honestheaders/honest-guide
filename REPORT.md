@@ -29,3 +29,4 @@
 - 2026-10-18: 英語記事「Copy a web page table into a spreadsheet with XPath and the Console, no scraper needed」を公開(E27)。出典: MDN(Document.evaluate、XPath入門、string())、Chrome for Developers(Console Utilities)、Google Search Central(robots.txt入門)。W3C仕様のページは開けなかったので出典に入れていない。check_en.py の出典OKに developers.google.com/search を追加。チェックは1回で合格。
 - 2026-10-19: 英語記事「CORS errors in local development: the response headers that matter」を公開(E6)。出典: MDN(CORSガイド、CORS errors、Access-Control-Allow-Headers、Preflight request)。E5はE24の記事とほぼ同じ内容なので保留にした。チェックは1回で合格。
 - 2026-10-20: 英語記事「Content-Security-Policy Report-Only: the safe way to send your first CSP」を公開(E7)。出典: MDN(Content-Security-Policy-Report-Only、CSPガイド)。CSP仕様のページは開いていないので出典に入れていない。チェックは1回で合格。
+- 2026-10-21: 英語記事「HSTS rollout order: ramp up max-age in three stages before you preload」を公開(E8)。出典: hstspreload.org(導入の推奨手順・登録の条件・削除の条件)。MDNとRFCのページは自動実行中に開けなかったので出典に入れていない。チェックは1回で合格。
