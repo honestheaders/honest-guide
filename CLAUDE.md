@@ -86,3 +86,4 @@
 - Honest Scraper(似た要素を表にする・XPath)は 2026-10-12 にストアで公開。カードは `{{product:scraper}}`。ウェブのデータを表にしたい・XPathを試したい悩みの記事で使える。XPath・表にする記事(themes_en.md の E26・E27)を書いたら、`src/en.py` の TOOL_FOR にその記事のスラッグ → `xpath-tester` を足し、本文からも [XPath tester](/honest-guide/en/tools/xpath-tester/) にリンクする。
 - **図と画面写真(2026-10-12 追加):** 文字だけにしない。説明が図で早くわかる記事には `{{diagram:名前|説明}}`(図は `src/diagrams/名前.svg`、横幅360で描く)を1つ入れてよい。自社の道具の画面写真は `{{shot:ファイル名|説明}}`(画像は `src/img/`)。図の中身も本文と同じく出典で確かめた事実だけ。答えの箱・目次・Copyボタンは build が自動で入れる。
 - **無料ツール(2026-10-12 追加):** 英語の無料ツールは `src/en_tools.py`(TOOLS と BODIES)で /en/tools/<slug>/ にできる。ブラウザの中だけで動かし、入力を外に送らない。ルールは公式(MDN、OWASP など)で確かめ、ページの Sources に確認日を書く。記事とツールのつながりは `src/en.py` の TOOL_FOR。ツールは人が来る入口なので、記事に合うツールがなければ足すことを考える(1回に1つまで)。
+- **ツール→商品の導線(2026-10-22 追加):** 無料ツールのページには、`src/en.py` の TOOL_PRODUCTS で決めた自社商品カードと、TOOL_FOR でつながった記事の一覧が自動で出る。新しいツールを足したら TOOL_PRODUCTS にも1〜2個足す。Honest Headers のカードには Pro(Gumroad $9)の案内が自動で付く。

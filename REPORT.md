@@ -31,3 +31,4 @@
 - 2026-10-20: 英語記事「Content-Security-Policy Report-Only: the safe way to send your first CSP」を公開(E7)。出典: MDN(Content-Security-Policy-Report-Only、CSPガイド)。CSP仕様のページは開いていないので出典に入れていない。チェックは1回で合格。
 - 2026-10-21: 英語記事「HSTS rollout order: ramp up max-age in three stages before you preload」を公開(E8)。出典: hstspreload.org(導入の推奨手順・登録の条件・削除の条件)。MDNとRFCのページは自動実行中に開けなかったので出典に入れていない。チェックは1回で合格。
 - 2026-10-22: 英語記事「Partitioned cookies (CHIPS): one cookie jar per top-level site」を公開(E9)。出典: MDN(CHIPS)、Privacy Sandbox(CHIPS)。IETFドラフトは開いていないので出典に入れていない。check_en.py の出典OKに privacysandbox.google.com を追加。チェックは1回で合格。
+- 2026-10-22: 人を呼ぶ導線を強化。無料ツール5つのページに「このツールを使う記事」と自社商品カード(ツールを使った人が次に使う道具)を追加。Honest Headers のカードに Pro($9、Gumroad)の案内を追加(今までサイトから Pro へ行く道がなかった)。英語トップに「ModHeaderから乗り換える人へ」の入口を追加。全ページに og:url・og:site_name・twitter:card(SNSで共有されたときの表示)を追加。

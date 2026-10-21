@@ -28,6 +28,12 @@ DISCLOSURE = ('<p class="pr">Disclosure: Honest Tools makes Honest Headers, Hone
 
 CSS_EN = 'article a{overflow-wrap:anywhere}td code{overflow-wrap:anywhere}article table{display:block;overflow-x:auto}body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.7}code{background:#f1f1ec;padding:1px 4px;border-radius:4px;font-size:.92em}pre{background:#f1f1ec;padding:12px;border-radius:8px;overflow-x:auto}pre code{padding:0}.own{background:#1f4e79;box-shadow:0 2px 0 #12304d}.own:hover,.own:focus-visible{background:#163a5c}.own .shop{color:#1f4e79}'
 
+PRO = ('<p class="ispec pro">Free to use. Optional Pro features (redirects, rules for one tab only, resource-type filters, auto-off timer): '
+       '<a href="https://honesttools.gumroad.com/l/rixjq" rel="noopener" target="_blank">$9 one-time license on Gumroad</a>.</p>')
+# 無料ツールのページに出す自社商品(ツールを使った人が次に使う道具)
+TOOL_PRODUCTS = {"security-headers-checker": ["headers", "templates"], "set-cookie-builder": ["cookies"], "cookie-converter": ["cookies"],
+                 "xpath-tester": ["scraper"], "php-version-checker": ["checklist", "templates"]}
+
 ICONS = {"headers": "honest-headers-48.png", "cookies": "honest-cookies-48.png", "scraper": "honest-scraper-48.png"}
 SRC = pathlib.Path(__file__).resolve().parent
 TOOL_FOR = {"security-headers-checklist": "security-headers-checker", "samesite-cookie-attribute": "set-cookie-builder", "edit-cookies-in-chrome": "set-cookie-builder", "test-xpath-in-chrome-devtools": "xpath-tester", "web-page-table-to-spreadsheet-xpath": "xpath-tester", "cookie-editor-json-to-cookies-txt-for-curl": "cookie-converter"}
@@ -82,7 +88,7 @@ def product_card(key, base=""):
     name, desc, url, label = PRODUCTS[key]
     icon = f'<img src="{base}/img/{ICONS[key]}" alt="" width="28" height="28">' if key in ICONS else ""
     return (f'<div class="item"><p class="iname">{icon}{html.escape(name)}</p><p class="ispec">{html.escape(desc)}</p>'
-            f'<a class="buy own" href="{url}" rel="noopener" target="_blank"><span class="shop">Honest Tools</span>{html.escape(label)}<span class="arrow">›</span></a></div>')
+            f'<a class="buy own" href="{url}" rel="noopener" target="_blank"><span class="shop">Honest Tools</span>{html.escape(label)}<span class="arrow">›</span></a>{PRO if key == "headers" else ""}</div>')
 
 def build(OUT, CFG, CSS, ROOT):
     BASE = CFG["base_path"] + "/en"
@@ -99,7 +105,7 @@ def build(OUT, CFG, CSS, ROOT):
                 f'<p><a href="{BASE}/about/">About</a> / <a href="{CFG["base_path"]}/privacy/">Privacy Policy</a> / <a href="{CFG["base_path"]}/terms/">Terms of Service</a></p><p>&copy; {year} {CFG["operator"]}</p></div></footer>')
         doc = f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="google-site-verification" content="hqAGwjMx_F-TdJl79qigCCcuhYe7_9BUhfd7nEK2TMI"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{html.escape(title)}</title><meta name="description" content="{html.escape(desc)}"><link rel="canonical" href="{canon}">
-<meta property="og:title" content="{html.escape(title)}"><meta property="og:description" content="{html.escape(desc)}"><meta property="og:type" content="{'article' if article else 'website'}">
+<meta property="og:url" content="{canon}"><meta property="og:site_name" content="Honest Guide"><meta name="twitter:card" content="summary"><meta property="og:title" content="{html.escape(title)}"><meta property="og:description" content="{html.escape(desc)}"><meta property="og:type" content="{'article' if article else 'website'}">
 <link rel="icon" href="{CFG["base_path"]}/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Honest Guide (English)" href="{URL}/feed.xml">{extra_head}
 <style>{CSS}{CSS_EN}</style></head><body>{nav}<main class="wrap">{body}</main>{foot}</body></html>'''
         d = OUT / "en" / path.strip("/")
@@ -142,11 +148,21 @@ def build(OUT, CFG, CSS, ROOT):
     free = "".join(f'<li><a href="{BASE}/tools/{sl}/"><b>{html.escape(t)}</b><span>{html.escape(d)}</span></a></li>' for sl, t, d in TOOLS)
     for sl, t, d in TOOLS:
         crumb = f'<nav class="crumb"><a href="{BASE}/">Guides</a> › <a href="{BASE}/tools/">Tools</a> › {html.escape(t)}</nav>'
-        pages.append(page(f"/tools/{sl}/", f"{t} | Honest Guide", d, crumb + "<article>" + BODIES[sl].replace("BASE/", BASE + "/") + "</article>"))
+        body_t = BODIES[sl].replace("BASE/", BASE + "/")
+        guides = [a for a in arts if TOOL_FOR.get(a[0]) == sl]
+        nxt = ""
+        if guides:
+            nxt += '<h2 id="guides">Guides that use this tool</h2><ul>' + "".join(f'<li><a href="{BASE}/{a[0]}/">{html.escape(a[1]["title"])}</a></li>' for a in guides) + "</ul>"
+        if TOOL_PRODUCTS.get(sl):
+            nxt += '<h2 id="next">Doing this often?</h2>' + DISCLOSURE + "".join(product_card(k, BASE) for k in TOOL_PRODUCTS[sl])
+        body_t = body_t.replace('<h2 id="sources"', nxt + '<h2 id="sources"', 1) if '<h2 id="sources"' in body_t else body_t + nxt
+        pages.append(page(f"/tools/{sl}/", f"{t} | Honest Guide", d, crumb + "<article>" + body_t + "</article>"))
     pages.append(page("/tools/", "Free tools for HTTP headers and cookies | Honest Guide", "Free browser tools: check security headers and build Set-Cookie headers. Nothing is sent to a server.",
                       f'<h1>Free tools</h1><p>Small tools that run only in your browser. Nothing you type is sent anywhere.</p><ul class="cards">{free}</ul>'))
     top = (f'<section class="hero"><h1>Honest Guide</h1><p>Plain answers about HTTP headers, cookies and browser developer tools. '
-           f'Checked against official docs, with sources and dates.</p></section><h2>Guides</h2><ul class="cards">{lst}</ul>'
+           f'Checked against official docs, with sources and dates.</p></section>'
+           f'<p class="tl"><b>Moving off ModHeader?</b> Start with <a href="{BASE}/modheader-removed-from-chrome-what-to-do/">what was reported and how to check any header extension</a>, '
+           f'then <a href="{BASE}/move-modheader-rules-append-not-supported/">how to move your rules</a>.</p><h2>Guides</h2><ul class="cards">{lst}</ul>'
            f'<h2>Free tools (run in your browser)</h2><ul class="cards">{free}</ul><h2>Tools we make</h2><ul class="cards">{tools}</ul>')
     pages.append(page("/", "Honest Guide | HTTP headers, cookies and browser dev tools, explained", "Plain answers about HTTP headers, cookies and browser developer tools, checked against official documentation.", top))
 
