@@ -2,6 +2,8 @@
 Every rule shown by a tool comes from the sources listed on its page (checked dates included)."""
 
 TOOLS = [
+    ("php-version-checker", "PHP version checker (CVE-2026-109618/109619)",
+     "Paste php -v or an X-Powered-By header. See if your PHP is at or above the 21 October 2026 fixed release for its branch, and which interim settings php.ini has."),
     ("security-headers-checker", "Security headers checker (paste your headers)",
      "Paste response headers from DevTools or curl. See which of the 7 recommended security headers are missing and which 5 old headers to remove."),
     ("set-cookie-builder", "Set-Cookie builder and checker",
@@ -58,7 +60,7 @@ want("referrer-policy",null,"Set it explicitly, e.g. <code>strict-origin-when-cr
 want("permissions-policy",null,"Turn off features you never use, e.g. <code>geolocation=(), camera=(), microphone=()</code>.");
 want("cross-origin-opener-policy",null,"Add <code>same-origin</code> (or <code>same-origin-allow-popups</code> if you use sign-in or payment popups).");
 function drop(name,bad,fix){var v=h[name];if(v!==undefined&&bad(v)){k++;rem.push(li("ng","✕ Remove: "+name+": "+esc(v),fix))}}
-drop("x-powered-by",function(){return true},"OWASP: remove all X-Powered-By headers. It tells visitors which framework you run.");
+drop("x-powered-by",function(){return true},"OWASP: remove all X-Powered-By headers. It tells visitors which framework you run."+(/php/i.test(h["x-powered-by"]||"")?' PHP: set <code>expose_php = Off</code>, and <a href="BASE/tools/php-version-checker/">check this PHP version against the October 2026 fixes</a>.':''));
 drop("server",function(v){return /\d/.test(v)},"Hide the version number (nginx: <code>server_tokens off;</code>).");
 drop("x-xss-protection",function(v){return v.trim()!=="0"},"OWASP: do not set it, or turn it off with <code>0</code>. Use CSP instead.");
 drop("public-key-pins",function(){return true},"OWASP: do not use.");
@@ -234,4 +236,62 @@ $("dl").onclick=function(){if(!$("out").value)return;var a=document.createElemen
 })();
 </script>'''
 
-BODIES = {"security-headers-checker": CHECKER, "set-cookie-builder": COOKIE, "xpath-tester": XPATH, "cookie-converter": CONVERTER}
+PHPCHECK = r'''<h1>PHP version checker for CVE-2026-109618 and CVE-2026-109619</h1>
+<div class="answer"><p class="ah">SHORT ANSWER</p><p>On 21 October 2026 php.net released PHP 8.5.12, 8.4.27, 8.3.36 and 8.2.35 to fix two critical remote code execution bugs (CVSS v4.0 9.2). Paste your <code>php -v</code> output, a <code>X-Powered-By</code> header, or <code>php -i</code> lines below to see whether your version is at or above the fixed release for its branch. It runs only in your browser: nothing you paste is sent anywhere.</p></div>
+<div class="tool"><label for="h">Paste <code>php -v</code>, response headers, or <code>php -i</code> output</label>
+<textarea id="h" spellcheck="false" placeholder="PHP 8.3.30 (cli) (built: ...)&#10;or&#10;X-Powered-By: PHP/8.3.30"></textarea>
+<div class="row"><button class="btn" id="go" type="button">Check</button><button class="btn ghost" id="ex" type="button">Try an example</button></div></div>
+<div id="r" aria-live="polite"></div>
+<h2 id="fixed">Fixed versions by branch</h2>
+<table><tr><th>Branch</th><th>Fixed in</th></tr>
+<tr><td>8.5</td><td>8.5.12</td></tr><tr><td>8.4</td><td>8.4.27</td></tr><tr><td>8.3</td><td>8.3.36</td></tr><tr><td>8.2</td><td>8.2.35</td></tr>
+<tr><td>7.4, 8.0, 8.1</td><td>No php.net release. Source backports only; ask your vendor or upgrade.</td></tr>
+<tr><td>Older</td><td>No fix from php.net. Upgrade to a supported branch.</td></tr></table>
+<h2 id="where">Where to get the version</h2>
+<ul><li><b>On the server:</b> <code>php -v</code>. The web server can run a different PHP than the command line, so also check the version your site reports (for example a <code>phpinfo()</code> page you then delete).</li>
+<li><b>From outside:</b> <code>curl -sI https://your-site.example</code> shows <code>X-Powered-By: PHP/…</code> only while <code>expose_php</code> is on.</li>
+<li><b>Settings:</b> <code>php -i | grep -E "memory_limit|post_max_size|upload_progress.enabled|fatal_error_backtraces"</code></li></ul>
+<h2 id="interim">If you cannot update today</h2>
+<p>php.net says only an update is a complete fix. These settings reduce some attack paths but "do not make an installation safe":</p>
+<ul><li><code>session.upload_progress.enabled=0</code> in php.ini, an FPM pool or server config (not <code>ini_set()</code> or <code>.user.ini</code>), then restart every worker.</li>
+<li>PHP 8.5 only: <code>fatal_error_backtraces=0</code>, then restart every worker.</li>
+<li><code>memory_limit=-1</code>, set where applications cannot override it (for example <code>php_admin_value</code>), and a low <code>post_max_size</code> (8M without uploads, 32M with uploads).</li>
+<li>Hiding errors with <code>display_errors</code> or <code>@</code> does not help.</li></ul>
+<h2 id="not-for">Who this is not for</h2>
+<ul><li>Linux distribution packages (Debian, Ubuntu, Red Hat and others) often fix bugs without changing the upstream version number. If your version has a suffix like <code>-1ubuntu</code> or <code>deb12</code>, the number alone cannot tell you; check your distribution's security notice.</li>
+<li>This tool does not scan a site, test for the bug, or tell you whether you were attacked. For a hosted site, ask your host which PHP build they run.</li></ul>
+<h2 id="sources">Sources (checked 2026-10-22)</h2>
+<ul><li>php.net, Security advisory, 21 Oct 2026: <a href="https://www.php.net/archive/2026.php#2026-10-21-5">https://www.php.net/archive/2026.php#2026-10-21-5</a></li>
+<li>PHP security advisory GHSA-w8hw-w9fx-j79w (CVE-2026-109618): <a href="https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w">https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w</a></li>
+<li>PHP security advisory GHSA-6wmf-4rv5-p3rp (CVE-2026-109619): <a href="https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp">https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp</a></li>
+<li>PHP manual, expose_php: <a href="https://www.php.net/manual/en/ini.core.php">https://www.php.net/manual/en/ini.core.php</a></li></ul>
+<script>
+(function(){
+var FIX={"8.5":12,"8.4":27,"8.3":36,"8.2":35},EX="X-Powered-By: PHP/8.3.30\nmemory_limit => 128M => 128M\npost_max_size => 64M => 64M\nsession.upload_progress.enabled => On => On";
+function esc(s){return s.replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function li(c,t,d){return '<li class="'+c+'"><b>'+t+'</b>'+(d||"")+'</li>'}
+function ini(t,k){var m=t.match(new RegExp("^\\s*"+k.replace(/\./g,"\\.")+"\\s*(?:=>|=)\\s*([^\\n]*)$","mi"));if(!m)return null;var v=m[1].split("=>").pop().trim().replace(/^"|"$/g,"");return v}
+function off(v){return /^(0|off|false|no|)$/i.test(v)}
+function mb(v){var m=String(v).trim().match(/^(-?\d+)\s*([kmg]?)/i);if(!m)return null;var n=+m[1],u=m[2].toLowerCase();return u==="g"?n*1024:u==="m"?n:u==="k"?n/1024:n/1048576}
+function run(){var t=document.getElementById("h").value,out=[],head="";
+var m=t.match(/PHP[\/ ](\d+)\.(\d+)\.(\d+)([^\s;,)]*)/i);
+if(m){var br=m[1]+"."+m[2],p=+m[3],full=m[1]+"."+m[2]+"."+m[3]+m[4],v=esc(full),dist=/ubuntu|deb|el\d|\+|~|-\d/i.test(m[4]);
+if(FIX[br]!==undefined){if(p>=FIX[br]){head="PHP "+v+": at or above the fixed release "+br+"."+FIX[br]+".";out.push(li("ok","✓ "+head,"Restart PHP-FPM or the web server so the running workers use it."))}
+else{head="PHP "+v+": "+(dist?"the number is below "+br+"."+FIX[br]+"; check your distribution.":"update to "+br+"."+FIX[br]+" or later.");out.push(li("ng","✕ "+head,dist?"Your version has a distribution suffix. The package may already carry the fix; check your distribution's security notice before deciding.":"php.net calls this the only complete fix. See the interim settings below if you cannot update today."))}}
+else if(/^(7\.4|8\.0|8\.1)$/.test(br)){head="PHP "+v+": no php.net release for this branch.";out.push(li("ng","✕ "+head,"php.net published source backports for 7.4, 8.0 and 8.1 only. Ask your vendor or host for a patched build, or upgrade to 8.2 or later."))}
+else if(+m[1]<8||(+m[1]===8&&+m[2]<2)){head="PHP "+v+": end of life, no fix from php.net.";out.push(li("ng","✕ "+head,"Upgrade to a supported branch (8.2 or later)."))}
+else{head="PHP "+v+": this branch is not in the 21 October 2026 advisory.";out.push(li("info","△ "+head,"Check php.net for the current release of this branch."))}
+if(/x-powered-by\s*:/i.test(t))out.push(li("info","△ Your PHP version is visible in X-Powered-By","Set <code>expose_php = Off</code> in php.ini to stop sending it. This hides the number; it does not fix anything."))}
+else out.push(li("info","△ No PHP version found","Paste a line like <code>PHP 8.3.30 (cli)</code> or <code>X-Powered-By: PHP/8.3.30</code>."));
+var up=ini(t,"session.upload_progress.enabled"),fb=ini(t,"fatal_error_backtraces"),ml=ini(t,"memory_limit"),pm=ini(t,"post_max_size");
+if(up!==null)out.push(off(up)?li("ok","✓ session.upload_progress.enabled is off"):li("info","△ session.upload_progress.enabled is "+esc(up),"php.net suggests 0 if you do not use the feature, even after updating."));
+if(fb!==null&&m&&m[1]+"."+m[2]==="8.5")out.push(off(fb)?li("ok","✓ fatal_error_backtraces is off"):li("info","△ fatal_error_backtraces is "+esc(fb),"Interim setting on 8.5: 0, then restart every worker."));
+if(ml!==null)out.push(String(ml).trim()==="-1"?li("ok","✓ memory_limit is -1"):li("info","△ memory_limit is "+esc(ml),"Interim setting for CVE-2026-109618 is -1, set where apps cannot override it. Not needed once you are on a fixed release."));
+if(pm!==null){var n=mb(pm);out.push(n!==null&&n<=32?li("ok","✓ post_max_size is "+esc(pm)):li("info","△ post_max_size is "+esc(pm),"php.net suggests 8M without file uploads, 32M with uploads, while you wait to update."))}
+document.getElementById("r").innerHTML=(head?'<p class="score">'+head+'</p>':'')+'<ul class="res">'+out.join("")+'</ul>'}
+document.getElementById("go").onclick=run;
+document.getElementById("ex").onclick=function(){document.getElementById("h").value=EX;run()};
+})();
+</script>'''
+
+BODIES = {"php-version-checker": PHPCHECK, "security-headers-checker": CHECKER, "set-cookie-builder": COOKIE, "xpath-tester": XPATH, "cookie-converter": CONVERTER}

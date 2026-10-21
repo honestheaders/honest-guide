@@ -65,7 +65,7 @@ want("referrer-policy",null,"Set it explicitly, e.g. <code>strict-origin-when-cr
 want("permissions-policy",null,"Turn off features you never use, e.g. <code>geolocation=(), camera=(), microphone=()</code>.");
 want("cross-origin-opener-policy",null,"Add <code>same-origin</code> (or <code>same-origin-allow-popups</code> if you use sign-in or payment popups).");
 function drop(name,bad,fix){var v=h[name];if(v!==undefined&&bad(v)){k++;rem.push(li("ng","✕ Remove: "+name+": "+esc(v),fix))}}
-drop("x-powered-by",function(){return true},"OWASP: remove all X-Powered-By headers. It tells visitors which framework you run.");
+drop("x-powered-by",function(){return true},"OWASP: remove all X-Powered-By headers. It tells visitors which framework you run."+(/php/i.test(h["x-powered-by"]||"")?' PHP: set <code>expose_php = Off</code>, and <a href="/honest-guide/en/tools/php-version-checker/">check this PHP version against the October 2026 fixes</a>.':''));
 drop("server",function(v){return /\d/.test(v)},"Hide the version number (nginx: <code>server_tokens off;</code>).");
 drop("x-xss-protection",function(v){return v.trim()!=="0"},"OWASP: do not set it, or turn it off with <code>0</code>. Use CSP instead.");
 drop("public-key-pins",function(){return true},"OWASP: do not use.");
