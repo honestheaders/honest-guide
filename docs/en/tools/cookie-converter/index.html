@@ -1,0 +1,86 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="google-site-verification" content="hqAGwjMx_F-TdJl79qigCCcuhYe7_9BUhfd7nEK2TMI"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cookie JSON to cookies.txt converter (both ways) | Honest Guide</title><meta name="description" content="Paste a cookie editor&#x27;s JSON export and get a Netscape cookies.txt for curl or wget, or turn a cookies.txt back into JSON. Runs only in your browser."><link rel="canonical" href="https://honestheaders.github.io/honest-guide/en/tools/cookie-converter/">
+<meta property="og:title" content="Cookie JSON to cookies.txt converter (both ways) | Honest Guide"><meta property="og:description" content="Paste a cookie editor&#x27;s JSON export and get a Netscape cookies.txt for curl or wget, or turn a cookies.txt back into JSON. Runs only in your browser."><meta property="og:type" content="website">
+<link rel="icon" href="/honest-guide/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Honest Guide (English)" href="https://honestheaders.github.io/honest-guide/en/feed.xml">
+<style>:root{--c:#1f4e79;--bg:#fafaf7;--t:#222;--m:#666;--l:#ddd}
+*{box-sizing:border-box}body{margin:0;font-family:"Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;color:var(--t);background:var(--bg);line-height:1.85;font-size:16px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+header{background:var(--c);color:#fff}header .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 16px;gap:8px}
+.logo{color:#fff;font-weight:700;font-size:20px;text-decoration:none}nav a{color:#dbe8f5;margin-left:14px;text-decoration:none;font-size:14px}
+main{padding-top:24px;padding-bottom:40px}h1{font-size:26px;line-height:1.4}h2{font-size:20px;border-left:5px solid var(--c);padding-left:10px;margin-top:36px}
+a{color:var(--c)}table{border-collapse:collapse;width:100%;margin:16px 0;font-size:15px}th,td{border:1px solid var(--l);padding:8px;text-align:left;vertical-align:top}th{background:#eef3f8}
+.plain th{width:30%}.cards{list-style:none;padding:0;display:grid;gap:12px}.cards a{display:block;background:#fff;border:1px solid var(--l);border-radius:10px;padding:14px 16px;text-decoration:none;color:var(--t)}
+.cards b{display:block;color:var(--c)}.cards span{font-size:14px;color:var(--m)}.hero{background:#fff;border:1px solid var(--l);border-radius:12px;padding:20px;text-align:center}
+.pr{font-size:13px;color:var(--m);background:#f1f1ec;padding:8px 12px;border-radius:6px}.date{font-size:13px;color:var(--m)}
+.tool{display:grid;gap:12px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:16px}.tool label{display:block;font-size:14px;color:var(--m)}
+.tool input{display:block;width:100%;font-size:20px;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px}
+.result{background:#fff8dc;border:1px solid #ecd98a;border-radius:10px;padding:8px 16px;margin-top:16px;font-size:18px}.result b{font-size:24px;color:#c00}
+.note{font-size:13px;color:var(--m)}footer{background:#f1f1ec;font-size:13px;color:var(--m);padding:20px 0}
+
+.crumb{font-size:13px;color:var(--m)}.related{margin-top:32px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:4px 16px 12px}.related h2{margin-top:12px;font-size:17px}
+.buy{display:flex;align-items:center;gap:10px;background:#bf0000;color:#fff;text-decoration:none;font-weight:700;border-radius:10px;padding:12px 14px;margin:10px 0;line-height:1.4;box-shadow:0 2px 0 #8c0000}
+.buy:hover,.buy:focus-visible{background:#a30000;outline:none}.buy .shop{font-size:11px;font-weight:700;background:#fff;color:#bf0000;border-radius:4px;padding:2px 6px;white-space:nowrap}
+.buy .arrow{margin-left:auto;font-size:20px}li>.buy{margin:6px 0}article ul:has(.buy){list-style:none;padding-left:0}
+.quick{background:#fff;border:2px solid #f0c9c9;border-radius:12px;padding:12px 14px;margin:18px 0}.quick .qh{margin:0 0 4px;font-weight:700;color:#bf0000}.quick .qn{margin:6px 0 0;font-size:13px;color:var(--m)}
+.item{background:#fff;border:1px solid var(--l);border-radius:12px;padding:14px 16px;margin:14px 0}.item p{margin:0 0 6px}.iname{font-weight:700;font-size:17px;color:var(--c)}
+.ispec{font-size:14px;color:var(--t)}.ifit{font-size:14px;background:#f5f8fb;border-radius:6px;padding:6px 10px}.ifit b{display:block;font-size:12px;color:var(--c)}
+.crumb a{color:var(--c);margin-left:0;font-size:13px}
+.src a,.note a{word-break:break-all}
+article a{overflow-wrap:anywhere}td code{overflow-wrap:anywhere}article table{display:block;overflow-x:auto}body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.7}code{background:#f1f1ec;padding:1px 4px;border-radius:4px;font-size:.92em}pre{background:#f1f1ec;padding:12px;border-radius:8px;overflow-x:auto}pre code{padding:0}.own{background:#1f4e79;box-shadow:0 2px 0 #12304d}.own:hover,.own:focus-visible{background:#163a5c}.own .shop{color:#1f4e79}.item .iname img{width:28px;height:28px;vertical-align:-7px;margin-right:8px;border-radius:6px}.answer{background:#eef3f8;border-left:5px solid #1f4e79;border-radius:8px;padding:12px 16px;margin:18px 0}.answer .ah{margin:0;font-size:13px;font-weight:700;color:#1f4e79;letter-spacing:.03em}.answer p{margin:4px 0 0}.toc{background:#fff;border:1px solid #ddd;border-radius:10px;padding:10px 16px;margin:18px 0;font-size:15px}.toc p{margin:0;font-size:13px;color:#666}.toc ol{margin:6px 0 0;padding-left:20px}.toc li{margin:2px 0}.toc a{color:#1f4e79;margin-left:0;font-size:inherit;text-decoration:underline}figure.dia{margin:20px auto;max-width:520px;background:#fff;border:1px solid #ddd;border-radius:10px;padding:10px}figure.dia svg,figure.shot img{display:block;width:100%;height:auto}figure.shot{margin:20px auto;max-width:520px}figure.shot img{border:1px solid #ddd;border-radius:10px}figcaption{font-size:13px;color:#666;text-align:center;margin-top:6px}pre{position:relative}.cp{position:absolute;top:6px;right:6px;font:12px system-ui,sans-serif;background:#fff;border:1px solid #bbb;border-radius:6px;padding:3px 8px;cursor:pointer}h2[id]{scroll-margin-top:12px}.tl{background:#fff8dc;border:1px solid #ecd98a;border-radius:8px;padding:8px 12px;font-size:15px}.fix{font-size:13px;color:#666;border-top:1px solid #ddd;padding-top:10px;margin-top:28px}.tool textarea,.tool input[type=text],.tool input[type=number],.tool select{display:block;width:100%;font:15px ui-monospace,Menlo,Consolas,monospace;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px;background:#fff}.tool textarea{min-height:180px}.tool .row{display:flex;flex-wrap:wrap;gap:8px 16px}.tool .row label{display:flex;align-items:center;gap:6px;font-size:15px;color:#222}.btn{font:600 15px system-ui,sans-serif;background:#1f4e79;color:#fff;border:0;border-radius:8px;padding:10px 16px;cursor:pointer}.btn.ghost{background:#fff;color:#1f4e79;border:1px solid #1f4e79}.res{list-style:none;padding:0;margin:8px 0}.res li{background:#fff;border:1px solid #ddd;border-radius:8px;padding:8px 12px;margin:6px 0;font-size:15px}.res li b{display:block}.res .ok{border-left:5px solid #2e7d4f}.res .ng{border-left:5px solid #b3261e}.res .info{border-left:5px solid #b38600}.score{font-size:18px;font-weight:700;margin:12px 0 4px}main code{overflow-wrap:anywhere}.res li{overflow-wrap:anywhere}#out{font:15px ui-monospace,Menlo,Consolas,monospace;background:#f1f1ec;padding:12px;border-radius:8px;overflow-wrap:anywhere}</style></head><body><header><div class="wrap"><a class="logo" href="/honest-guide/en/">Honest Guide</a><nav><a href="/honest-guide/en/">Guides</a><a href="/honest-guide/en/tools/">Tools</a><a href="/honest-guide/en/about/">About</a><a href="/honest-guide/">日本語</a></nav></div></header><main class="wrap"><nav class="crumb"><a href="/honest-guide/en/">Guides</a> › <a href="/honest-guide/en/tools/">Tools</a> › Cookie JSON to cookies.txt converter (both ways)</nav><article><h1>Cookie JSON to cookies.txt converter</h1>
+<div class="answer"><p class="ah">HOW IT WORKS</p><p>Paste a JSON list of cookies (the property names Chrome's <code>chrome.cookies</code> API uses, which many cookie editors export) to get a cookies.txt file with the seven TAB-separated fields curl expects. Or paste a cookies.txt to get JSON back. It runs only in your browser: nothing you paste is sent anywhere.</p></div>
+<div class="tool">
+<div class="row"><label><input type="radio" name="dir" id="d1" checked> JSON to cookies.txt</label><label><input type="radio" name="dir" id="d2"> cookies.txt to JSON</label></div>
+<label for="in">Input</label><textarea id="in" spellcheck="false"></textarea>
+<div class="row"><button class="btn" id="go" type="button">Convert</button><button class="btn ghost" id="ex" type="button">Try an example</button><button class="btn ghost" id="cp" type="button">Copy result</button><button class="btn ghost" id="dl" type="button">Save as file</button></div>
+</div>
+<ul class="res" id="msg" aria-live="polite"></ul>
+<label for="out">Result</label><textarea id="out" spellcheck="false" readonly></textarea>
+<h2 id="mapping">The mapping it uses</h2>
+<table><tr><th>cookies.txt field</th><th>JSON property</th></tr>
+<tr><td>Domain (with <code>#HttpOnly_</code> in front when HttpOnly)</td><td><code>domain</code>, <code>httpOnly</code></td></tr>
+<tr><td>Include subdomains (TRUE/FALSE)</td><td>the opposite of <code>hostOnly</code> (our reading)</td></tr>
+<tr><td>Path</td><td><code>path</code></td></tr>
+<tr><td>HTTPS only (TRUE/FALSE)</td><td><code>secure</code></td></tr>
+<tr><td>Expiry (seconds since 1970, or 0)</td><td><code>expirationDate</code>; 0 when it is missing (session cookie)</td></tr>
+<tr><td>Name, value</td><td><code>name</code>, <code>value</code></td></tr></table>
+<p>The reasons, and a Python version of the same converter: <a href="/honest-guide/en/cookie-editor-json-to-cookies-txt-for-curl/">Cookie editor export to cookies.txt: the 7 fields curl expects</a>. Try the result with <code>curl -v -b cookies.txt https://your-test-site.example/</code>.</p>
+<h2 id="not-for">Who this is not for</h2>
+<ul><li>cookies.txt has no place for <code>SameSite</code> or partition keys, so converting to cookies.txt drops them, and converting back cannot restore them.</li>
+<li>If your export uses other property names, the converter tells you which are missing instead of guessing.</li>
+<li>The files hold live session values. Keep them out of Git and bug reports, and delete them after testing. Only use cookies for sites you are allowed to test.</li></ul>
+<h2 id="sources">Sources (checked 2026-10-22)</h2>
+<ul><li>curl, HTTP cookies (file structure and the seven fields): <a href="https://curl.se/docs/http-cookies.html">https://curl.se/docs/http-cookies.html</a></li>
+<li>Chrome for Developers, chrome.cookies (cookie properties): <a href="https://developer.chrome.com/docs/extensions/reference/api/cookies">https://developer.chrome.com/docs/extensions/reference/api/cookies</a></li></ul>
+<script>
+(function(){
+function $(i){return document.getElementById(i)}
+var EXJ='[\n  {"domain": ".example.com", "hostOnly": false, "path": "/", "secure": true, "httpOnly": true, "expirationDate": 1798761600, "name": "session", "value": "abc123", "sameSite": "lax"},\n  {"domain": "app.example.com", "hostOnly": true, "path": "/", "secure": true, "httpOnly": false, "session": true, "name": "theme", "value": "dark"}\n]';
+function li(c,t){var e=document.createElement("li");e.className=c;e.textContent=t;$("msg").appendChild(e)}
+function toTxt(text){var a;try{a=JSON.parse(text)}catch(e){li("ng","✕ This is not valid JSON: "+e.message);return ""}
+if(!Array.isArray(a)){if(a&&Array.isArray(a.cookies))a=a.cookies;else{li("ng","✕ Expected a JSON list of cookies ([ ... ]).");return ""}}
+var out=["# Netscape HTTP Cookie File"],skip=0,drop=0;
+a.forEach(function(c,i){var miss=["domain","name","path"].filter(function(k){return typeof(c&&c[k])!=="string"});
+if(miss.length||c.value===undefined){skip++;li("ng","✕ Cookie "+(i+1)+" skipped: missing "+(miss.concat(c&&c.value!==undefined?[]:["value"]).join(", ")));return}
+if(/[\t\r\n]/.test(c.name+c.value+c.domain+c.path)){skip++;li("ng","✕ Cookie "+(i+1)+" skipped: a field contains a TAB or line break.");return}
+if(c.sameSite||c.partitionKey)drop++;
+var d=(c.httpOnly?"#HttpOnly_":"")+c.domain,sub=c.hostOnly?"FALSE":"TRUE",sec=c.secure?"TRUE":"FALSE",exp=(typeof c.expirationDate==="number"&&!c.session)?String(Math.floor(c.expirationDate)):"0";
+out.push([d,sub,c.path,sec,exp,c.name,String(c.value)].join("\t"))});
+li(skip?"info":"ok",(skip?"△ ":"✓ ")+(out.length-1)+" cookie"+(out.length===2?"":"s")+" converted"+(skip?", "+skip+" skipped.":"."));
+if(drop)li("info","△ SameSite and partition keys have no place in cookies.txt and were left out.");
+return out.join("\n")+"\n"}
+function toJson(text){var out=[],bad=0;
+text.split(/\r?\n/).forEach(function(line,i){if(!line.trim())return;var ho=false;
+if(line.indexOf("#HttpOnly_")===0){ho=true;line=line.slice(10)}else if(line.charAt(0)==="#")return;
+var f=line.split("\t");if(f.length!==7){bad++;li("ng","✕ Line "+(i+1)+" skipped: it has "+f.length+" TAB-separated fields, not 7.");return}
+var c={domain:f[0],hostOnly:f[1]!=="TRUE",path:f[2],secure:f[3]==="TRUE",httpOnly:ho,name:f[5],value:f[6]};
+var e=Number(f[4]);if(e>0)c.expirationDate=e;else c.session=true;out.push(c)});
+li(bad?"info":"ok",(bad?"△ ":"✓ ")+out.length+" cookie"+(out.length===1?"":"s")+" read"+(bad?", "+bad+(bad===1?" line":" lines")+" skipped.":"."));
+return JSON.stringify(out,null,2)}
+function run(){$("msg").textContent="";var t=$("in").value;if(!t.trim()){li("info","△ Paste something first.");$("out").value="";return}
+$("out").value=$("d1").checked?toTxt(t):toJson(t)}
+$("go").onclick=run;
+$("ex").onclick=function(){$("d1").checked=true;$("in").value=EXJ;run()};
+$("cp").onclick=function(){navigator.clipboard.writeText($("out").value).then(function(){$("cp").textContent="Copied";setTimeout(function(){$("cp").textContent="Copy result"},1500)})};
+$("dl").onclick=function(){if(!$("out").value)return;var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([$("out").value],{type:"text/plain"}));a.download=$("d1").checked?"cookies.txt":"cookies.json";a.click();setTimeout(function(){URL.revokeObjectURL(a.href)},5000)};
+})();
+</script></article></main><footer><div class="wrap"><p>Practical notes on HTTP headers, cookies and browser tools, by Honest Tools. Facts are checked against official documentation; each article lists its sources and the date they were checked.</p><p><a href="/honest-guide/en/about/">About</a> / <a href="/honest-guide/privacy/">Privacy Policy</a> / <a href="/honest-guide/terms/">Terms of Service</a></p><p>&copy; 2026 Honest Tools</p></div></footer></body></html>

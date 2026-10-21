@@ -6,6 +6,8 @@ TOOLS = [
      "Paste response headers from DevTools or curl. See which of the 7 recommended security headers are missing and which 5 old headers to remove."),
     ("set-cookie-builder", "Set-Cookie builder and checker",
      "Build a Set-Cookie header with Secure, HttpOnly, SameSite, Partitioned and prefixes, and see which combinations browsers reject."),
+    ("cookie-converter", "Cookie JSON to cookies.txt converter (both ways)",
+     "Paste a cookie editor's JSON export and get a Netscape cookies.txt for curl or wget, or turn a cookies.txt back into JSON. Runs only in your browser."),
     ("xpath-tester", "XPath tester (paste HTML, see what matches)",
      "Paste some HTML and an XPath expression. See the match count, the text of each match, and copy the results, one per line."),
 ]
@@ -173,4 +175,63 @@ $("cp").onclick=function(){navigator.clipboard.writeText(last.join("\n")).then(f
 })();
 </script>'''
 
-BODIES = {"security-headers-checker": CHECKER, "set-cookie-builder": COOKIE, "xpath-tester": XPATH}
+CONVERTER = r'''<h1>Cookie JSON to cookies.txt converter</h1>
+<div class="answer"><p class="ah">HOW IT WORKS</p><p>Paste a JSON list of cookies (the property names Chrome's <code>chrome.cookies</code> API uses, which many cookie editors export) to get a cookies.txt file with the seven TAB-separated fields curl expects. Or paste a cookies.txt to get JSON back. It runs only in your browser: nothing you paste is sent anywhere.</p></div>
+<div class="tool">
+<div class="row"><label><input type="radio" name="dir" id="d1" checked> JSON to cookies.txt</label><label><input type="radio" name="dir" id="d2"> cookies.txt to JSON</label></div>
+<label for="in">Input</label><textarea id="in" spellcheck="false"></textarea>
+<div class="row"><button class="btn" id="go" type="button">Convert</button><button class="btn ghost" id="ex" type="button">Try an example</button><button class="btn ghost" id="cp" type="button">Copy result</button><button class="btn ghost" id="dl" type="button">Save as file</button></div>
+</div>
+<ul class="res" id="msg" aria-live="polite"></ul>
+<label for="out">Result</label><textarea id="out" spellcheck="false" readonly></textarea>
+<h2 id="mapping">The mapping it uses</h2>
+<table><tr><th>cookies.txt field</th><th>JSON property</th></tr>
+<tr><td>Domain (with <code>#HttpOnly_</code> in front when HttpOnly)</td><td><code>domain</code>, <code>httpOnly</code></td></tr>
+<tr><td>Include subdomains (TRUE/FALSE)</td><td>the opposite of <code>hostOnly</code> (our reading)</td></tr>
+<tr><td>Path</td><td><code>path</code></td></tr>
+<tr><td>HTTPS only (TRUE/FALSE)</td><td><code>secure</code></td></tr>
+<tr><td>Expiry (seconds since 1970, or 0)</td><td><code>expirationDate</code>; 0 when it is missing (session cookie)</td></tr>
+<tr><td>Name, value</td><td><code>name</code>, <code>value</code></td></tr></table>
+<p>The reasons, and a Python version of the same converter: <a href="BASE/cookie-editor-json-to-cookies-txt-for-curl/">Cookie editor export to cookies.txt: the 7 fields curl expects</a>. Try the result with <code>curl -v -b cookies.txt https://your-test-site.example/</code>.</p>
+<h2 id="not-for">Who this is not for</h2>
+<ul><li>cookies.txt has no place for <code>SameSite</code> or partition keys, so converting to cookies.txt drops them, and converting back cannot restore them.</li>
+<li>If your export uses other property names, the converter tells you which are missing instead of guessing.</li>
+<li>The files hold live session values. Keep them out of Git and bug reports, and delete them after testing. Only use cookies for sites you are allowed to test.</li></ul>
+<h2 id="sources">Sources (checked 2026-10-22)</h2>
+<ul><li>curl, HTTP cookies (file structure and the seven fields): <a href="https://curl.se/docs/http-cookies.html">https://curl.se/docs/http-cookies.html</a></li>
+<li>Chrome for Developers, chrome.cookies (cookie properties): <a href="https://developer.chrome.com/docs/extensions/reference/api/cookies">https://developer.chrome.com/docs/extensions/reference/api/cookies</a></li></ul>
+<script>
+(function(){
+function $(i){return document.getElementById(i)}
+var EXJ='[\n  {"domain": ".example.com", "hostOnly": false, "path": "/", "secure": true, "httpOnly": true, "expirationDate": 1798761600, "name": "session", "value": "abc123", "sameSite": "lax"},\n  {"domain": "app.example.com", "hostOnly": true, "path": "/", "secure": true, "httpOnly": false, "session": true, "name": "theme", "value": "dark"}\n]';
+function li(c,t){var e=document.createElement("li");e.className=c;e.textContent=t;$("msg").appendChild(e)}
+function toTxt(text){var a;try{a=JSON.parse(text)}catch(e){li("ng","✕ This is not valid JSON: "+e.message);return ""}
+if(!Array.isArray(a)){if(a&&Array.isArray(a.cookies))a=a.cookies;else{li("ng","✕ Expected a JSON list of cookies ([ ... ]).");return ""}}
+var out=["# Netscape HTTP Cookie File"],skip=0,drop=0;
+a.forEach(function(c,i){var miss=["domain","name","path"].filter(function(k){return typeof(c&&c[k])!=="string"});
+if(miss.length||c.value===undefined){skip++;li("ng","✕ Cookie "+(i+1)+" skipped: missing "+(miss.concat(c&&c.value!==undefined?[]:["value"]).join(", ")));return}
+if(/[\t\r\n]/.test(c.name+c.value+c.domain+c.path)){skip++;li("ng","✕ Cookie "+(i+1)+" skipped: a field contains a TAB or line break.");return}
+if(c.sameSite||c.partitionKey)drop++;
+var d=(c.httpOnly?"#HttpOnly_":"")+c.domain,sub=c.hostOnly?"FALSE":"TRUE",sec=c.secure?"TRUE":"FALSE",exp=(typeof c.expirationDate==="number"&&!c.session)?String(Math.floor(c.expirationDate)):"0";
+out.push([d,sub,c.path,sec,exp,c.name,String(c.value)].join("\t"))});
+li(skip?"info":"ok",(skip?"△ ":"✓ ")+(out.length-1)+" cookie"+(out.length===2?"":"s")+" converted"+(skip?", "+skip+" skipped.":"."));
+if(drop)li("info","△ SameSite and partition keys have no place in cookies.txt and were left out.");
+return out.join("\n")+"\n"}
+function toJson(text){var out=[],bad=0;
+text.split(/\r?\n/).forEach(function(line,i){if(!line.trim())return;var ho=false;
+if(line.indexOf("#HttpOnly_")===0){ho=true;line=line.slice(10)}else if(line.charAt(0)==="#")return;
+var f=line.split("\t");if(f.length!==7){bad++;li("ng","✕ Line "+(i+1)+" skipped: it has "+f.length+" TAB-separated fields, not 7.");return}
+var c={domain:f[0],hostOnly:f[1]!=="TRUE",path:f[2],secure:f[3]==="TRUE",httpOnly:ho,name:f[5],value:f[6]};
+var e=Number(f[4]);if(e>0)c.expirationDate=e;else c.session=true;out.push(c)});
+li(bad?"info":"ok",(bad?"△ ":"✓ ")+out.length+" cookie"+(out.length===1?"":"s")+" read"+(bad?", "+bad+(bad===1?" line":" lines")+" skipped.":"."));
+return JSON.stringify(out,null,2)}
+function run(){$("msg").textContent="";var t=$("in").value;if(!t.trim()){li("info","△ Paste something first.");$("out").value="";return}
+$("out").value=$("d1").checked?toTxt(t):toJson(t)}
+$("go").onclick=run;
+$("ex").onclick=function(){$("d1").checked=true;$("in").value=EXJ;run()};
+$("cp").onclick=function(){navigator.clipboard.writeText($("out").value).then(function(){$("cp").textContent="Copied";setTimeout(function(){$("cp").textContent="Copy result"},1500)})};
+$("dl").onclick=function(){if(!$("out").value)return;var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([$("out").value],{type:"text/plain"}));a.download=$("d1").checked?"cookies.txt":"cookies.json";a.click();setTimeout(function(){URL.revokeObjectURL(a.href)},5000)};
+})();
+</script>'''
+
+BODIES = {"security-headers-checker": CHECKER, "set-cookie-builder": COOKIE, "xpath-tester": XPATH, "cookie-converter": CONVERTER}
