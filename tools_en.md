@@ -6,7 +6,7 @@ Rules: self-check only (your own site or browser), runs in the visitor's browser
 |---|---|---|---|---|---|
 | T1 | PHP version checker + own-site bookmark | PHP CVE-2026-109618/109619 (Oct 2026) | php.net advisory, GHSAs | E28 | published |
 | T2 | Security headers checker: own-site bookmark + nginx/Apache/PHP fixes | Missing or leaky headers | nginx, Apache mod_headers, PHP manual | E4, E17 | published |
-| T3 | Mixed content finder (bookmark): lists `http://` images, scripts, iframes on the HTTPS page you are on | Padlock warnings, blocked scripts after moving to HTTPS | MDN Mixed content, web.dev | E8 | todo |
+| T3 | Mixed content finder (bookmark): lists `http://` images, scripts, iframes on the HTTPS page you are on | Padlock warnings, blocked scripts after moving to HTTPS | MDN Mixed content, web.dev | E8 | published |
 | T4 | CSP builder: pick sources, get a Report-Only header first, then the enforcing one | CSP breaks sites when added blind | MDN CSP, CSP Level 3 | E7, templates | todo |
 | T5 | Subresource Integrity (SRI) hash generator: paste a file's text, get `integrity="sha384-..."` | CDN scripts changed without notice | MDN SRI, W3C SRI | E4 | todo |
 | T6 | Certificate expiry reminder: paste a PEM certificate, see expiry and SANs, add an .ics reminder 14 days before | Sites going down on a forgotten renewal | RFC 5280, MDN (Web Crypto not needed) | E8 | todo |

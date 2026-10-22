@@ -2,6 +2,8 @@
 Every rule shown by a tool comes from the sources listed on its page (checked dates included)."""
 
 TOOLS = [
+    ("mixed-content-finder", "Mixed content finder (http:// on an HTTPS page)",
+     "Click a bookmark on your own page, or paste its HTML. See every http:// address, which ones browsers block, and the https:// versions to copy."),
     ("php-version-checker", "PHP version checker (CVE-2026-109618/109619)",
      "Paste php -v or an X-Powered-By header. See if your PHP is at or above the 21 October 2026 fixed release for its branch, and which interim settings php.ini has."),
     ("security-headers-checker", "Security headers checker (paste your headers)",
@@ -322,4 +324,57 @@ if(location.hash.indexOf("#h=")===0){try{document.getElementById("h").value=deco
 })();
 </script>'''
 
-BODIES = {"php-version-checker": PHPCHECK, "security-headers-checker": CHECKER, "set-cookie-builder": COOKIE, "xpath-tester": XPATH, "cookie-converter": CONVERTER}
+MIXED = r'''<h1>Mixed content finder</h1>
+<div class="answer"><p class="ah">SHORT ANSWER</p><p>An HTTPS page that loads anything over <code>http://</code> has mixed content. Browsers upgrade images, audio and video to HTTPS and block the rest (scripts, stylesheets, iframes, fonts, <code>srcset</code> images). Click the bookmark on your own page, or paste its HTML, to list every <code>http://</code> address and see which ones get blocked. It runs only in your browser.</p></div>
+<h2 id="own-site">Check a page of your own site</h2>
+<ol><li>On a computer, drag this link to your bookmarks bar: <a class="btn ghost" href="javascript:(function(){function x(d){var o=[];function a(e,at,u,pic){if(u&&/^\s*http:\/\//i.test(u))o.push([e.tagName.toLowerCase(),at,u.trim(),pic?1:0])}d.querySelectorAll('img,script,link,iframe,audio,video,source,object,embed,a[download]').forEach(function(e){var t=e.tagName.toLowerCase(),pic=e.parentNode&&e.parentNode.tagName&&e.parentNode.tagName.toLowerCase()==='picture';if(t==='link'||t==='a')a(e,'href',e.getAttribute('href'));else if(t==='object')a(e,'data',e.getAttribute('data'));else a(e,'src',e.getAttribute('src'),pic);var ss=e.getAttribute('srcset');if(ss)ss.split(',').forEach(function(c){a(e,'srcset',c.trim().split(/\s+/)[0],1)})});return o.slice(0,300)}var r={p:location.protocol,h:location.hostname,l:x(document)};window.open('https://honestheaders.github.io/honest-guide/en/tools/mixed-content-finder/#m='+encodeURIComponent(JSON.stringify(r)))})()">Find mixed content</a></li>
+<li>Open a page of your site and click the bookmark. It lists the <code>http://</code> addresses in that page's HTML and opens this tool with the list. The list travels after the <code>#</code>, which browsers do not send to any server.</li></ol>
+<div class="tool"><label for="h">Or paste the page's HTML (View source, select all, copy)</label>
+<textarea id="h" spellcheck="false" placeholder="&lt;img src=&quot;http://example.com/logo.png&quot;&gt;"></textarea>
+<div class="row"><button class="btn" id="go" type="button">Find http:// addresses</button><button class="btn ghost" id="ex" type="button">Try an example</button></div></div>
+<div id="r" aria-live="polite"></div>
+<h2 id="kinds">What browsers do with each kind</h2>
+<table><tr><th>In the page</th><th>What happens</th></tr>
+<tr><td><code>&lt;img src&gt;</code>, <code>&lt;audio&gt;</code>, <code>&lt;video&gt;</code>, their <code>&lt;source&gt;</code></td><td>Upgraded to <code>https://</code>. Breaks if that server has no HTTPS. Not upgraded (blocked) when the host is an IP address.</td></tr>
+<tr><td><code>&lt;script&gt;</code>, <code>&lt;link&gt;</code> (stylesheets), <code>&lt;iframe&gt;</code>, <code>&lt;object&gt;</code>, <code>srcset</code> and <code>&lt;picture&gt;</code> images, fonts</td><td>Blocked</td></tr>
+<tr><td><code>&lt;a href="http://…" download&gt;</code></td><td>A mixed download. Browsers commonly block it and let the user keep or discard it.</td></tr></table>
+<h2 id="fix">How to fix it</h2>
+<ul><li>Change each address to <code>https://</code> after checking that it opens over HTTPS. For files on your own site, a path that starts with <code>/</code> works too.</li>
+<li>For a site with many old addresses, the header <code>Content-Security-Policy: upgrade-insecure-requests</code> makes the browser request them over HTTPS. A file that is not available over HTTPS then fails; there is no fallback to HTTP.</li>
+<li>That header does not upgrade links people click to other sites, and it does not replace HSTS. See <a href="BASE/hsts-rollout-max-age-preload/">HSTS max-age and preload: a safe rollout order</a>.</li></ul>
+<h2 id="not-for">Who this is not for</h2>
+<ul><li>It reads the HTML only. Addresses inside CSS files (<code>url(http://…)</code>), and requests made later by scripts (<code>fetch</code>, XHR), are not listed. For those, open DevTools Console on your page: Chrome shows a warning for each mixed request.</li>
+<li>It checks one page at a time and does not crawl a site.</li></ul>
+<h2 id="sources">Sources (checked 2026-10-22)</h2>
+<ul><li>MDN, Mixed content: <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content">https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content</a></li>
+<li>MDN, CSP upgrade-insecure-requests: <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/upgrade-insecure-requests">https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/upgrade-insecure-requests</a></li></ul>
+<script>
+(function(){
+function x(d){var o=[];function a(e,at,u,pic){if(u&&/^\s*http:\/\//i.test(u))o.push([e.tagName.toLowerCase(),at,u.trim(),pic?1:0])}d.querySelectorAll('img,script,link,iframe,audio,video,source,object,embed,a[download]').forEach(function(e){var t=e.tagName.toLowerCase(),pic=e.parentNode&&e.parentNode.tagName&&e.parentNode.tagName.toLowerCase()==='picture';if(t==='link'||t==='a')a(e,'href',e.getAttribute('href'));else if(t==='object')a(e,'data',e.getAttribute('data'));else a(e,'src',e.getAttribute('src'),pic);var ss=e.getAttribute('srcset');if(ss)ss.split(',').forEach(function(c){a(e,'srcset',c.trim().split(/\s+/)[0],1)})});return o.slice(0,300)}
+var EX='<img src="http://example.com/logo.png">\n<img src="http://192.0.2.10/banner.png">\n<script src="http://cdn.example.net/lib.js"><\/script>\n<link rel="stylesheet" href="http://example.com/style.css">\n<picture><source srcset="http://example.com/hero.webp"><img src="https://example.com/hero.jpg"></picture>\n<a href="http://example.com/manual.pdf" download>Manual</a>\n<a href="http://example.org/">a normal link (not mixed content)</a>';
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function host(u){var m=u.match(/^\s*http:\/\/([^\/?#:]+|\[[^\]]+\])/i);return m?m[1].toLowerCase():""}
+function kind(r){var t=r[0],at=r[1],u=r[2],ip=/^(\d{1,3}(\.\d{1,3}){3}|\[.*\])$/.test(host(u));
+if(t==="a")return["info","Mixed download","Browsers commonly block it and ask the user."];
+if(at==="srcset")return["ng","Blocked","srcset and picture images are not upgraded."];
+if((t==="img"&&!r[3])||t==="audio"||t==="video"||(t==="source"&&!r[3])){if(ip)return["ng","Blocked","The host is an IP address, so it is not upgraded."];return["info","Upgraded to https://","Breaks if "+esc(host(u))+" has no HTTPS."]}
+if(t==="img"&&r[3])return["ng","Blocked","Images inside picture are not upgraded."];
+return["ng","Blocked","&lt;"+t+"&gt; is blockable content."]}
+function show(list,proto,h){var out=[],fixed=[],nb=0,pre="";
+if(proto==="http:")pre=('<p class="score">This page itself is on http://. Move the whole site to HTTPS first; mixed content is about HTTPS pages.</p>');
+if(!list.length){document.getElementById("r").innerHTML=pre+'<p class="score">No http:// addresses found in the HTML.</p><p class="note">Also check the DevTools Console: addresses in CSS files and script requests are not in the HTML.</p>';return}
+list.forEach(function(r){var k=kind(r);if(k[0]==="ng")nb++;var own=h&&host(r[2])===h;
+out.push('<li class="'+k[0]+'"><b>'+(k[0]==="ng"?"✕ ":"△ ")+k[1]+': &lt;'+esc(r[0])+' '+esc(r[1])+'&gt;</b><code>'+esc(r[2])+'</code><br>'+k[2]+(own?" It is on your own site: use a path starting with /.":"")+'</li>');
+fixed.push(r[2].replace(/^\s*http:\/\//i,"https://"))});
+document.getElementById("r").innerHTML=pre+'<p class="score">'+list.length+' http:// address'+(list.length>1?'es':'')+', '+nb+' blocked.</p><ul class="res">'+out.join("")+'</ul>'+
+'<h3>The same addresses with https:// (open each one to check it works)</h3><pre id="fx">'+esc(fixed.filter(function(v,i,a){return a.indexOf(v)===i}).join("\n"))+'</pre><button class="btn ghost" id="cp" type="button">Copy</button>';
+document.getElementById("cp").onclick=function(){navigator.clipboard.writeText(document.getElementById("fx").textContent).then(function(){document.getElementById("cp").textContent="Copied"})}}
+function run(){var t=document.getElementById("h").value;if(!t.trim()){document.getElementById("r").innerHTML='<p class="score">Paste some HTML first.</p>';return}
+show(x(new DOMParser().parseFromString(t,"text/html")),"https:","")}
+document.getElementById("go").onclick=run;
+document.getElementById("ex").onclick=function(){document.getElementById("h").value=EX;run()};
+if(location.hash.indexOf("#m=")===0){try{var d=JSON.parse(decodeURIComponent(location.hash.slice(3)));history.replaceState(null,"",location.pathname);show(d.l||[],d.p,d.h)}catch(e){document.getElementById("r").innerHTML='<p class="score">Could not read the list from the bookmark.</p>'}}
+})();
+</script>'''
+
+BODIES = {"mixed-content-finder": MIXED, "php-version-checker": PHPCHECK, "security-headers-checker": CHECKER, "set-cookie-builder": COOKIE, "xpath-tester": XPATH, "cookie-converter": CONVERTER}

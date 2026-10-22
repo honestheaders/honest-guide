@@ -32,11 +32,11 @@ PRO = ('<p class="ispec pro">Free to use. Optional Pro features (redirects, rule
        '<a href="https://honesttools.gumroad.com/l/rixjq" rel="noopener" target="_blank">$9 one-time license on Gumroad</a>.</p>')
 # 無料ツールのページに出す自社商品(ツールを使った人が次に使う道具)
 TOOL_PRODUCTS = {"security-headers-checker": ["headers", "templates"], "set-cookie-builder": ["cookies"], "cookie-converter": ["cookies"],
-                 "xpath-tester": ["scraper"], "php-version-checker": ["checklist", "templates"]}
+                 "xpath-tester": ["scraper"], "php-version-checker": ["checklist", "templates"], "mixed-content-finder": ["checklist", "templates"]}
 
 ICONS = {"headers": "honest-headers-48.png", "cookies": "honest-cookies-48.png", "scraper": "honest-scraper-48.png"}
 SRC = pathlib.Path(__file__).resolve().parent
-TOOL_FOR = {"security-headers-checklist": "security-headers-checker", "samesite-cookie-attribute": "set-cookie-builder", "edit-cookies-in-chrome": "set-cookie-builder", "test-xpath-in-chrome-devtools": "xpath-tester", "web-page-table-to-spreadsheet-xpath": "xpath-tester", "cookie-editor-json-to-cookies-txt-for-curl": "cookie-converter"}
+TOOL_FOR = {"hsts-rollout-max-age-preload": "mixed-content-finder", "security-headers-checklist": "security-headers-checker", "samesite-cookie-attribute": "set-cookie-builder", "edit-cookies-in-chrome": "set-cookie-builder", "test-xpath-in-chrome-devtools": "xpath-tester", "web-page-table-to-spreadsheet-xpath": "xpath-tester", "cookie-editor-json-to-cookies-txt-for-curl": "cookie-converter"}
 REPORT = '<p class="fix">Found a mistake or something out of date? <a href="https://github.com/honestheaders/honest-headers/issues">Tell us on GitHub</a>. We check each fact against the sources above.</p>'
 
 CSS_EN += ('.item .iname img{width:28px;height:28px;vertical-align:-7px;margin-right:8px;border-radius:6px}'
