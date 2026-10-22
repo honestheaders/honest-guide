@@ -27,6 +27,10 @@ CHECKER = r'''<h1>Security headers checker</h1>
 <textarea id="h" spellcheck="false" placeholder="HTTP/2 200&#10;content-type: text/html&#10;strict-transport-security: max-age=31536000"></textarea>
 <div class="row"><button class="btn" id="go" type="button">Check headers</button><button class="btn ghost" id="ex" type="button">Try an example</button></div></div>
 <div id="r" aria-live="polite"></div>
+<h2 id="own-site">Check your own site in one click</h2>
+<ol><li>On a computer, drag this link to your bookmarks bar: <a class="btn ghost" href="javascript:(function(){fetch(location.href,{cache:'no-store'}).then(function(r){var t='Checked: '+location.origin+'\n';r.headers.forEach(function(v,k){t+=k+': '+v+'\n'});window.open('https://honestheaders.github.io/honest-guide/en/tools/security-headers-checker/#h='+encodeURIComponent(t))}).catch(function(e){alert('Could not read this page\'s headers: '+e)})})()">Check my headers</a></li>
+<li>Open your own site and click the bookmark. It reads the headers your browser already received for that page and opens this checker with them, plus a copy-ready fix for nginx, Apache or PHP.</li></ol>
+<p>The headers travel after the <code>#</code> in the address, which browsers do not send to any server. Nothing goes to Honest Tools. Cookies (<code>Set-Cookie</code>) are not readable this way and are not checked.</p>
 <h2 id="where">Where to copy the headers from</h2>
 <ul><li><b>Chrome DevTools:</b> Network panel, reload, click the first (document) request, then in <b>Response Headers</b> turn on <b>Raw</b> and copy.</li>
 <li><b>Command line:</b> <code>curl -sI https://your-site.example</code> prints only the headers.</li></ul>
@@ -34,8 +38,12 @@ CHECKER = r'''<h1>Security headers checker</h1>
 <h2 id="not-for">Who this is not for</h2>
 <ul><li>This only looks at whether headers are present and at a few obvious values. It does not judge whether your Content-Security-Policy is strict enough, and it is not a security audit.</li>
 <li>If you want a site scanned from the internet by URL, Mozilla's HTTP Observatory does that.</li></ul>
-<h2 id="sources">Sources (checked 2026-10-12)</h2>
-<ul><li>OWASP HTTP Headers Cheat Sheet: <a href="https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html">https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html</a></li>
+<h2 id="sources">Sources (checked 2026-10-12; server snippets checked 2026-10-22)</h2>
+<ul><li>nginx, add_header (always, inheritance): <a href="https://nginx.org/en/docs/http/ngx_http_headers_module.html">https://nginx.org/en/docs/http/ngx_http_headers_module.html</a></li>
+<li>nginx, server_tokens: <a href="https://nginx.org/en/docs/http/ngx_http_core_module.html#server_tokens">https://nginx.org/en/docs/http/ngx_http_core_module.html#server_tokens</a> and fastcgi_hide_header: <a href="https://nginx.org/en/docs/http/ngx_http_fastcgi_module.html#fastcgi_hide_header">https://nginx.org/en/docs/http/ngx_http_fastcgi_module.html#fastcgi_hide_header</a></li>
+<li>Apache, mod_headers (Header set/unset, always): <a href="https://httpd.apache.org/docs/2.4/mod/mod_headers.html">https://httpd.apache.org/docs/2.4/mod/mod_headers.html</a></li>
+<li>PHP manual, header_remove() and expose_php: <a href="https://www.php.net/manual/en/function.header-remove.php">https://www.php.net/manual/en/function.header-remove.php</a>, <a href="https://www.php.net/manual/en/ini.core.php">https://www.php.net/manual/en/ini.core.php</a></li>
+<li>OWASP HTTP Headers Cheat Sheet: <a href="https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html">https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html</a></li>
 <li>MDN, Strict-Transport-Security: <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Strict-Transport-Security">https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Strict-Transport-Security</a></li>
 <li>MDN, X-Content-Type-Options: <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Content-Type-Options">https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Content-Type-Options</a></li></ul>
 <script>
@@ -48,9 +56,20 @@ if(/^[a-z0-9-]+$/i.test(L[i])&&i+1<L.length&&!/^[A-Za-z0-9-]+\s*:/.test(L[i+1]))
 return h}
 function esc(s){return s.replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function li(c,t,d){return '<li class="'+c+'"><b>'+t+'</b>'+d+'</li>'}
-function run(){var h=parse(document.getElementById("h").value),add=[],rem=[],n=0,k=0;
+var VAL={"strict-transport-security":"max-age=31536000; includeSubDomains","content-security-policy":"frame-ancestors 'self'; object-src 'none'; base-uri 'self'","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","referrer-policy":"strict-origin-when-cross-origin","permissions-policy":"geolocation=(), camera=(), microphone=()","cross-origin-opener-policy":"same-origin"};
+var NAME={"strict-transport-security":"Strict-Transport-Security","content-security-policy":"Content-Security-Policy","x-frame-options":"X-Frame-Options","x-content-type-options":"X-Content-Type-Options","referrer-policy":"Referrer-Policy","permissions-policy":"Permissions-Policy","cross-origin-opener-policy":"Cross-Origin-Opener-Policy","x-powered-by":"X-Powered-By","x-xss-protection":"X-XSS-Protection","public-key-pins":"Public-Key-Pins","expect-ct":"Expect-CT","server":"Server"};
+function fixes(miss,rmv,h){if(!miss.length&&!rmv.length)return "";
+var ng=["# nginx: inside the server { } block. If a location { } has its own add_header,","# it does not inherit these, so repeat them there."],ap=["# Apache (mod_headers): server config, virtual host or .htaccess"],ph=["<?php","// PHP: before any output (only covers pages PHP sends)"];
+miss.forEach(function(m){var v=VAL[m];ng.push("add_header "+NAME[m]+' "'+v+'" always;');ap.push("Header always set "+NAME[m]+' "'+v+'"');ph.push("header(\""+NAME[m]+": "+v.replace(/"/g,'\\"')+"\");")});
+rmv.forEach(function(m){if(m==="server"){ng.push("server_tokens off;   # hides the nginx version");ap.push("# Server version: see ServerTokens in the Apache core docs");return}
+if(m==="x-powered-by"){ng.push("fastcgi_hide_header X-Powered-By;   # when it comes from PHP-FPM");ap.push("Header unset X-Powered-By","Header always unset X-Powered-By");ph.push("// Best: expose_php = Off in php.ini","header_remove(\"X-Powered-By\");");return}
+ng.push("# "+NAME[m]+": delete the line in your config that sets it");ap.push("Header unset "+NAME[m],"Header always unset "+NAME[m]);ph.push("header_remove(\""+NAME[m]+"\");")});
+function blk(t,id,L){return '<h3>'+t+'</h3><pre id="'+id+'">'+esc(L.join("\n"))+'</pre><button class="btn ghost cpy" type="button" data-t="'+id+'">Copy</button>'}
+return '<h2 id="fix">Copy-ready fix (pick your server)</h2><p class="note">Change one thing at a time, reload the server, and run this check again. HSTS only belongs on HTTPS; test CSP and COOP before you keep them.</p>'+blk("nginx","fx-ng",ng)+blk("Apache","fx-ap",ap)+(h["x-powered-by"]&&/php/i.test(h["x-powered-by"])||miss.length?blk("PHP","fx-ph",ph):"")}
+document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest(".cpy");if(!b)return;navigator.clipboard.writeText(document.getElementById(b.getAttribute("data-t")).textContent).then(function(){b.textContent="Copied";setTimeout(function(){b.textContent="Copy"},1500)})});
+function run(){var h=parse(document.getElementById("h").value),add=[],rem=[],n=0,k=0,miss=[],rmv=[];
 if(!Object.keys(h).length){document.getElementById("r").innerHTML='<p class="score">No headers found. Paste lines like <code>name: value</code>.</p>';return}
-function want(name,ok,fix,hint){var v=h[name];if(v===undefined){add.push(li("ng","✕ "+name+" is missing",fix));return}
+function want(name,ok,fix,hint){var v=h[name];if(v===undefined){miss.push(name);add.push(li("ng","✕ "+name+" is missing",fix));return}
 if(ok&&!ok(v)){add.push(li("info","△ "+name+": "+esc(v),hint));return}n++;add.push(li("ok","✓ "+name,esc(v)))}
 want("strict-transport-security",function(v){return /max-age=\d+/i.test(v)},"Add it on HTTPS responses, e.g. <code>max-age=31536000; includeSubDomains</code>.","Needs a <code>max-age</code> value.");
 want("content-security-policy",null,"Start with <code>frame-ancestors 'self'; object-src 'none'; base-uri 'self'</code> and test before tightening.");
@@ -59,7 +78,7 @@ want("x-content-type-options",function(v){return v.trim().toLowerCase()==="nosni
 want("referrer-policy",null,"Set it explicitly, e.g. <code>strict-origin-when-cross-origin</code>.");
 want("permissions-policy",null,"Turn off features you never use, e.g. <code>geolocation=(), camera=(), microphone=()</code>.");
 want("cross-origin-opener-policy",null,"Add <code>same-origin</code> (or <code>same-origin-allow-popups</code> if you use sign-in or payment popups).");
-function drop(name,bad,fix){var v=h[name];if(v!==undefined&&bad(v)){k++;rem.push(li("ng","✕ Remove: "+name+": "+esc(v),fix))}}
+function drop(name,bad,fix){var v=h[name];if(v!==undefined&&bad(v)){k++;rmv.push(name);rem.push(li("ng","✕ Remove: "+name+": "+esc(v),fix))}}
 drop("x-powered-by",function(){return true},"OWASP: remove all X-Powered-By headers. It tells visitors which framework you run."+(/php/i.test(h["x-powered-by"]||"")?' PHP: set <code>expose_php = Off</code>, and <a href="BASE/tools/php-version-checker/">check this PHP version against the October 2026 fixes</a>.':''));
 drop("server",function(v){return /\d/.test(v)},"Hide the version number (nginx: <code>server_tokens off;</code>).");
 drop("x-xss-protection",function(v){return v.trim()!=="0"},"OWASP: do not set it, or turn it off with <code>0</code>. Use CSP instead.");
@@ -67,9 +86,10 @@ drop("public-key-pins",function(){return true},"OWASP: do not use.");
 drop("expect-ct",function(){return true},"OWASP: do not use it.");
 document.getElementById("r").innerHTML='<p class="score">'+n+' of 7 recommended headers look right. '+(k?k+' header'+(k>1?'s':'')+' to remove.':'Nothing to remove.')+'</p>'+
 (rem.length?'<h2>Remove first (usually one-line changes)</h2><ul class="res">'+rem.join("")+'</ul>':'')+'<h2>The 7 to add</h2><ul class="res">'+add.join("")+'</ul>'+
-'<p class="note">Add CSP, COOP and HSTS one at a time and test: they can break parts of a site.</p>'}
+'<p class="note">Add CSP, COOP and HSTS one at a time and test: they can break parts of a site.</p>'+fixes(miss,rmv,h)}
 document.getElementById("go").onclick=run;
 document.getElementById("ex").onclick=function(){document.getElementById("h").value=EX;run()};
+if(location.hash.indexOf("#h=")===0){try{document.getElementById("h").value=decodeURIComponent(location.hash.slice(3))}catch(e){}history.replaceState(null,"",location.pathname);run()}
 })();
 </script>'''
 
