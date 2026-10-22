@@ -28,7 +28,7 @@ SOURCE_OK = re.compile(
     r"(developer\.mozilla\.org|developer\.chrome\.com|web\.dev|owasp\.org|"
     r"rfc-editor\.org|datatracker\.ietf\.org|w3\.org|whatwg\.org|"
     r"curl\.se|gnu\.org|nginx\.org|vercel\.com|developers\.cloudflare\.com|stripeolt\.com|"
-    r"hstspreload\.org|privacysandbox\.google\.com|developers\.google\.com/search|support\.google\.com|chromium\.org|github\.com/honestheaders)"
+    r"hstspreload\.org|php\.net|privacysandbox\.google\.com|developers\.google\.com/search|support\.google\.com|chromium\.org|github\.com/honestheaders)"
 )
 
 

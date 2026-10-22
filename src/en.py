@@ -36,7 +36,7 @@ TOOL_PRODUCTS = {"security-headers-checker": ["headers", "templates"], "set-cook
 
 ICONS = {"headers": "honest-headers-48.png", "cookies": "honest-cookies-48.png", "scraper": "honest-scraper-48.png"}
 SRC = pathlib.Path(__file__).resolve().parent
-TOOL_FOR = {"hsts-rollout-max-age-preload": "mixed-content-finder", "security-headers-checklist": "security-headers-checker", "samesite-cookie-attribute": "set-cookie-builder", "edit-cookies-in-chrome": "set-cookie-builder", "test-xpath-in-chrome-devtools": "xpath-tester", "web-page-table-to-spreadsheet-xpath": "xpath-tester", "cookie-editor-json-to-cookies-txt-for-curl": "cookie-converter"}
+TOOL_FOR = {"hsts-rollout-max-age-preload": "mixed-content-finder", "security-headers-checklist": "security-headers-checker", "samesite-cookie-attribute": "set-cookie-builder", "edit-cookies-in-chrome": "set-cookie-builder", "test-xpath-in-chrome-devtools": "xpath-tester", "web-page-table-to-spreadsheet-xpath": "xpath-tester", "cookie-editor-json-to-cookies-txt-for-curl": "cookie-converter", "php-security-release-october-2026-check-your-version": "php-version-checker"}
 REPORT = '<p class="fix">Found a mistake or something out of date? <a href="https://github.com/honestheaders/honest-headers/issues">Tell us on GitHub</a>. We check each fact against the sources above.</p>'
 
 CSS_EN += ('.item .iname img{width:28px;height:28px;vertical-align:-7px;margin-right:8px;border-radius:6px}'

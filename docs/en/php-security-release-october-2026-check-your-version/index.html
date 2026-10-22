@@ -1,0 +1,82 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="google-site-verification" content="hqAGwjMx_F-TdJl79qigCCcuhYe7_9BUhfd7nEK2TMI"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PHP 8.5.12, 8.4.27, 8.3.36 and 8.2.35: check which PHP version your site runs | Honest Guide</title><meta name="description" content="php.net released fixes for two critical PHP bugs on 21 October 2026. Which versions fix them, three ways to see the version your web server really runs, and the interim settings php.net lists."><link rel="canonical" href="https://honestheaders.github.io/honest-guide/en/php-security-release-october-2026-check-your-version/">
+<meta property="og:url" content="https://honestheaders.github.io/honest-guide/en/php-security-release-october-2026-check-your-version/"><meta property="og:site_name" content="Honest Guide"><meta name="twitter:card" content="summary"><meta property="og:title" content="PHP 8.5.12, 8.4.27, 8.3.36 and 8.2.35: check which PHP version your site runs | Honest Guide"><meta property="og:description" content="php.net released fixes for two critical PHP bugs on 21 October 2026. Which versions fix them, three ways to see the version your web server really runs, and the interim settings php.net lists."><meta property="og:type" content="article">
+<link rel="icon" href="/honest-guide/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Honest Guide (English)" href="https://honestheaders.github.io/honest-guide/en/feed.xml"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "PHP 8.5.12, 8.4.27, 8.3.36 and 8.2.35: check which PHP version your site runs", "description": "php.net released fixes for two critical PHP bugs on 21 October 2026. Which versions fix them, three ways to see the version your web server really runs, and the interim settings php.net lists.", "inLanguage": "en", "dateModified": "2026-10-22", "author": {"@type": "Organization", "name": "Honest Tools"}, "publisher": {"@type": "Organization", "name": "Honest Tools"}, "mainEntityOfPage": "https://honestheaders.github.io/honest-guide/en/php-security-release-october-2026-check-your-version/"}</script>
+<style>:root{--c:#1f4e79;--bg:#fafaf7;--t:#222;--m:#666;--l:#ddd}
+*{box-sizing:border-box}body{margin:0;font-family:"Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;color:var(--t);background:var(--bg);line-height:1.85;font-size:16px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+header{background:var(--c);color:#fff}header .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 16px;gap:8px}
+.logo{color:#fff;font-weight:700;font-size:20px;text-decoration:none}nav a{color:#dbe8f5;margin-left:14px;text-decoration:none;font-size:14px}
+main{padding-top:24px;padding-bottom:40px}h1{font-size:26px;line-height:1.4}h2{font-size:20px;border-left:5px solid var(--c);padding-left:10px;margin-top:36px}
+a{color:var(--c)}table{border-collapse:collapse;width:100%;margin:16px 0;font-size:15px}th,td{border:1px solid var(--l);padding:8px;text-align:left;vertical-align:top}th{background:#eef3f8}
+.plain th{width:30%}.cards{list-style:none;padding:0;display:grid;gap:12px}.cards a{display:block;background:#fff;border:1px solid var(--l);border-radius:10px;padding:14px 16px;text-decoration:none;color:var(--t)}
+.cards b{display:block;color:var(--c)}.cards span{font-size:14px;color:var(--m)}.hero{background:#fff;border:1px solid var(--l);border-radius:12px;padding:20px;text-align:center}
+.pr{font-size:13px;color:var(--m);background:#f1f1ec;padding:8px 12px;border-radius:6px}.date{font-size:13px;color:var(--m)}
+.tool{display:grid;gap:12px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:16px}.tool label{display:block;font-size:14px;color:var(--m)}
+.tool input{display:block;width:100%;font-size:20px;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px}
+.result{background:#fff8dc;border:1px solid #ecd98a;border-radius:10px;padding:8px 16px;margin-top:16px;font-size:18px}.result b{font-size:24px;color:#c00}
+.note{font-size:13px;color:var(--m)}footer{background:#f1f1ec;font-size:13px;color:var(--m);padding:20px 0}
+
+.crumb{font-size:13px;color:var(--m)}.related{margin-top:32px;background:#fff;border:1px solid var(--l);border-radius:10px;padding:4px 16px 12px}.related h2{margin-top:12px;font-size:17px}
+.buy{display:flex;align-items:center;gap:10px;background:#bf0000;color:#fff;text-decoration:none;font-weight:700;border-radius:10px;padding:12px 14px;margin:10px 0;line-height:1.4;box-shadow:0 2px 0 #8c0000}
+.buy:hover,.buy:focus-visible{background:#a30000;outline:none}.buy .shop{font-size:11px;font-weight:700;background:#fff;color:#bf0000;border-radius:4px;padding:2px 6px;white-space:nowrap}
+.buy .arrow{margin-left:auto;font-size:20px}li>.buy{margin:6px 0}article ul:has(.buy){list-style:none;padding-left:0}
+.quick{background:#fff;border:2px solid #f0c9c9;border-radius:12px;padding:12px 14px;margin:18px 0}.quick .qh{margin:0 0 4px;font-weight:700;color:#bf0000}.quick .qn{margin:6px 0 0;font-size:13px;color:var(--m)}
+.item{background:#fff;border:1px solid var(--l);border-radius:12px;padding:14px 16px;margin:14px 0}.item p{margin:0 0 6px}.iname{font-weight:700;font-size:17px;color:var(--c)}
+.ispec{font-size:14px;color:var(--t)}.ifit{font-size:14px;background:#f5f8fb;border-radius:6px;padding:6px 10px}.ifit b{display:block;font-size:12px;color:var(--c)}
+.crumb a{color:var(--c);margin-left:0;font-size:13px}
+.src a,.note a{word-break:break-all}
+article a{overflow-wrap:anywhere}td code{overflow-wrap:anywhere}article table{display:block;overflow-x:auto}body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.7}code{background:#f1f1ec;padding:1px 4px;border-radius:4px;font-size:.92em}pre{background:#f1f1ec;padding:12px;border-radius:8px;overflow-x:auto}pre code{padding:0}.own{background:#1f4e79;box-shadow:0 2px 0 #12304d}.own:hover,.own:focus-visible{background:#163a5c}.own .shop{color:#1f4e79}.item .iname img{width:28px;height:28px;vertical-align:-7px;margin-right:8px;border-radius:6px}.answer{background:#eef3f8;border-left:5px solid #1f4e79;border-radius:8px;padding:12px 16px;margin:18px 0}.answer .ah{margin:0;font-size:13px;font-weight:700;color:#1f4e79;letter-spacing:.03em}.answer p{margin:4px 0 0}.toc{background:#fff;border:1px solid #ddd;border-radius:10px;padding:10px 16px;margin:18px 0;font-size:15px}.toc p{margin:0;font-size:13px;color:#666}.toc ol{margin:6px 0 0;padding-left:20px}.toc li{margin:2px 0}.toc a{color:#1f4e79;margin-left:0;font-size:inherit;text-decoration:underline}figure.dia{margin:20px auto;max-width:520px;background:#fff;border:1px solid #ddd;border-radius:10px;padding:10px}figure.dia svg,figure.shot img{display:block;width:100%;height:auto}figure.shot{margin:20px auto;max-width:520px}figure.shot img{border:1px solid #ddd;border-radius:10px}figcaption{font-size:13px;color:#666;text-align:center;margin-top:6px}pre{position:relative}.cp{position:absolute;top:6px;right:6px;font:12px system-ui,sans-serif;background:#fff;border:1px solid #bbb;border-radius:6px;padding:3px 8px;cursor:pointer}h2[id]{scroll-margin-top:12px}.tl{background:#fff8dc;border:1px solid #ecd98a;border-radius:8px;padding:8px 12px;font-size:15px}.fix{font-size:13px;color:#666;border-top:1px solid #ddd;padding-top:10px;margin-top:28px}.tool textarea,.tool input[type=text],.tool input[type=number],.tool select{display:block;width:100%;font:15px ui-monospace,Menlo,Consolas,monospace;padding:10px;margin-top:4px;border:1px solid #bbb;border-radius:6px;background:#fff}.tool textarea{min-height:180px}.tool .row{display:flex;flex-wrap:wrap;gap:8px 16px}.tool .row label{display:flex;align-items:center;gap:6px;font-size:15px;color:#222}.btn{font:600 15px system-ui,sans-serif;background:#1f4e79;color:#fff;border:0;border-radius:8px;padding:10px 16px;cursor:pointer}.btn.ghost{background:#fff;color:#1f4e79;border:1px solid #1f4e79}.res{list-style:none;padding:0;margin:8px 0}.res li{background:#fff;border:1px solid #ddd;border-radius:8px;padding:8px 12px;margin:6px 0;font-size:15px}.res li b{display:block}.res .ok{border-left:5px solid #2e7d4f}.res .ng{border-left:5px solid #b3261e}.res .info{border-left:5px solid #b38600}.score{font-size:18px;font-weight:700;margin:12px 0 4px}main code{overflow-wrap:anywhere}.res li{overflow-wrap:anywhere}#out{font:15px ui-monospace,Menlo,Consolas,monospace;background:#f1f1ec;padding:12px;border-radius:8px;overflow-wrap:anywhere}</style></head><body><header><div class="wrap"><a class="logo" href="/honest-guide/en/">Honest Guide</a><nav><a href="/honest-guide/en/">Guides</a><a href="/honest-guide/en/tools/">Tools</a><a href="/honest-guide/en/about/">About</a><a href="/honest-guide/">日本語</a></nav></div></header><main class="wrap"><nav class="crumb"><a href="/honest-guide/en/">Guides</a> › PHP 8.5.12, 8.4.27, 8.3.36 and 8.2.35: check which PHP version your site runs</nav><article><h1>PHP 8.5.12, 8.4.27, 8.3.36 and 8.2.35: check which PHP version your site runs</h1><p class="date">Updated 2026-10-22</p><p class="pr">Disclosure: Honest Tools makes Honest Headers, Honest Cookies, Honest Scraper and the PDFs linked on this site. Links to them are links to our own products. This section has no ads and no affiliate links.</p><div class="answer"><p class="ah">THE SHORT ANSWER</p><p>If your site runs PHP 8.5, 8.4, 8.3 or 8.2, update to 8.5.12, 8.4.27, 8.3.36 or 8.2.35 (or newer). Those are the releases php.net announced on 21 October 2026 for two critical remote code execution bugs, CVE-2026-109618 and CVE-2026-109619. This page shows how to find the version your web server actually uses. It is defensive only and contains no attack details.</p></div><p class="tl">Free tool: <a href="/honest-guide/en/tools/php-version-checker/">PHP version checker (CVE-2026-109618/109619)</a>, runs in your browser.</p><nav class="toc" aria-label="On this page"><p>On this page · about 3 min read</p><ol><li><a href="#what-php-net-says">What php.net says</a></li><li><a href="#find-the-version-your-web-server-really-runs">Find the version your web server really runs</a></li><li><a href="#interim-settings-only-an-update-is-a-complete-fi">Interim settings (only an update is a complete fix)</a></li><li><a href="#who-this-is-not-for">Who this is not for</a></li><li><a href="#sources-checked-2026-10-22">Sources (checked 2026-10-22)</a></li></ol></nav>
+<h2 id="what-php-net-says">What php.net says</h2>
+<p>The php.net security advisory dated 21 October 2026 describes both bugs as critical. It names the fixed releases and says all PHP installations that serve web requests are at risk. It lists PHP-FPM, Apache with mod_php, php-cgi, FrankenPHP and LiteSpeed, and says the risk is highest for mod_php.</p>
+<table>
+<thead>
+<tr>
+<th>Your branch</th>
+<th>Fixed release</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PHP 8.5</td>
+<td>8.5.12</td>
+</tr>
+<tr>
+<td>PHP 8.4</td>
+<td>8.4.27</td>
+</tr>
+<tr>
+<td>PHP 8.3</td>
+<td>8.3.36</td>
+</tr>
+<tr>
+<td>PHP 8.2</td>
+<td>8.2.35</td>
+</tr>
+</tbody>
+</table>
+<p>The advisory also says PHP 8.6.0 RC4 includes the fixes. PHP 8.1 and older no longer get updates from the project; the security team published minimal backports for 7.4, 8.0 and 8.1 on GitHub branches. If you are on one of those, ask your vendor or plan an upgrade to a supported branch.</p>
+<h2 id="find-the-version-your-web-server-really-runs">Find the version your web server really runs</h2>
+<p>The command line and the web server can use different PHP builds, so check the one that serves your pages.</p>
+<ol>
+<li><strong>On the server:</strong> run <code>php -v</code>. This shows the command-line PHP, which may not be the one behind your site.</li>
+<li><strong>From outside:</strong> run <code>curl -sI https://your-site.example</code> and look for an <code>X-Powered-By: PHP/...</code> line. It only appears if the server sends that header, and many sites hide it.</li>
+<li><strong>Ask your host or package manager:</strong> Linux distributions may ship a fix under an older version number, so a "lower" number does not always mean unpatched. Check your vendor's security notice for these two CVE IDs.</li>
+</ol>
+<p>If you want a quick answer in the browser, the <a href="/honest-guide/en/tools/php-version-checker/">PHP version checker</a> compares a pasted <code>php -v</code> output or header with the fixed releases. It runs locally and sends nothing anywhere. You can also see which headers your own site sends with the <a href="/honest-guide/en/security-headers-checklist/">security headers checklist</a>.</p>
+<h2 id="interim-settings-only-an-update-is-a-complete-fi">Interim settings (only an update is a complete fix)</h2>
+<p>php.net says plainly that only an update is a complete solution, and that these measures "reduce exposure to specific attack paths but do not make an installation safe". The ones it lists:</p>
+<ul>
+<li><code>memory_limit=-1</code>, set where applications cannot change it back (for example <code>php_admin_value</code> in the FPM pool or Apache config).</li>
+<li>A low <code>post_max_size</code>: <code>8M</code> if you do not need uploads, <code>32M</code> if you do, with <code>upload_max_filesize</code> kept below it.</li>
+<li><code>session.upload_progress.enabled=0</code> in <code>php.ini</code>, an FPM pool or server configuration, then restart every worker. php.net says not to rely on <code>ini_set()</code> or FPM <code>.user.ini</code> for this.</li>
+<li>On PHP 8.5 only, <code>fatal_error_backtraces=0</code>, then restart every worker.</li>
+<li>Request-size limits at the web server or proxy, and a container or cgroup limit as an availability boundary.</li>
+</ul>
+<h2 id="who-this-is-not-for">Who this is not for</h2>
+<p>If a host manages PHP for you (a managed platform that updates itself), your job may be only to confirm with them. This page does not cover older PHP branches beyond what php.net states, does not describe how the bugs work, and is not a full server security review. Check your own vendor's advisory for exact package versions.</p>
+<h2 id="sources-checked-2026-10-22">Sources (checked 2026-10-22)</h2>
+<ul>
+<li>PHP security advisory, October 2026 (8.5.12, 8.4.27, 8.3.36, 8.2.35): <a href="https://www.php.net/archive/2026.php#2026-10-21-5">https://www.php.net/archive/2026.php#2026-10-21-5</a></li>
+<li>php.net front page, where the same release announcement is listed: <a href="https://www.php.net/">https://www.php.net/</a></li>
+</ul><p class="fix">Found a mistake or something out of date? <a href="https://github.com/honestheaders/honest-headers/issues">Tell us on GitHub</a>. We check each fact against the sources above.</p></article><section class="related"><h2>More guides</h2><ul><li><a href="/honest-guide/en/partitioned-cookies-chips-explained/">Partitioned cookies (CHIPS): one cookie jar per top-level site</a></li><li><a href="/honest-guide/en/content-security-policy-report-only-first/">Content-Security-Policy Report-Only: the safe way to send your first CSP</a></li><li><a href="/honest-guide/en/modheader-removed-from-chrome-what-to-do/">ModHeader was removed from the Chrome Web Store: what was reported, and how to check any header extension</a></li></ul></section></main><footer><div class="wrap"><p>Practical notes on HTTP headers, cookies and browser tools, by Honest Tools. Facts are checked against official documentation; each article lists its sources and the date they were checked.</p><p><a href="/honest-guide/en/about/">About</a> / <a href="/honest-guide/privacy/">Privacy Policy</a> / <a href="/honest-guide/terms/">Terms of Service</a></p><p>&copy; 2026 Honest Tools</p></div></footer></body></html>
