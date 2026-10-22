@@ -247,6 +247,12 @@ PHPCHECK = r'''<h1>PHP version checker for CVE-2026-109618 and CVE-2026-109619</
 <tr><td>8.5</td><td>8.5.12</td></tr><tr><td>8.4</td><td>8.4.27</td></tr><tr><td>8.3</td><td>8.3.36</td></tr><tr><td>8.2</td><td>8.2.35</td></tr>
 <tr><td>7.4, 8.0, 8.1</td><td>No php.net release. Source backports only; ask your vendor or upgrade.</td></tr>
 <tr><td>Older</td><td>No fix from php.net. Upgrade to a supported branch.</td></tr></table>
+<h2 id="own-site">Check your own site by opening it</h2>
+<p>A web page cannot read another site's headers on its own, so this works as a bookmark you click while your site is open (on a computer):</p>
+<ol><li>Drag this link to your bookmarks bar: <a class="btn ghost" href="javascript:(function(){fetch(location.href,{cache:'no-store'}).then(function(r){var t='Checked: '+location.origin+'\n';r.headers.forEach(function(v,k){t+=k+': '+v+'\n'});window.open('https://honestheaders.github.io/honest-guide/en/tools/php-version-checker/#h='+encodeURIComponent(t))}).catch(function(e){alert('Could not read this page\'s headers: '+e)})})()">Check PHP headers</a></li>
+<li>Open your own site and click the bookmark. It reads the headers your browser already received from that page and opens this checker with them.</li></ol>
+<p>The headers travel after the <code>#</code> in the address, which browsers do not send to any server. The bookmark sends nothing to Honest Tools.</p>
+<p><b>What headers can and cannot tell you:</b> they show a PHP version only while <code>expose_php</code> is on. Many sites hide it, and distribution packages may carry the fix under an older number. If no version shows, check on the server with <code>php -v</code> or ask your host.</p>
 <h2 id="where">Where to get the version</h2>
 <ul><li><b>On the server:</b> <code>php -v</code>. The web server can run a different PHP than the command line, so also check the version your site reports (for example a <code>phpinfo()</code> page you then delete).</li>
 <li><b>From outside:</b> <code>curl -sI https://your-site.example</code> shows <code>X-Powered-By: PHP/…</code> only while <code>expose_php</code> is on.</li>
@@ -282,6 +288,7 @@ else if(/^(7\.4|8\.0|8\.1)$/.test(br)){head="PHP "+v+": no php.net release for t
 else if(+m[1]<8||(+m[1]===8&&+m[2]<2)){head="PHP "+v+": end of life, no fix from php.net.";out.push(li("ng","✕ "+head,"Upgrade to a supported branch (8.2 or later)."))}
 else{head="PHP "+v+": this branch is not in the 21 October 2026 advisory.";out.push(li("info","△ "+head,"Check php.net for the current release of this branch."))}
 if(/x-powered-by\s*:/i.test(t))out.push(li("info","△ Your PHP version is visible in X-Powered-By","Set <code>expose_php = Off</code> in php.ini to stop sending it. This hides the number; it does not fix anything."))}
+else if(/^Checked: /.test(t))out.push(li("info","△ This site's headers do not show a PHP version","That is good practice (expose_php off), or the site does not run PHP. Headers cannot tell you whether it is patched: run <code>php -v</code> on the server or ask your host."));
 else out.push(li("info","△ No PHP version found","Paste a line like <code>PHP 8.3.30 (cli)</code> or <code>X-Powered-By: PHP/8.3.30</code>."));
 var up=ini(t,"session.upload_progress.enabled"),fb=ini(t,"fatal_error_backtraces"),ml=ini(t,"memory_limit"),pm=ini(t,"post_max_size");
 if(up!==null)out.push(off(up)?li("ok","✓ session.upload_progress.enabled is off"):li("info","△ session.upload_progress.enabled is "+esc(up),"php.net suggests 0 if you do not use the feature, even after updating."));
@@ -291,6 +298,7 @@ if(pm!==null){var n=mb(pm);out.push(n!==null&&n<=32?li("ok","✓ post_max_size i
 document.getElementById("r").innerHTML=(head?'<p class="score">'+head+'</p>':'')+'<ul class="res">'+out.join("")+'</ul>'}
 document.getElementById("go").onclick=run;
 document.getElementById("ex").onclick=function(){document.getElementById("h").value=EX;run()};
+if(location.hash.indexOf("#h=")===0){try{document.getElementById("h").value=decodeURIComponent(location.hash.slice(3))}catch(e){}history.replaceState(null,"",location.pathname);run()}
 })();
 </script>'''
 
