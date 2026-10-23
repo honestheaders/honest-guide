@@ -1,7 +1,10 @@
 """Free tools for the English section (/en/tools/...). They run only in the visitor's browser.
 Every rule shown by a tool comes from the sources listed on its page (checked dates included)."""
+import html
 
 TOOLS = [
+    ("csp-builder", "CSP builder (Report-Only first, then enforce)",
+     "List where your scripts, styles and images come from, or click a bookmark on your own page to fill it in. Get a Report-Only header to test first, then the enforcing one, for nginx, Apache and PHP."),
     ("mixed-content-finder", "Mixed content finder (http:// on an HTTPS page)",
      "Click a bookmark on your own page, or paste its HTML. See every http:// address, which ones browsers block, and the https:// versions to copy."),
     ("php-version-checker", "PHP version checker (CVE-2026-109618/109619)",
@@ -377,4 +380,119 @@ if(location.hash.indexOf("#m=")===0){try{var d=JSON.parse(decodeURIComponent(loc
 })();
 </script>'''
 
-BODIES = {"mixed-content-finder": MIXED, "php-version-checker": PHPCHECK, "security-headers-checker": CHECKER, "set-cookie-builder": COOKIE, "xpath-tester": XPATH, "cookie-converter": CONVERTER}
+CSP_BM = ("javascript:(function(){var q=String.fromCharCode(39),o=location.origin,S={script:{},style:{},img:{},font:{},connect:{},frame:{},media:{}};"
+          "function add(k,u){try{var x=new URL(u,location.href);if(!/^(https?|wss?):$/.test(x.protocol))return;S[k][x.origin===o?q+'self'+q:x.origin]=1}catch(e){}}"
+          "performance.getEntriesByType('resource').forEach(function(e){var t=e.initiatorType,n=e.name,f=/\\.(woff2?|ttf|otf|eot)([?#]|$)/i.test(n);"
+          "if(t==='script')add('script',n);else if(t==='img'||t==='image'||t==='input'||t==='body')add('img',n);"
+          "else if(t==='css'||t==='link'){if(f)add('font',n);else if(t==='link'&&/\\.css([?#]|$)/i.test(n))add('style',n);else if(t==='css')add('img',n)}"
+          "else if(t==='fetch'||t==='xmlhttprequest'||t==='beacon')add('connect',n);else if(t==='iframe'||t==='frame')add('frame',n);"
+          "else if(t==='audio'||t==='video'||t==='track')add('media',n)});"
+          "document.querySelectorAll('script[src]').forEach(function(e){add('script',e.src)});"
+          "document.querySelectorAll('link[rel~=stylesheet][href]').forEach(function(e){add('style',e.href)});"
+          "document.querySelectorAll('iframe[src]').forEach(function(e){add('frame',e.src)});"
+          "var i={s:0,h:0,y:document.querySelectorAll('style').length,a:document.querySelectorAll('[style]').length,j:0};"
+          "document.querySelectorAll('script:not([src])').forEach(function(e){var t=(e.type||'').toLowerCase();if(!t||/javascript|ecmascript|module/.test(t))i.s++});"
+          "document.querySelectorAll('a[href]').forEach(function(e){if(/^\\s*javascript:/i.test(e.getAttribute('href')))i.j++});"
+          "document.querySelectorAll('*').forEach(function(e){for(var a=0;a<e.attributes.length;a++)if(/^on/i.test(e.attributes[a].name)){i.h++;break}});"
+          "var r={o:o,i:i,s:{}};for(var k in S)r.s[k]=Object.keys(S[k]).slice(0,40);"
+          "window.open('https://honestheaders.github.io/honest-guide/en/tools/csp-builder/#c='+encodeURIComponent(JSON.stringify(r)))})()")
+
+CSP = r'''<h1>CSP builder</h1>
+<div class="answer"><p class="ah">SHORT ANSWER</p><p>List where your page loads scripts, styles, images, fonts and API calls from, and this builder writes a <code>Content-Security-Policy-Report-Only</code> header to test first and the enforcing <code>Content-Security-Policy</code> header for later, with lines for nginx, Apache and PHP. A bookmark can fill in the list from a page of your own site. It runs only in your browser.</p></div>
+<h2 id="own-site">Fill it in from your own page</h2>
+<ol><li>On a computer, drag this link to your bookmarks bar: <a class="btn ghost" href="BOOKMARK">Collect my sources</a></li>
+<li>Open a page of your site, use it for a moment (menus, forms, anything that loads more), then click the bookmark. It lists the origins that page loaded from and counts inline scripts and styles, then opens this builder with them. The list travels after the <code>#</code>, which browsers do not send to any server.</li></ol>
+<div class="tool">
+<p><b>Sources for each kind</b> (separate with spaces; same-site files are <code>'self'</code>). Anything left as only <code>'self'</code> falls back to <code>default-src 'self'</code>. An empty box becomes <code>'none'</code>.</p>
+<div id="dirs"></div>
+<div style="margin-top:10px">
+<label style="display:block;margin:8px 0;text-align:left"><input style="display:inline;width:auto;margin:0 8px 0 0" type="checkbox" id="dat"> Allow <code>data:</code> images</label>
+<label style="display:block;margin:8px 0;text-align:left"><input style="display:inline;width:auto;margin:0 8px 0 0" type="checkbox" id="us"> Allow inline styles</label>
+<label style="display:block;margin:8px 0;text-align:left"><input style="display:inline;width:auto;margin:0 8px 0 0" type="checkbox" id="ui"> Allow inline scripts</label>
+<label style="display:block;margin:8px 0;text-align:left"><input style="display:inline;width:auto;margin:0 8px 0 0" type="checkbox" id="fo" checked> <code>form-action 'self'</code></label>
+<label style="display:block;margin:8px 0;text-align:left"><input style="display:inline;width:auto;margin:0 8px 0 0" type="checkbox" id="up"> <code>upgrade-insecure-requests</code></label></div>
+<label for="fa">Who may put this page in a frame (<code>frame-ancestors</code>)</label>
+<select id="fa"><option value="'none'">Nobody: 'none'</option><option value="'self'">Only my own site: 'self'</option></select>
+<label for="bu">The &lt;base&gt; tag (<code>base-uri</code>)</label>
+<select id="bu"><option value="'none'">Not used: 'none'</option><option value="'self'">Used, same site only: 'self'</option></select>
+<label for="rep">Report address (optional, a URL on your server that accepts POST)</label>
+<input type="text" id="rep" spellcheck="false" placeholder="https://your-site.example/csp-reports">
+<div class="row" style="margin-top:10px"><button class="btn" id="go" type="button">Build the headers</button><button class="btn ghost" id="ex" type="button">Try an example</button></div></div>
+<div id="r" aria-live="polite"></div>
+<h2 id="order">The order to roll it out</h2>
+<ol><li>Send the <b>Report-Only</b> header. Nothing is blocked; violations are reported. MDN says the <code>report-to</code> directive must be there for reports to be sent, so add a report address.</li>
+<li>Fix what the reports show: move inline scripts and <code>onclick</code>-style handlers into files, or add the missing origin.</li>
+<li>Send the enforcing <code>Content-Security-Policy</code> header. You can keep the Report-Only one next to it while you try a stricter version; browsers honor both.</li></ol>
+<p>More detail: <a href="BASE/content-security-policy-report-only-first/">Content-Security-Policy Report-Only: the safe way to send your first CSP</a>.</p>
+<h2 id="limits">What the bookmark cannot see</h2>
+<ul><li>Only what that one page loaded so far. Other pages, logged-in areas and rarely used buttons may load more, so collect on several pages and merge the lists.</li>
+<li>A font or image loaded from CSS is sorted by its file name, so check the font and image boxes.</li>
+<li>It does not read your server's current headers. For those, use the <a href="BASE/tools/security-headers-checker/">security headers checker</a>.</li></ul>
+<h2 id="not-for">Who this is not for</h2>
+<ul><li>Sites that already use per-response nonces or hashes (<code>'nonce-…'</code>, <code>'strict-dynamic'</code>). This builder writes an allowlist of origins, which is easier to start with but looser than MDN's nonce-based strict CSP.</li>
+<li>Anyone who needs a policy on a page they do not control. A CSP is set by the site that sends the page.</li></ul>
+<h2 id="sources">Sources (checked 2026-10-23)</h2>
+<ul><li>MDN, Content-Security-Policy header (fetch directives, fallback to default-src, keywords, multiple policies): <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy">https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy</a></li>
+<li>MDN, Content Security Policy guide (inline scripts and eval blocked, object-src 'none', base-uri, frame-ancestors, report-only): <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP">https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP</a></li>
+<li>MDN, Content-Security-Policy-Report-Only (report-to required, not in meta): <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy-Report-Only">https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy-Report-Only</a></li>
+<li>MDN, CSP style-src (inline style elements and attributes blocked): <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/style-src">https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/style-src</a></li>
+<li>W3C, Content Security Policy Level 3, section 3.3 (report-uri, frame-ancestors and sandbox not supported in meta): <a href="https://www.w3.org/TR/CSP3/">https://www.w3.org/TR/CSP3/</a></li>
+<li>MDN, PerformanceResourceTiming initiatorType (how the bookmark sorts requests): <a href="https://developer.mozilla.org/en-US/docs/Web/API/PerformanceResourceTiming/initiatorType">https://developer.mozilla.org/en-US/docs/Web/API/PerformanceResourceTiming/initiatorType</a></li></ul>
+<script>
+(function(){
+var Q="'",SELF="'self'",D=[["script","script-src","Scripts"],["style","style-src","Stylesheets"],["img","img-src","Images"],["font","font-src","Fonts"],["connect","connect-src","fetch, XHR, WebSocket"],["frame","frame-src","Iframes"],["media","media-src","Audio and video"]];
+var KW=["'self'","'none'","'unsafe-inline'","'unsafe-eval'","'strict-dynamic'","'unsafe-hashes'","'wasm-unsafe-eval'","'report-sample'"];
+function $(i){return document.getElementById(i)}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+$("dirs").innerHTML=D.map(function(d){return '<label for="d-'+d[0]+'">'+d[2]+' (<code>'+d[1]+'</code>)</label><input type="text" id="d-'+d[0]+'" spellcheck="false" value="'+SELF+'">'}).join("");
+function check(dir,t,w){var l=t.toLowerCase();
+if(/[;,]/.test(t)){w.push(["ng",dir+": "+t,"Remove ; and , inside a source list. Separate sources with spaces."]);return}
+if(["self","none","unsafe-inline","unsafe-eval","strict-dynamic"].indexOf(l)>=0){w.push(["ng",dir+": "+t,"Keywords need single quotes: '"+l+"'."]);return}
+if(l.charAt(0)===Q){if(KW.indexOf(l)<0&&!/^'(nonce-|sha(256|384|512)-)/.test(l))w.push(["ng",dir+": "+t,"Unknown keyword."]);
+if(l==="'unsafe-inline'"||l==="'unsafe-eval'")w.push(["info",dir+": "+t,"MDN says to avoid it: it undoes much of what a CSP protects."]);return}
+if(l==="*"){w.push(["info",dir+": *","Allows any host. List the hosts you use instead."]);return}
+if(l==="http:"||/^http:\/\//.test(l)){w.push(["info",dir+": "+t,"Plain http. Use https:// for anything on an HTTPS page."]);return}
+if(l==="https:"){w.push(["info",dir+": https:","Allows any HTTPS host. Fine as a first step, narrower is better."]);return}
+if(l==="data:"&&dir==="script-src"){w.push(["ng",dir+": data:","data: in script-src lets injected code run."]);return}
+if(/^[a-z][a-z0-9+.-]*:$/.test(l))return;
+if(!/^([a-z][a-z0-9+.-]*:\/\/)?(\*\.)?[a-z0-9-]+(\.[a-z0-9-]+)*(:(\d+|\*))?(\/[^\s]*)?$/.test(l)&&!/^([a-z][a-z0-9+.-]*:\/\/)?\[[0-9a-f:]+\](:\d+)?$/.test(l))w.push(["ng",dir+": "+t,"Does not look like a host (example.com, https://cdn.example.com, *.example.com)."])}
+function build(){var p=["default-src 'self'"],w=[];
+D.forEach(function(d){var v=$("d-"+d[0]).value.trim(),t=v?v.split(/\s+/):[];
+if(d[0]==="img"&&$("dat").checked&&t.indexOf("data:")<0)t.push("data:");
+if(d[0]==="style"&&$("us").checked&&t.indexOf("'unsafe-inline'")<0)t.push("'unsafe-inline'");
+if(d[0]==="script"&&$("ui").checked&&t.indexOf("'unsafe-inline'")<0)t.push("'unsafe-inline'");
+t=t.filter(function(x,i,a){return a.indexOf(x)===i});
+t.forEach(function(x){check(d[1],x,w)});
+if(!t.length)p.push(d[1]+" 'none'");else if(!(t.length===1&&t[0]===SELF))p.push(d[1]+" "+t.join(" "))});
+p.push("object-src 'none'","base-uri "+$("bu").value);if($("fo").checked)p.push("form-action 'self'");
+p.push("frame-ancestors "+$("fa").value);if($("up").checked)p.push("upgrade-insecure-requests");
+var rep=$("rep").value.trim(),rp=[];
+if(rep){if(!/^https:\/\/[^\s"';,]+$/.test(rep))w.push(["ng","Report address","Use a full https:// address without spaces, quotes, ; or ,."]);else rp=["report-uri "+rep,"report-to csp-endpoint"]}
+var pol=p.concat(rp).join("; "),meta=p.filter(function(x){return!/^frame-ancestors/.test(x)}).join("; ");
+var ro=(rp.length?'Reporting-Endpoints: csp-endpoint="'+rep+'"\n':"")+"Content-Security-Policy-Report-Only: "+pol,en=(rp.length?'Reporting-Endpoints: csp-endpoint="'+rep+'"\n':"")+"Content-Security-Policy: "+pol;
+function srv(name){var ng=[],ap=[],ph=[];if(rp.length){ng.push("add_header Reporting-Endpoints 'csp-endpoint=\""+rep+"\"' always;");ap.push("Header always set Reporting-Endpoints 'csp-endpoint=\""+rep+"\"'");ph.push("header('Reporting-Endpoints: csp-endpoint=\""+rep+"\"');")}
+ng.push('add_header '+name+' "'+pol+'" always;');ap.push('Header always set '+name+' "'+pol+'"');ph.push("header(\""+name+": "+pol+"\");");
+return "# nginx (server block)\n"+ng.join("\n")+"\n\n# Apache (mod_headers)\n"+ap.join("\n")+"\n\n# PHP (before any output)\n"+ph.join("\n")}
+var h="";
+if(!rp.length)h+='<p class="note"><b>No report address.</b> MDN says Report-Only needs <code>report-to</code> to send reports. Without one, test the enforcing header on a staging copy and watch the Issues panel in Chrome DevTools, which lists CSP violations.</p>';
+h+='<p class="score">'+(w.filter(function(x){return x[0]==="ng"}).length?"Fix the red items first.":"Your headers")+'</p>';
+if(w.length)h+='<ul class="res">'+w.map(function(x){return '<li class="'+x[0]+'"><b>'+(x[0]==="ng"?"✕ ":"△ ")+esc(x[1])+'</b>'+esc(x[2])+'</li>'}).join("")+'</ul>';
+h+='<h3>Step 1: test with Report-Only</h3><pre id="o1">'+esc(ro)+'</pre><button class="btn ghost cpb" data-t="o1" type="button">Copy</button><pre id="o1s">'+esc(srv("Content-Security-Policy-Report-Only"))+'</pre><button class="btn ghost cpb" data-t="o1s" type="button">Copy</button>';
+h+='<h3>Step 2: enforce, after the reports are clean</h3><pre id="o2">'+esc(en)+'</pre><button class="btn ghost cpb" data-t="o2" type="button">Copy</button><pre id="o2s">'+esc(srv("Content-Security-Policy"))+'</pre><button class="btn ghost cpb" data-t="o2s" type="button">Copy</button>';
+h+='<h3>No access to headers? The meta tag (enforcing only)</h3><p class="note">A &lt;meta&gt; tag cannot carry Report-Only, <code>frame-ancestors</code> or <code>report-uri</code>, so they are left out here. Put it near the top of &lt;head&gt;.</p><pre id="o3">'+esc('<meta http-equiv="Content-Security-Policy" content="'+meta+'">')+'</pre><button class="btn ghost cpb" data-t="o3" type="button">Copy</button>';
+$("r").innerHTML=h;
+document.querySelectorAll(".cpb").forEach(function(b){b.onclick=function(){navigator.clipboard.writeText($(b.getAttribute("data-t")).textContent).then(function(){b.textContent="Copied"})}})}
+$("go").onclick=build;
+$("ex").onclick=function(){$("d-script").value="'self' https://www.googletagmanager.com";$("d-style").value="'self' https://fonts.googleapis.com";$("d-img").value="'self' https://www.googletagmanager.com";$("d-font").value="https://fonts.gstatic.com";$("d-connect").value="'self' https://www.google-analytics.com";$("d-frame").value="";$("d-media").value=SELF;$("dat").checked=true;$("rep").value="https://example.com/csp-reports";build()};
+if(location.hash.indexOf("#c=")===0){try{var c=JSON.parse(decodeURIComponent(location.hash.slice(3))),i=c.i||{},n=[];history.replaceState(null,"",location.pathname);
+D.forEach(function(d){var l=(c.s&&c.s[d[0]])||[];l=l.filter(function(x){return x===SELF||/^(https?|wss?):\/\/[^\s"'<>;,]+$/.test(x)});if(d[0]!=="frame"&&l.indexOf(SELF)<0)l.unshift(SELF);l.sort(function(a,b){return a===SELF?-1:b===SELF?1:0});$("d-"+d[0]).value=l.length?l.join(" "):SELF});
+if(i.s)n.push(i.s+" inline &lt;script&gt; block"+(i.s>1?"s":""));if(i.h)n.push(i.h+" element"+(i.h>1?"s":"")+" with onclick-style handlers");if(i.j)n.push(i.j+" javascript: link"+(i.j>1?"s":""));
+var m='<p class="score">Filled in from '+esc(c.o||"your page")+'. Check each box, then build.</p>';
+if(n.length)m+='<ul class="res"><li class="info"><b>△ '+n.join(", ")+'</b>These are blocked once script-src is enforced. Move them into .js files (use addEventListener for handlers) before step 2. Ticking "Allow inline scripts" removes much of the protection.</li></ul>';
+if(i.y||i.a)m+='<ul class="res"><li class="info"><b>△ '+(i.y||0)+' &lt;style&gt; block(s), '+(i.a||0)+' style="" attribute(s)</b>Blocked by style-src unless you tick "Allow inline styles". Move them into .css files, or tick it until you can.</li></ul>';
+$("r").innerHTML=m}catch(e){$("r").innerHTML='<p class="score">Could not read the list from the bookmark.</p>'}}
+})();
+</script>'''.replace("BOOKMARK", html.escape(CSP_BM, quote=True))
+
+
+BODIES = {"csp-builder": CSP, "mixed-content-finder": MIXED, "php-version-checker": PHPCHECK, "security-headers-checker": CHECKER, "set-cookie-builder": COOKIE, "xpath-tester": XPATH, "cookie-converter": CONVERTER}
