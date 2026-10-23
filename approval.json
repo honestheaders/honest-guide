@@ -1,0 +1,1 @@
+{"mode": "manual", "note": "manual=記事は draft/ ブランチに置き、オーナーが「投稿して」と言うまで公開しない。auto=毎日 main へ直接 push。"}
